@@ -1,0 +1,16 @@
+*.[oa]
+*~
+*.swp
+*.swo
+*.bin
+*.map
+*.SESH
+*.elf
+*.exe
+*.lss
+*.sym
+*.pre
+*.hex
+*.out
+*.sw*
+linkerMap.lds
