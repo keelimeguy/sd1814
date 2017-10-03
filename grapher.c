@@ -1,42 +1,46 @@
-#include <stdio.h>
+#include "grapher.h"
+#include "util.h"
 
-#define GRAPH_WIDTH 80 // pixels
-#define BAR_WIDTH 2.0 // pixels
-#define MIN_BAR_HEIGHT 1 // pixels
-#define MAX_BAR_HEIGHT 28 // pixels
-#define BAR_PADDING 1 // pixels
+static double get_min(double* arr, int size);
+static double get_max(double* arr, int size);
 
-#define DANGER_HIGH 20.0
-#define WARNING_HIGH 10.0
-#define WARNING_LOW -7.0
-#define DANGER_LOW -14.0
+static double get_min(double* arr, int size) {
+    if (size<=0) return 0;
 
-#define MIN(a, b) (a<b?a:b)
-#define MAX(a, b) (a>b?a:b)
+    #ifdef DEFAULT_MIN
+        double min = DEFAULT_MIN;
+        int i=0;
+    #else
+        double min = arr[0];
+        int i=1;
+    #endif
 
-double get_min(double* arr, int size) {
-    double min;
-    int i;
-    for (i=0; i<size; i++) {
-        if (i>=GRAPH_WIDTH) break;
-        if (i==0 || arr[i]<min) min = arr[i];
-    }
+    for (; i<size; i++)
+        if (arr[i]<min) min = arr[i];
     return min;
 }
 
-double get_max(double* arr, int size) {
-    double max;
-    int i;
-    for (i=0; i<size; i++)
-        if (i==0 || arr[i]>max) max = arr[i];
+static double get_max(double* arr, int size) {
+    if (size<=0) return 0;
+
+    #ifdef DEFAULT_MAX
+        double max = DEFAULT_MAX;
+        int i=0;
+    #else
+        double max = arr[0];
+        int i=1;
+    #endif
+
+    for (; i<size; i++)
+        if (arr[i]>max) max = arr[i];
     return max;
 }
 
 void graph(double* data, int size, int start, int bar_width) {
     int i, j, index;
     int bar[size];
-    int min = get_min(data, MIN(size, GRAPH_WIDTH/bar_width)) - BAR_PADDING;
-    int max = get_max(data, MIN(size, GRAPH_WIDTH/bar_width));
+    int min = get_min(data, MIN(size, GRAPH_WIDTH/bar_width)) - BAR_PADDING_LOW;
+    int max = get_max(data, MIN(size, GRAPH_WIDTH/bar_width)) + BAR_PADDING_HIGH;
 
     #define CONVERT(x) ((int)(((x-min)/(max-min))*(double)(MAX_BAR_HEIGHT-MIN_BAR_HEIGHT)) + MIN_BAR_HEIGHT)
 
@@ -46,58 +50,28 @@ void graph(double* data, int size, int start, int bar_width) {
     for (j=size-start, i=0; i<start; i++, j++)
         bar[j] = CONVERT(data[i]);
 
+    GRAPH_RESET();
     for (j=MAX_BAR_HEIGHT; j>0; j--) {
         for (i=GRAPH_WIDTH; i>size*bar_width; i--) {
-            printf("-");
+            GRAPH_PIXEL_OFF(i, j);
         }
         for (i=0; i<GRAPH_WIDTH-(GRAPH_WIDTH%bar_width); i++) {
             if ((i/bar_width)>=size) break;
             index = (start+i/bar_width)%size;
             if (bar[i/bar_width]>=j)
                 if (data[index]>=DANGER_HIGH)
-                    printf("%c", 176);
+                    GRAPH_PIXEL_DANGER(i, j);
                 else if (data[index]>=WARNING_HIGH)
-                    printf("%c", 177);
+                    GRAPH_PIXEL_WARNING(i, j);
                 else if (data[index]<=DANGER_LOW)
-                    printf("%c", 176);
+                    GRAPH_PIXEL_DANGER(i, j);
                 else if (data[index]<=WARNING_LOW)
-                    printf("%c", 177);
+                    GRAPH_PIXEL_WARNING(i, j);
                 else
-                    printf("%c", 219);
+                    GRAPH_PIXEL_ON(i, j);
             else
-                printf("-");
+                GRAPH_PIXEL_OFF(i, j);
         }
-        printf("\n");
+        GRAPH_NEXT_ROW();
     }
-}
-
-int main(int args, char** argv) {
-    if (args!=2) {
-        printf("Usage:\n%s <data_file>", argv[0]);
-        return 0;
-    }
-
-    FILE *fp;
-    double d;
-    char c;
-    int size = GRAPH_WIDTH/BAR_WIDTH;
-    int i = 0, length = 0;
-    double data[size];
-
-    fp = fopen(argv[1], "r");
-    while (1) {
-        printf("Press <ENTER> to continue: ", argv[0]);
-        c = fgetc(stdin);
-        if (c != '\n') break;
-
-        fscanf(fp, "%lf",&d);
-        data[i] = d;
-        i++;
-        if (length < size) length++;
-        if (i >= size) i = 0;
-
-        graph(data, length, length!=size?0:i, BAR_WIDTH);
-    }
-
-    fclose(fp);
 }
