@@ -2,9 +2,14 @@
 
 #define GRAPH_WIDTH 80 // pixels
 #define BAR_WIDTH 2.0 // pixels
-#define MIN_BAR_HEIGHT 0 // pixels
-#define MAX_BAR_HEIGHT 10 // pixels
+#define MIN_BAR_HEIGHT 1 // pixels
+#define MAX_BAR_HEIGHT 28 // pixels
 #define BAR_PADDING 1 // pixels
+
+#define DANGER_HIGH 20.0
+#define WARNING_HIGH 10.0
+#define WARNING_LOW -7.0
+#define DANGER_LOW -14.0
 
 #define MIN(a, b) (a<b?a:b)
 #define MAX(a, b) (a>b?a:b)
@@ -28,20 +33,18 @@ double get_max(double* arr, int size) {
 }
 
 void graph(double* data, int size, int start, int bar_width) {
-    int i, j;
+    int i, j, index;
     int bar[size];
     int min = get_min(data, MIN(size, GRAPH_WIDTH/bar_width)) - BAR_PADDING;
     int max = get_max(data, MIN(size, GRAPH_WIDTH/bar_width));
 
+    #define CONVERT(x) ((int)(((x-min)/(max-min))*(double)(MAX_BAR_HEIGHT-MIN_BAR_HEIGHT)) + MIN_BAR_HEIGHT)
+
     if (start>size) return;
     for (j=0, i=start; i<size; i++, j++)
-        bar[j] = (int)(((data[i]-min)/(max-min))*(double)(MAX_BAR_HEIGHT-MIN_BAR_HEIGHT)) + MIN_BAR_HEIGHT;
+        bar[j] = CONVERT(data[i]);
     for (j=size-start, i=0; i<start; i++, j++)
-        bar[j] = (int)(((data[i]-min)/(max-min))*(double)(MAX_BAR_HEIGHT-MIN_BAR_HEIGHT)) + MIN_BAR_HEIGHT;
-
-    for (i=0; i<size; i++)
-        printf("%.1f, ", data[i]);
-    printf("\n");
+        bar[j] = CONVERT(data[i]);
 
     for (j=MAX_BAR_HEIGHT; j>0; j--) {
         for (i=GRAPH_WIDTH; i>size*bar_width; i--) {
@@ -49,8 +52,18 @@ void graph(double* data, int size, int start, int bar_width) {
         }
         for (i=0; i<GRAPH_WIDTH-(GRAPH_WIDTH%bar_width); i++) {
             if ((i/bar_width)>=size) break;
+            index = (start+i/bar_width)%size;
             if (bar[i/bar_width]>=j)
-                printf("%c", 219);
+                if (data[index]>=DANGER_HIGH)
+                    printf("%c", 176);
+                else if (data[index]>=WARNING_HIGH)
+                    printf("%c", 177);
+                else if (data[index]<=DANGER_LOW)
+                    printf("%c", 176);
+                else if (data[index]<=WARNING_LOW)
+                    printf("%c", 177);
+                else
+                    printf("%c", 219);
             else
                 printf("-");
         }
