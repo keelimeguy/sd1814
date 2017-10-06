@@ -36,8 +36,8 @@ static double get_max(double* arr, int size) {
     return max;
 }
 
-void graph(double* data, int size, int start, int bar_width) {
-    int i, j, index;
+extern "C" void graph(double* data, int size, int start, int bar_width) {
+    int i, x, y, index;
     int bar[size];
     int min = get_min(data, MIN(size, GRAPH_WIDTH/bar_width)) - BAR_PADDING_LOW;
     int max = get_max(data, MIN(size, GRAPH_WIDTH/bar_width)) + BAR_PADDING_HIGH;
@@ -45,33 +45,35 @@ void graph(double* data, int size, int start, int bar_width) {
     #define CONVERT(x) ((int)(((x-min)/(max-min))*(double)(MAX_BAR_HEIGHT-MIN_BAR_HEIGHT)) + MIN_BAR_HEIGHT)
 
     if (start>size) return;
-    for (j=0, i=start; i<size; i++, j++)
-        bar[j] = CONVERT(data[i]);
-    for (j=size-start, i=0; i<start; i++, j++)
-        bar[j] = CONVERT(data[i]);
+    for (y=0, i=start; i<size; i++, y++)
+        bar[y] = CONVERT(data[i]);
+    for (y=size-start, i=0; i<start; i++, y++)
+        bar[y] = CONVERT(data[i]);
 
     GRAPH_RESET();
-    for (j=MAX_BAR_HEIGHT; j>0; j--) {
-        for (i=GRAPH_WIDTH; i>size*bar_width; i--) {
-            GRAPH_PIXEL_OFF(i, j);
+    for (y=MAX_BAR_HEIGHT; y>0; y--) {
+        for (x=0; x<GRAPH_WIDTH-(GRAPH_WIDTH%bar_width)-size*bar_width; x++) {
+            GRAPH_PIXEL_OFF(x, y);
         }
-        for (i=0; i<GRAPH_WIDTH-(GRAPH_WIDTH%bar_width); i++) {
+        for (x=GRAPH_WIDTH-(GRAPH_WIDTH%bar_width)-size*bar_width, i=0; i<GRAPH_WIDTH-(GRAPH_WIDTH%bar_width); i++, x++) {
             if ((i/bar_width)>=size) break;
             index = (start+i/bar_width)%size;
-            if (bar[i/bar_width]>=j)
+            if (bar[i/bar_width]>=y)
                 if (data[index]>=DANGER_HIGH)
-                    GRAPH_PIXEL_DANGER(i, j);
+                    GRAPH_PIXEL_DANGER(x, y);
                 else if (data[index]>=WARNING_HIGH)
-                    GRAPH_PIXEL_WARNING(i, j);
+                    GRAPH_PIXEL_WARNING(x, y);
                 else if (data[index]<=DANGER_LOW)
-                    GRAPH_PIXEL_DANGER(i, j);
+                    GRAPH_PIXEL_DANGER(x, y);
                 else if (data[index]<=WARNING_LOW)
-                    GRAPH_PIXEL_WARNING(i, j);
+                    GRAPH_PIXEL_WARNING(x, y);
                 else
-                    GRAPH_PIXEL_ON(i, j);
+                    GRAPH_PIXEL_ON(x, y);
             else
-                GRAPH_PIXEL_OFF(i, j);
+                GRAPH_PIXEL_OFF(x, y);
         }
         GRAPH_NEXT_ROW();
     }
 }
+
+
