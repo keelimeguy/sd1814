@@ -11,11 +11,6 @@
 // #define DEFAULT_MIN 0.0
 // #define DEFAULT_MAX 10.0
 
-#define DANGER_HIGH 20.0
-#define WARNING_HIGH 10.0
-#define WARNING_LOW -7.0
-#define DANGER_LOW -14.0
-
 #if IS_TINY_SCREEN
 
     #include "TinyScreen_driver.h"
@@ -36,8 +31,13 @@
 
 #else // use console by default
 
+    #define DANGER_HIGH 20.0
+    #define WARNING_HIGH 10.0
+    #define WARNING_LOW -7.0
+    #define DANGER_LOW -14.0
+
     #define GRAPH_WIDTH                 80 // pixels
-    #define BAR_WIDTH                   2.0 // pixels
+    #define BAR_WIDTH                   2 // pixels
     #define MIN_BAR_HEIGHT              1 // pixels
     #define MAX_BAR_HEIGHT              28 // pixels
     #define BAR_PADDING_LOW             1
@@ -53,8 +53,17 @@
 #endif
 
 #ifdef __cplusplus
-extern "C"
+extern "C" {
 #endif
-void graph(double* data, int size, int start, int bar_width);
+
+int add_to_graph(int val);
+void graph(int clear);
+
+#ifdef __cplusplus
+}
+#endif
+
+double graph_min();
+double graph_max();
 
 #endif

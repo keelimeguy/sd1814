@@ -12,35 +12,28 @@ int main(int args, char** argv) {
     FILE *fp;
     double d;
     char c;
-    int size = GRAPH_WIDTH/BAR_WIDTH;
-    int i = 0, length = 0;
-    int diff = 1, k = 0;
-    double data[size];
+    int diff = 1, k = 0, i = 0;
 
     if (args==2)
         fp = fopen(argv[1], "r");
+
     while (1) {
         printf("Press <ENTER> to continue: ");
         c = fgetc(stdin);
         if (c != '\n') break;
 
         if (args!=2) {
-            data[i] = k*i;
+            d = k*i;
             k+=diff;
             if (k*i>DANGER_HIGH || k*i<DANGER_LOW) {
                 diff = -diff;
                 k/=i/2;
             }
-            if (length < size) length++;
-            if (++i >= size) i = 0;
-        } else {
+        } else
             fscanf(fp, "%lf",&d);
-            data[i] = d;
-            i++;
-            if (length < size) length++;
-            if (i >= size) i = 0;
-        }
-        graph(data, length, length!=size?0:i, BAR_WIDTH);
+
+        i = add_to_graph(d);
+        graph(0);
     }
 
     if (args==2)
