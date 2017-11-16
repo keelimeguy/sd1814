@@ -63,6 +63,7 @@ void graph(int clear);
 }
 #endif
 
+int graph_length();
 double graph_min();
 double graph_max();
 

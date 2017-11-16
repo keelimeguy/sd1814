@@ -6,9 +6,8 @@
 
 TinyScreen display = TinyScreen(TinyScreenPlus);
 
-const int size = GRAPH_WIDTH/BAR_WIDTH;
-int i = 0, length = 0, diff = 1.1;
-double data[size], k = 0;
+int i = 0, diff = 1.1;
+double data, k = 0;
 char buffer[12];
 
 void setup(void) {
@@ -20,18 +19,15 @@ void setup(void) {
 }
 
 void loop() {
-    data[i] = k*i;
-    ftoa(buffer, data[i], 1);
-
+    data = k*i;
     k+=diff;
-    if (k*i>DANGER_HIGH || k*i<DANGER_LOW) {
+    if (data>DANGER_HIGH || data<DANGER_LOW) {
             diff = -diff;
             k/=(double)(i)/3.0;
     }
-    if (length < size) length++;
-    if (++i >= size) i = 0;
-
-    graph(data, length, length!=size?0:i, BAR_WIDTH);
+    ftoa(buffer, data, 1);
+    i = add_to_graph(data);
+    graph(0);
     writeText(0, 20, buffer, 1);
     delay(500);
 }

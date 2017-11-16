@@ -1,7 +1,7 @@
 #ifndef NHD_128160EF_H
 #define NHD_128160EF_H
 
-/* Pin connections (Serial mode):
+/* Pin connections:
     1 (GND)
     2 (IOVDD) = VDD
     3 (VDD) = 2.8V, 3mA (2.5V-3.3V)
@@ -67,52 +67,44 @@
 
 /*
 void NHD_Init(void) {
-    GPIO_ResetBits(GPIOC, CS1);
-    GPIO_SetBits(GPIOC, nRD);
-    GPIO_ResetBits(GPIOC, nWR);
-    GPIO_WriteBit(GPIOC, RES, Bit_RESET);
+    CS_OFF();
+    RD_ON();
+    WR_OFF();
+    RESET_OFF();
     delay(5);
     NHD_delay(10);
-    GPIO_WriteBit(GPIOC, RES, Bit_SET);
+    RESET_ON();
     delay(100);
     NHD_delay(10);
-    NHD_Write_Command(0x11);
+    NHD_Write_Command(NHD_EXIT_SLEEP_MODE);
     NHD_delay(100);
-    NHD_Write_Command(0x26);NHD_(0x04);
-    NHD_Write_Command(0xF2);NHD_(0x00);
-    NHD_Write_Command(0xB1);NHD_(0x0A);NHD_Write_Data(0x14);
+    NHD_Write_Command(NHD_SET_GAMMA_CURVE);NHD_Write_Data(0x04);
+    NHD_Write_Command(0xF2);NHD_Write_Data(0x00);
+    NHD_Write_Command(0xB1);NHD_Write_Data(0x0A);NHD_Write_Data(0x14);
     NHD_Write_Command(0xC0);NHD_Write_Data(0x0A);NHD_Write_Data(0x00);
     NHD_Write_Command(0xC1);NHD_Write_Data(0x02);
     NHD_Write_Command(0xC5);NHD_Write_Data(0x2F);NHD_Write_Data(0x3E);
     NHD_Write_Command(0xC7);NHD_Write_Data(0x40);
-    NHD_Write_Command(0x2A);
-    NHD_Write_Data(0x00);
-    NHD_Write_Data(0x00);
-    NHD_Write_Data(0x00);
-    NHD_Write_Data(0x7F);
-    NHD_Write_Command(0x2B);
-    NHD_Write_Data(0x00);
-    NHD_Write_Data(0x00);
-    NHD_Write_Data(0x00);
-    NHD_Write_Data(0x9F);
-    NHD_Write_Command(0x36);NHD_Write_Data(0x48);
-    NHD_Write_Command(0x3A);NHD_Write_Data(0xC5);
-    NHD_Write_Command(0x29);
-    NHD_Write_Command(0x2C);
+    NHD_Write_Command(NHD_SET_COLUMN_ADDRESS);NHD_Write_Data(0x00);NHD_Write_Data(0x00);NHD_Write_Data(0x00);NHD_Write_Data(NHD_MAX_ROW);
+    NHD_Write_Command(NHD_SET_PAGE_ADDRESS);NHD_Write_Data(0x00);NHD_Write_Data(0x00);NHD_Write_Data(0x00);NHD_Write_Data(NHD_MAX_COL);
+    NHD_Write_Command(NHD_SET_ADDRESS_MODE);NHD_Write_Data(0x48);
+    NHD_Write_Command(NHD_SET_PIXEL_FORMAT);NHD_Write_Data(0xC5);
+    NHD_Write_Command(NHD_SET_DISPLAY_ON);
+    NHD_Write_Command(NHD_WRITE_MEMORY_START);
 }
 
 void NHD_Write_Command(unsigned char command) {
-    GPIO_ResetBits(GPIOC, RS);
-    GPIO_Write(GPIOB, command);
-    GPIO_ResetBits(GPIOC, nWR);
-    GPIO_SetBits(GPIOC, nWR);
+    DC_OFF();
+    DATA_BUS(command);
+    WR_OFF();
+    WR_ON();
 }
 
 void NHD_Write_Data(unsigned char data1) {
-    GPIO_SetBits(GPIOC, RS);
-    GPIO_Write(GPIOB, data1);
-    GPIO_ResetBits(GPIOC, nWR);
-    GPIO_SetBits(GPIOC, nWR);
+    DC_ON();
+    DATA_BUS(data1);
+    WR_OFF();
+    WR_ON();
 }
 */
 

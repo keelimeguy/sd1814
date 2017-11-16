@@ -3,19 +3,35 @@
 
 static double get_min(int size);
 static double get_max(int size);
-static double min = 0;
-static double max = 0;
+
+#ifdef DEFAULT_MIN
+    static double data_min = DEFAULT_MIN;
+#else
+    static double data_min = 0;
+#endif
+static int min_index = 0;
+
+#ifdef DEFAULT_MAX
+    static double data_max = DEFAULT_MAX;
+#else
+    static double data_max = 0;
+#endif
+static int max_index = 0;
 
 const int data_size = GRAPH_WIDTH/BAR_WIDTH;
-int data_index = 0, data_length = 0, data_start = 0;
-double data[data_size];
+static int data_index = 0, data_length = 0, data_start = 0;
+static double data[data_size];
+
+int graph_length(){
+    return data_length;
+}
 
 double graph_min() {
-    return min + BAR_PADDING_LOW;
+    return data_min;
 }
 
 double graph_max() {
-    return max - BAR_PADDING_HIGH;
+    return data_max;
 }
 
 static double get_min(int size) {
@@ -52,6 +68,20 @@ static double get_max(int size) {
 
 extern "C" int add_to_graph(int val) {
     data[data_index] = val;
+    if (data_length == 0 || val<data_min) {
+        data_min = val;
+        min_index = data_index;
+    } else if (min_index == data_index) {
+        data_min = get_min(data_length);
+    }
+
+    if (data_length == 0 || val>data_max) {
+        data_max = val;
+        max_index = data_index;
+    } else if (max_index == data_index) {
+        data_max = get_max(data_length);
+    }
+
     data_index++;
     if (data_index >= data_size) data_index = 0;
     if (data_length < data_size) {
@@ -59,20 +89,14 @@ extern "C" int add_to_graph(int val) {
         data_start = 0;
     } else
         data_start = data_index;
-
-    int i;
-    for (i=0;i<data_size;i++)
-        printf("%2.2f, ", data[i]);
-    printf("\n");
-
     return data_index;
 }
 
 extern "C" void graph(int clear) {
     int i, x, y, index;
     int bar[data_length];
-    min = get_min(data_length) - BAR_PADDING_LOW;
-    max = get_max(data_length) + BAR_PADDING_HIGH;
+    double min = data_min - BAR_PADDING_LOW;
+    double max = data_max + BAR_PADDING_HIGH;
 
     #define CONVERT(xx) ((int)(((xx-min)/(max-min))*(double)(MAX_BAR_HEIGHT-MIN_BAR_HEIGHT)) + MIN_BAR_HEIGHT)
 
