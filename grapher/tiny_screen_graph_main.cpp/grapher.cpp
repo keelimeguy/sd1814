@@ -21,6 +21,7 @@ static int max_index = 0;
 const int data_size = GRAPH_WIDTH/BAR_WIDTH;
 static int data_index = 0, data_length = 0, data_start = 0;
 static double data[data_size];
+static int bar_cache[data_size];
 
 int graph_length(){
     return data_length;
@@ -82,6 +83,14 @@ extern "C" int add_to_graph(int val) {
         data_max = get_max(data_length);
     }
 
+
+    double min = data_min - BAR_PADDING_LOW;
+    double max = data_max + BAR_PADDING_HIGH;
+
+    #define CONVERT(xx) ((int)(((xx-min)/(max-min))*(double)(MAX_BAR_HEIGHT-MIN_BAR_HEIGHT)) + MIN_BAR_HEIGHT)
+    bar_cache[data_index] = CONVERT(val);
+
+
     data_index++;
     if (data_index >= data_size) data_index = 0;
     if (data_length < data_size) {
@@ -89,22 +98,19 @@ extern "C" int add_to_graph(int val) {
         data_start = 0;
     } else
         data_start = data_index;
+
     return data_index;
 }
 
 extern "C" void graph(int clear) {
     int i, x, y, index;
     int bar[data_length];
-    double min = data_min - BAR_PADDING_LOW;
-    double max = data_max + BAR_PADDING_HIGH;
-
-    #define CONVERT(xx) ((int)(((xx-min)/(max-min))*(double)(MAX_BAR_HEIGHT-MIN_BAR_HEIGHT)) + MIN_BAR_HEIGHT)
 
     if (data_start>data_length) return;
     for (y=0, i=data_start; i<data_length; i++, y++)
-        bar[y] = CONVERT(data[i]);
+        bar[y] = bar_cache[i];
     for (y=data_length-data_start, i=0; i<data_start; i++, y++)
-        bar[y] = CONVERT(data[i]);
+        bar[y] = bar_cache[i];
 
     if (clear)
         GRAPH_RESET();
