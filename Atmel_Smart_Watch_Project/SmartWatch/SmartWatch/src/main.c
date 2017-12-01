@@ -1,10 +1,33 @@
+/* UConn Senior Design Team 1814, November 2017
+*/
 
+#include <SmartWatch.h>
 
-#include <asf.h>
+/* is_reading_timeout() triggered by:
+        RTC Alarm (RTC interrupt)
+    is_bt_active() triggered by:
+        BT message send request
+        BT interrupt
+    is_screen_active() triggered by:
+        user input (external interrupt)
+*/
 
-int main (void)
-{
-	system_init();
-
-	/* Insert application code here, after the board has been initialized. */
+int main (void) {
+    init_all();
+    for(;;) {
+        while (is_active()) {
+            if (is_reading_timeout()) {
+                take_measurement();
+                set_reading_timeout(READING_TIMEOUT);
+            }
+            if (is_bt_active()) {
+                bt_task();
+            }
+            if (is_screen_active()) {
+                smartwatch_task();
+            }
+        }
+        sleep();
+        wakeup();
+    }
 }
