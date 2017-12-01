@@ -10,12 +10,12 @@
 
 #include <board.h>
 
-#define ILI9163_SPI                 SERCOM0
+#define ILI9163_SPI                 BOARD_DISP_SERCOM
 #define CONFIG_ILI9163_FRAMEBUFFER
 
-#define ILI9163_DC_PIN              0
-#define ILI9163_RES_PIN             0
-#define ILI9163_CS_PIN              0
+#define ILI9163_DC_PIN              BOARD_DISP_DC_PIN
+#define ILI9163_RES_PIN             BOARD_DISP_RES_PIN
+#define ILI9163_CS_PIN              BOARD_DISP_CS_PIN
 
 #define ILI9163_SPI_PINMUX_SETTING  SPI_SIGNAL_MUX_SETTING_D
 #define ILI9163_SPI_PINMUX_PAD0     PINMUX_DEFAULT

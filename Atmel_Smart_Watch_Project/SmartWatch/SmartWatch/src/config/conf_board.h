@@ -1,3 +1,6 @@
+/* UConn Senior Design Team 1814, November 2017
+     Using code adapted from:
+
 /**
  * \file
  *
@@ -46,5 +49,23 @@
 
 #ifndef CONF_BOARD_H
 #define CONF_BOARD_H
+
+#define BOARD_BT_SERCOM            SERCOM0
+#define BOARD_DISP_SERCOM          SERCOM1
+
+#define BOARD_DISP_DC_PIN          0
+#define BOARD_DISP_RES_PIN         0
+#define BOARD_DISP_CS_PIN          0
+
+#define BOARD_BUTTON_L_PIN         0
+#define BOARD_BUTTON_R_PIN         0
+
+#define BOARD_LED_PIN_1            0
+// etc
+
+#define BOARD_PHOTODIODE_PIN_1     0
+// etc
+
+// TODO: Other pins as they turn up
 
 #endif // CONF_BOARD_H

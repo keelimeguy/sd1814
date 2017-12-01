@@ -4,7 +4,7 @@
 #ifndef SMARTWATCH_H
 #define SMARTWATCH_H
 
-#include "conf_SmartWatch.h"
+#include <ASF.h>
 
 #include "smartwatch/clock_driver.h"
 #include "smartwatch/display_manager.h"

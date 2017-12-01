@@ -10,12 +10,12 @@
 
 #include <board.h>
 
-#define ST7735S_SPI                 SERCOM0
+#define ST7735S_SPI                 BOARD_DISP_SERCOM
 #define CONFIG_ST7735S_FRAMEBUFFER
 
-#define ST7735S_DC_PIN              0
-#define ST7735S_RES_PIN             0
-#define ST7735S_CS_PIN              0
+#define ST7735S_DC_PIN              BOARD_DISP_DC_PIN
+#define ST7735S_RES_PIN             BOARD_DISP_RES_PIN
+#define ST7735S_CS_PIN              BOARD_DISP_CS_PIN
 
 #define ST7735S_SPI_PINMUX_SETTING  SPI_SIGNAL_MUX_SETTING_D
 #define ST7735S_SPI_PINMUX_PAD0     PINMUX_DEFAULT
