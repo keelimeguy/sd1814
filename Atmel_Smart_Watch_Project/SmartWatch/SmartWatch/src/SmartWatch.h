@@ -16,6 +16,7 @@ void init_all(void);
 void smartwatch_task(void);
 void is_active(void);
 void is_screen_active(void);
+void is_screen_active_soft(void);
 void sleep(void);
 void wakeup(void);
 

@@ -1,5 +1,5 @@
 /* UConn Senior Design Team 1814, November 2017
-     Using code adapted from:
+     Using code adapted from Atmel:
 
 /**
  * \file
@@ -50,20 +50,23 @@
 #ifndef CONF_BOARD_H
 #define CONF_BOARD_H
 
-#define BOARD_BT_SERCOM            SERCOM0
-#define BOARD_DISP_SERCOM          SERCOM1
+#define BOARD_BT_SERCOM            SERCOM0                  // PA08, PA09, PA10, PA11
+#define BOARD_BT_SERCOM_SETTING    SPI_SIGNAL_MUX_SETTING_D // MOSI, SCLK,  -  , MISO
 
-#define BOARD_DISP_DC_PIN          0
-#define BOARD_DISP_RES_PIN         0
-#define BOARD_DISP_CS_PIN          0
+#define BOARD_DISP_SERCOM          SERCOM1                  // PA16, PA17, PA18, PA19
+#define BOARD_DISP_SERCOM_SETTING  SPI_SIGNAL_MUX_SETTING_A // MOSI, SCLK,  -  ,  -
 
-#define BOARD_BUTTON_L_PIN         0
-#define BOARD_BUTTON_R_PIN         0
+#define BOARD_DISP_DC_PIN          PIN_PA20
+#define BOARD_DISP_RES_PIN         PIN_PA21
+#define BOARD_DISP_CS_PIN          PIN_PA22
 
-#define BOARD_LED_PIN_1            0
+#define BOARD_BUTTON_L_PIN         PIN_PA00
+#define BOARD_BUTTON_R_PIN         PIN_PA01
+
+#define BOARD_LED_PIN_1            PIN_PB10
 // etc
 
-#define BOARD_PHOTODIODE_PIN_1     0
+#define BOARD_PHOTODIODE_PIN_1     PIN_PB11
 // etc
 
 // TODO: Other pins as they turn up

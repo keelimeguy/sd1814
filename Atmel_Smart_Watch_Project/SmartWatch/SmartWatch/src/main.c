@@ -18,7 +18,6 @@ int main (void) {
         while (is_active()) {
             if (is_reading_timeout()) {
                 take_measurement();
-                set_reading_timeout(READING_TIMEOUT);
             }
             if (is_bt_active()) {
                 bt_task();

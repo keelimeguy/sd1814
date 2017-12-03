@@ -73,9 +73,6 @@
 // From module: Generic board support
 #include <board.h>
 
-// From module: IOPORT - General purpose I/O service
-#include <ioport.h>
-
 // From module: Interrupt management - SAM implementation
 #include <interrupt.h>
 
@@ -101,9 +98,6 @@
 // From module: SERCOM USART - Serial Communications (Callback APIs)
 #include <usart.h>
 #include <usart_interrupt.h>
-
-// From module: SSD1306 OLED controller
-#include <ssd1306.h>
 
 // From module: SYSTEM - Clock Management for SAMD20
 #include <clock.h>

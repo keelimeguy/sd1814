@@ -10,15 +10,25 @@ void init_all() {
     button_listener_init();
     measurement_controller_init();
     display_manager_init();
+
+    sleepmgr_init();
+
+    system_interrupt_enable_global();
 }
 
 void smartwatch_service(void) {
-    if (is_button_interrupt()) {
+    uint8_t buttons = get_buttons();
+    if (buttons & BUTTON_L_VAL || buttons & BUTTON_R_VAL) {
         set_screen_timeout(READING_TIMEOUT);
     }
 }
 
 uint8_t is_active(void) {
+    return is_bt_active_soft() || is_screen_active_soft() || is_reading_timeout_soft();
+}
+
+uint8_t is_screen_active_soft(void) {
+    return is_button_interrupt_soft() || !is_screen_timeout_soft();
 }
 
 uint8_t is_screen_active(void) {
@@ -26,6 +36,7 @@ uint8_t is_screen_active(void) {
 }
 
 void sleep(void) {
+    sleepmgr_enter_sleep();
 }
 
 void wakeup(void) {
