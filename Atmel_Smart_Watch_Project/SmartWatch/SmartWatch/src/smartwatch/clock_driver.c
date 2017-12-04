@@ -2,13 +2,14 @@
 */
 
 #include "clock_driver.h"
+#include "date_calc.h"
 
 static struct rtc_module rtc_instance;
 static struct rtc_calendar_alarm_time alarm;
-static uint8_t rtc_alarm_flag;
+static volatile uint8_t rtc_alarm_flag;
 
 static struct tc_module screen_timer;
-static uint32_t screen_timeout;
+static volatile uint32_t screen_timeout;
 
 static void rtc_alarm_callback(void);
 static void screen_timer_callback(void);
@@ -81,6 +82,13 @@ void clock_driver_init(void) {
 
 void rtc_get_time (struct rtc_calendar_time *const time) {
     rtc_calendar_get_time(&rtc_instance, time);
+}
+
+static const char** day_str= {"Wed\0", "Thu\0", "Fri\0", "Sat\0", "Sun\0", "Mon\0", "Tue\0"};
+
+char* calendar_day_str(char* str, struct rtc_calendar_time *const time) {
+    str = day_str[(int)date_to_day_number(time.year, time.month, time.day)%7];
+    return str;
 }
 
 uint8_t is_reading_timeout_soft(void) {

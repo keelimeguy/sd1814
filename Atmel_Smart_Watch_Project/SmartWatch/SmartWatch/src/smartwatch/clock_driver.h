@@ -19,7 +19,8 @@
 void clock_driver_init(void);
 uint8_t is_reading_timeout(void);
 uint8_t is_reading_timeout_soft(void);
-void rtc_get_time (struct rtc_calendar_time *const time);
+void rtc_get_time(struct rtc_calendar_time *const time);
+char* calendar_day_str(char* str, struct rtc_calendar_time *const time);
 uint8_t is_screen_timeout(void);
 uint8_t is_screen_timeout_soft(void);
 void set_screen_timeout(uint32_t val);

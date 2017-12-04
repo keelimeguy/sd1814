@@ -86,6 +86,9 @@
 
 #endif
 
+// Font library
+#include "GFXfont/gfxfont.h"
+
 /* All configurations:
      Color format is 16bit (RRRR_RGGG_GGGB_BBBB)
      Interface mode is 4-wire serial
@@ -113,7 +116,7 @@
 #define DISP_PIXEL_GRAPH_OFF      DISP_PIXEL_BLACK
 
 void disp_init();
-void disp_setPos(uint8_t x, uint8_t y);
+void disp_set_pos(uint8_t x, uint8_t y);
 void disp_write_pixel(uint16_t color);
 void disp_write_pixel_at(uint8_t x, uint8_t y, uint16_t color);
 void disp_draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_t color);
@@ -123,5 +126,10 @@ void disp_clear_screen(uint16_t color);
 void disp_write(uint8_t c);
 void disp_write_str(char *str);
 void disp_get_text_bounds(char *str, uint8_t x, uint8_t y, uint8_t *x1, uint8_t *y1, uint8_t *w, uint8_t *h);
+void disp_set_font(GFXfont *font);
+void disp_set_font_scale(uint8_t scale);
+void disp_set_wrap(uint8_t val);
+void disp_set_cp437(uint8_t val);
+void disp_set_color(uint16_t text, uint16_t bg);
 
 #endif

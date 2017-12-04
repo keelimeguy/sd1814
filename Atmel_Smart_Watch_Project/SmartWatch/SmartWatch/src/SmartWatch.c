@@ -18,7 +18,8 @@ void init_all() {
 
 void smartwatch_service(void) {
     uint8_t buttons = get_buttons();
-    if (buttons & BUTTON_L_VAL || buttons & BUTTON_R_VAL) {
+    display_ui_task(buttons);
+    if (buttons) {
         set_screen_timeout(READING_TIMEOUT);
     }
 }

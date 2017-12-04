@@ -8,5 +8,8 @@
 
 void measurement_controller_init(void);
 void take_measurement(void);
+float get_measurement(void);
+uint8_t is_new_measurement_soft(void);
+uint8_t is_new_measurement(void);
 
 #endif

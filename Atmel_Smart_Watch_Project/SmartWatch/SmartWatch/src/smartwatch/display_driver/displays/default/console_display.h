@@ -12,6 +12,10 @@ extern "C" {
 #include <stdint.h>
 #include <stdio.h>
 
+typedef unsigned char uint8_t;
+typedef unsigned short uint16_t;
+typedef unsigned int uint32_t;
+
 #define CONSOLE_DISPLAY_WIDTH 100
 #define CONSOLE_DISPLAY_HEIGHT 100
 

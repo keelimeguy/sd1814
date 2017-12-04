@@ -51,7 +51,7 @@
 #define CONF_BOARD_H
 
 #define BOARD_BT_SERCOM            SERCOM0                  // PA08, PA09, PA10, PA11
-#define BOARD_BT_SERCOM_SETTING    SPI_SIGNAL_MUX_SETTING_D // MOSI, SCLK,  -  , MISO
+#define BOARD_BT_SERCOM_SETTING    USART_RX_3_TX_0_XCK_1    //  RX ,  XCK,  -  ,  TX
 
 #define BOARD_DISP_SERCOM          SERCOM1                  // PA16, PA17, PA18, PA19
 #define BOARD_DISP_SERCOM_SETTING  SPI_SIGNAL_MUX_SETTING_A // MOSI, SCLK,  -  ,  -

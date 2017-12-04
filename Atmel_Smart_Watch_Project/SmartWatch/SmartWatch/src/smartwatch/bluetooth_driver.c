@@ -6,6 +6,7 @@
 static struct usart_module usart_instance;
 static volatile uint8_t rx_buffer[BT_MAX_RX_BUFFER_LENGTH];
 static volatile uint8_t data_available, write_busy;
+static volatile uint8_t num_notifications, connection_state;
 
 static void bt_read_callback(struct usart_module *const usart_module);
 static void bt_write_callback(struct usart_module *const usart_module);
@@ -34,6 +35,7 @@ void bluetooth_driver_init(void) {
 
     data_available = 0;
     write_busy = 0;
+    connection_state = BT_DISCONNECTED;
     for (int i=0; i< BT_MAX_RX_BUFFER_LENGTH; i++)
         rx_buffer[i] = 0;
 
@@ -49,8 +51,10 @@ uint8_t is_bt_active(void) {
 }
 
 void bt_task(void) {
-    if (data_available)
+    if (data_available) {
+        num_notifications++;
         data_available--;
+    }
 }
 
 void bt_write(uint8_t *tx_data, uint16_t length) {
@@ -58,9 +62,22 @@ void bt_write(uint8_t *tx_data, uint16_t length) {
     usart_write_buffer_job(usart_instance, tx_data, length);
 }
 
+uint8_t bt_amt_notifications(void) {
+    return num_notifications;
+}
+
+void bt_clear_amt_notifications(void) {
+    num_notifications = 0;
+}
+
+uint8_t bt_connection_state(void) {
+    return connection_state;
+}
+
 static void bt_read_callback(struct usart_module *const usart_module) {
     data_available++;
     usart_read_buffer_job(usart_instance, rx_buffer, BT_MAX_RX_BUFFER_LENGTH);
+    connection_state = BT_CONNECTED;
 }
 
 static void bt_write_callback(struct usart_module *const usart_module) {
