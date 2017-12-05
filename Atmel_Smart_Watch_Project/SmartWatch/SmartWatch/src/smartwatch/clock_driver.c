@@ -36,9 +36,9 @@ void clock_driver_init(void) {
     alarm.time.minute    = time.minute;
     alarm.time.second    = time.second;
 
-    alarm.mask = RTC_CALENDAR_ALARM_MASK_MIN;
-    alarm.time.minute += READING_TIMEOUT;
-    alarm.time.minute = alarm.time.minute % 60;
+    alarm.mask = RTC_CALENDAR_ALARM_MASK_SEC;
+    alarm.time.second += READING_TIMEOUT;
+    alarm.time.second = alarm.time.second % 60;
 
     config_rtc_calendar.clock_24h = true;
     config_rtc_calendar.alarm[0].time = alarm.time;
@@ -129,8 +129,8 @@ static void rtc_alarm_callback(void) {
     rtc_alarm_flag = 1;
 
     /* Set new alarm */
-    alarm.time.minute += READING_TIMEOUT;
-    alarm.time.minute = alarm.time.minute % 60;
+    alarm.time.second += READING_TIMEOUT;
+    alarm.time.second = alarm.time.second % 60;
 
     rtc_calendar_set_alarm(&rtc_instance, &alarm, RTC_CALENDAR_ALARM_0);
 }

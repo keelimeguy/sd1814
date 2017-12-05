@@ -37,9 +37,13 @@ uint8_t is_screen_active(void) {
 }
 
 void sleep(void) {
-    sleepmgr_enter_sleep();
+	disp_sleep_enable();
+    sleepmgr_enter_sleep();	
 }
 
 void wakeup(void) {
+	if (is_screen_active_soft()) {
+		disp_sleep_disable();
+	}
 }
 

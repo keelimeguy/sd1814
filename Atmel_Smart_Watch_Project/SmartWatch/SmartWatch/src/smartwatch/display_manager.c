@@ -2,18 +2,17 @@
 */
 
 #include "display_manager.h"
-#include "display_driver/display_driver.h"
 #include "display_driver/grapher/util.h"
-/*
-#include "display_driver/GFXfont/Fonts/FreeSans9pt7b.h"
-#include "display_driver/GFXfont/Fonts/FreeSans12pt7b.h"
-#include "display_driver/GFXfont/Fonts/FreeSans24pt7b.h"
-*/
+
+#include "display_driver/GFXfont/Fonts/FreeMono9pt7b.h"
+#include "display_driver/GFXfont/Fonts/FreeMono12pt7b.h"
+#include "display_driver/GFXfont/Fonts/FreeMono24pt7b.h"
+
 #include "display_driver/grapher/grapher.h"
 
-#define FONT_9PT                 0//&FreeSans9pt7b
-#define FONT_12PT                0//&FreeSans12pt7b
-#define FONT_24PT                0//&FreeSans24pt7b
+#define FONT_9PT                 &FreeMono9pt7b
+#define FONT_12PT                &FreeMono12pt7b
+#define FONT_24PT                &FreeMono24pt7b
 
 #define FONT_DEFAULT             FONT_9PT
 
@@ -50,7 +49,7 @@ void display_manager_init(void) {
     disp_set_font(FONT_DEFAULT);
 
     lastDisplayedDay = 0;
-    currentDisplayState = DISP_STATE_HOME;
+    currentDisplayState = DISP_STATE_GRAPH;
     rewriteMenu = 1;
     rewriteTime = 1;
     lastAmtNotificationsShown = 0;

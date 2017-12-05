@@ -5,6 +5,7 @@
 #define DISPLAY_MANAGER_H
 
 #include <SmartWatch.h>
+#include "display_driver/display_driver.h"
 
 #define CLR_BUTTON               BUTTON_L_VAL
 #define GRAPH_BUTTON             BUTTON_L_VAL

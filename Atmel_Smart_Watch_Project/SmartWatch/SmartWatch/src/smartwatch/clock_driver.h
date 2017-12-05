@@ -6,8 +6,8 @@
 
 #include <SmartWatch.h>
 
-#define READING_TIMEOUT 7 // minutes
-#define SCREEN_TIMEOUT 60 // seconds
+#define READING_TIMEOUT 7 // s
+#define SCREEN_TIMEOUT 6000 // ms?
 
 #define RTC_YEAR_INIT  2017
 #define RTC_MONTH_INIT 1
