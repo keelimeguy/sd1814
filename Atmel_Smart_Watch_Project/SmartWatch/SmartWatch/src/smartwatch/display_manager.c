@@ -358,13 +358,12 @@ static void updateBLEstatusDisplay(void) {
 // TODO: make battery ADC read into interrupt and nonblocking
 static void displayBattery(void) {
     int result = 0;
-    // http://atmel.force.com/support/articles/en_US/FAQ/ADC-example
-    SYSCTRL->VREF.reg |= SYSCTRL_VREF_BGOUTEN;
-    while (ADC->STATUS.bit.SYNCBUSY == 1);
+/*    SYSCTRL->VREF.reg |= SYSCTRL_VREF_BGOUTEN;
+//    while (ADC->STATUS.bit.SYNCBUSY == 1);
     ADC->SAMPCTRL.bit.SAMPLEN = 0x1;
     while (ADC->STATUS.bit.SYNCBUSY == 1);
     ADC->INPUTCTRL.bit.MUXPOS = 0x19;         // Internal bandgap input
-    while (ADC->STATUS.bit.SYNCBUSY == 1);
+//    while (ADC->STATUS.bit.SYNCBUSY == 1);
     ADC->CTRLA.bit.ENABLE = 0x01;             // Enable ADC
     // Start conversion
     while (ADC->STATUS.bit.SYNCBUSY == 1);
@@ -379,10 +378,10 @@ static void displayBattery(void) {
     uint32_t valueRead = ADC->RESULT.reg;
     while (ADC->STATUS.bit.SYNCBUSY == 1);
     ADC->CTRLA.bit.ENABLE = 0x00;             // Disable ADC
-    while (ADC->STATUS.bit.SYNCBUSY == 1);
+//    while (ADC->STATUS.bit.SYNCBUSY == 1);
     SYSCTRL->VREF.reg &= ~SYSCTRL_VREF_BGOUTEN;
     result = (((1100L * 1024L) / valueRead) + 5L) / 10L;
-    uint8_t x = 70;
+*/    uint8_t x = 70;
     uint8_t y = 3;
     uint8_t height = 5;
     uint8_t length = 20;
