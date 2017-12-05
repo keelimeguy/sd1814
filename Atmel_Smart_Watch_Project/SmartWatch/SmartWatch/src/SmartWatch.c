@@ -16,7 +16,7 @@ void init_all() {
     system_interrupt_enable_global();
 }
 
-void smartwatch_service(void) {
+void smartwatch_task(void) {
     uint8_t buttons = get_buttons();
     display_ui_task(buttons);
     if (buttons) {

@@ -5,6 +5,18 @@
 #include "display_driver/display_driver.h"
 #include "display_driver/grapher/util.h"
 
+#include "display_driver/GFXfont/Fonts/FreeSans9pt7b.h"
+#include "display_driver/GFXfont/Fonts/FreeSans12pt7b.h"
+#include "display_driver/GFXfont/Fonts/FreeSans24pt7b.h"
+
+#include "display_driver/grapher/grapher.h"
+
+#define FONT_9PT                 &FreeSans9pt7b
+#define FONT_12PT                &FreeSans12pt7b
+#define FONT_24PT                &FreeSans24pt7b
+
+#define FONT_DEFAULT             FONT_9PT
+
 static volatile uint8_t rewriteMenu;
 static volatile uint8_t rewriteTime;
 static uint8_t lastDisplayedDay;
@@ -18,7 +30,7 @@ static uint8_t ble_connection_displayed_state;
 static float lastGlucoseVal;
 
 static int diff = 1, i = 0;
-static double k = WARNING_LOW;
+static double k = DISP_WARNING_LOW;
 static char buffer[12], min_max_buffer[12];
 
 static void initHomeScreen(void);
@@ -94,10 +106,10 @@ static void updateMainDisplay(uint8_t button) {
     //     lastSetBrightness = brightness;
     // }
 
-    if (buttons & VIEW_BUTTON) {
+    if (button & VIEW_BUTTON) {
         currentDisplayState == DISP_STATE_NOTIFICATION;
-    } else if (buttons & GRAPH_BUTTON) {
-        currentDisplayState == DISP_STATE_BUTTON;
+    } else if (button & GRAPH_BUTTON) {
+        currentDisplayState == DISP_STATE_GRAPH;
     }
 
     updateGlucoseDisplay(lastGlucoseVal);
@@ -135,13 +147,13 @@ static void viewNotifications(uint8_t button) {
         currentDisplayState = DISP_STATE_NOTIFICATION;
         disp_fill_rect(0, 12, 96, 64, DISP_PIXEL_BLACK);
         disp_set_font(FONT_12PT);
-        disp_fontColor(DISP_PIXEL_WHITE, DISP_PIXEL_WHITE);
+        disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_WHITE);
 
         if (bt_amt_notifications()) {
             disp_set_pos(0, menuTextY[0]);
-            disp_write_str(bt_get_notification(0));
+            //disp_write_str(bt_get_notification(0));
             disp_set_pos(0, menuTextY[1]);
-            disp_write_str(bt_get_notification(1));
+            //disp_write_str(bt_get_notification(1));
             disp_set_pos(56, menuTextY[3]);
             disp_write_str("clear >");
         } else {
@@ -167,7 +179,7 @@ static void showGraphView(uint8_t button) {
     }
     if (!button) {
         disp_set_font(FONT_12PT);
-        disp_fontColor(DISP_PIXEL_WHITE, DISP_PIXEL_BLACK);
+        disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_BLACK);
 
         if (graph_length()==0) {
             disp_set_pos(0, menuTextY[0]);
@@ -178,9 +190,11 @@ static void showGraphView(uint8_t button) {
             }
             graph(0);
             ftoa(min_max_buffer, graph_max(), 1);
-            writeText(0, menuTextY[0], min_max_buffer, 1);
+			disp_set_pos(0, menuTextY[0]);
+            disp_write_str(min_max_buffer);
             ftoa(min_max_buffer, graph_min(), 1);
-            writeText(0, menuTextY[2], min_max_buffer, 2);
+            disp_set_pos(0, menuTextY[2]);
+			disp_write_str(min_max_buffer);
 
             disp_set_font(FONT_9PT);
             disp_set_pos(42, menuTextY[3]);
@@ -214,7 +228,7 @@ static void updateDateDisplay(void) {
     disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_BLACK);
     disp_fill_rect(2, 1, 50, 20, DISP_PIXEL_BLACK);
     disp_set_pos(2, 1);
-    disp_write_str(calendar_day_str(buffer, time));
+    disp_write_str(calendar_day_str(buffer, &time));
     disp_write(' ');
     disp_write_str(itoa(time.month, buffer, 10));
     disp_write('/');
@@ -385,7 +399,7 @@ static void displayBattery(void) {
     disp_draw_line(x - 1, y + height + 1, x + length, y + height + 1, DISP_PIXEL_WHITE); //bottom border
     disp_draw_line(x + length, y - 1, x + length, y + height + 1, DISP_PIXEL_WHITE); //right border
     disp_draw_line(x + length + 1, y + 2, x + length + 1, y + height - 2, DISP_PIXEL_WHITE); //right border
-    for (uint8_t i = 0; i < length; i++) {
-        disp_draw_line(x + i, y, x + i, y + height, DISP_FORMAT_COLOR(red, green, 0));
+    for (uint8_t q = 0; q < length; q++) {
+        disp_draw_line(x + q, y, x + q, y + height, DISP_FORMAT_COLOR(red, green, 0));
     }
 }

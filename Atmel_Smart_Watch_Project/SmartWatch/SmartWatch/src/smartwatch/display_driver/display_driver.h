@@ -102,6 +102,7 @@
 #define DISP_DANGER_LOW   50.0
 
 #define DISP_PIXEL_BLACK          0x0000
+#define DISP_PIXEL_GREY           0x8410
 #define DISP_PIXEL_WHITE          0xffff
 #define DISP_PIXEL_RED            0xf800
 #define DISP_PIXEL_YELLOW         0xffe0
@@ -115,7 +116,7 @@
 #define DISP_PIXEL_GRAPH_DANGER   DISP_PIXEL_RED
 #define DISP_PIXEL_GRAPH_OFF      DISP_PIXEL_BLACK
 
-void disp_init();
+void disp_init(void);
 void disp_set_pos(uint8_t x, uint8_t y);
 void disp_write_pixel(uint16_t color);
 void disp_write_pixel_at(uint8_t x, uint8_t y, uint16_t color);

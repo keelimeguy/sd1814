@@ -20,8 +20,8 @@ static int max_index = 0;
 
 const int data_size = GRAPH_WIDTH/BAR_WIDTH;
 static int data_index = 0, data_length = 0, data_start = 0;
-static double data[data_size];
-static int bar_cache[data_size];
+static double data[GRAPH_WIDTH/BAR_WIDTH];
+static int bar_cache[GRAPH_WIDTH/BAR_WIDTH];
 
 int graph_length(){
     return data_length;
@@ -122,13 +122,13 @@ void graph(int clear) {
             if ((i/BAR_WIDTH)>=data_length) break;
             index = (data_start+i/BAR_WIDTH)%data_length;
             if (bar[i/BAR_WIDTH]>=y)
-                if (data[index]>=DANGER_HIGH)
+                if (data[index]>=DISP_DANGER_HIGH)
                     GRAPH_PIXEL_DANGER(x, y);
-                else if (data[index]>=WARNING_HIGH)
+                else if (data[index]>=DISP_WARNING_HIGH)
                     GRAPH_PIXEL_WARNING(x, y);
-                else if (data[index]<=DANGER_LOW)
+                else if (data[index]<=DISP_DANGER_LOW)
                     GRAPH_PIXEL_DANGER(x, y);
-                else if (data[index]<=WARNING_LOW)
+                else if (data[index]<=DISP_WARNING_LOW)
                     GRAPH_PIXEL_WARNING(x, y);
                 else
                     GRAPH_PIXEL_ON(x, y);

@@ -1,3 +1,5 @@
+#ifndef FONT_Picopixel_H
+#define FONT_Picopixel_H
 // Picopixel by Sebastian Weber.  A tiny font
 // with all characters within a 6 pixel height.
 
@@ -121,3 +123,4 @@ const GFXfont Picopixel PROGMEM = {
   0x20, 0x7E, 7 };
 
 // Approx. 852 bytes
+#endif

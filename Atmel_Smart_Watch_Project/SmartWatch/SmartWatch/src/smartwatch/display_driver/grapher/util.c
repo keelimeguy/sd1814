@@ -18,6 +18,7 @@ void reverse(char str[], int length)
     }
 }
 
+#ifndef _STDLIB_H_
 // Implementation of itoa()
 char* itoa(int num, char* str, int base)
 {
@@ -59,6 +60,7 @@ char* itoa(int num, char* str, int base)
 
     return str;
 }
+#endif
 
 // https://stackoverflow.com/questions/16647278/minimal-implementation-of-sprintf-or-printf
 

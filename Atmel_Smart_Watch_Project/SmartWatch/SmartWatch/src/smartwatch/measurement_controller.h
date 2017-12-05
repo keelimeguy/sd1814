@@ -1,8 +1,8 @@
 /* UConn Senior Design Team 1814, November 2017
 */
 
-#ifndef MEASUREMENT_CONTROLLER_H
-#define MEASUREMENT_CONTROLLER_H
+#ifndef _MEASUREMENT_CONTROLLER_H
+#define _MEASUREMENT_CONTROLLER_H
 
 #include <SmartWatch.h>
 

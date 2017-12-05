@@ -1,3 +1,5 @@
+#ifndef FONT_Org_01_H
+#define FONT_Org_01_H
 // Org_v01 by Orgdot (www.orgdot.com/aliasfonts).  A tiny,
 // stylized font with all characters within a 6 pixel height.
 
@@ -129,3 +131,4 @@ const GFXfont Org_01 PROGMEM = {
   0x20, 0x7E, 7 };
 
 // Approx. 943 bytes
+#endif

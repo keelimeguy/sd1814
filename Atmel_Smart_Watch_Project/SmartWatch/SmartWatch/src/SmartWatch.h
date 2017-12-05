@@ -6,6 +6,10 @@
 
 #include <ASF.h>
 
+#ifndef PROGMEM
+#define PROGMEM
+#endif
+
 #include "smartwatch/clock_driver.h"
 #include "smartwatch/display_manager.h"
 #include "smartwatch/button_listener.h"
@@ -14,9 +18,9 @@
 
 void init_all(void);
 void smartwatch_task(void);
-void is_active(void);
-void is_screen_active(void);
-void is_screen_active_soft(void);
+uint8_t is_active(void);
+uint8_t is_screen_active(void);
+uint8_t is_screen_active_soft(void);
 void sleep(void);
 void wakeup(void);
 

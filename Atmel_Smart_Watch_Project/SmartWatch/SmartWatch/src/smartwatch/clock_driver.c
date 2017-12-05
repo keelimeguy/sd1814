@@ -62,20 +62,20 @@ void clock_driver_init(void) {
     tc_get_config_defaults(&config_tc);
 
     // Assuming GCLK generator 0 source is 8MHz:
-    //  512 prescaler at 15625 compare match => 8e6/15625*512 = 1MHz
-    config->clock_prescaler = TC_CLOCK_PRESCALER_DIV512;
-    config_tc->counter_16_bit.compare_capture_channel[TC_COMPARE_CAPTURE_CHANNEL_0] = 0x3D08; // 15625-1
-    config_tc->wave_generation = TC_WAVE_GENERATION_MATCH_FREQ;
-    config_tc->enable_capture_on_channel[TC_COMPARE_CAPTURE_CHANNEL_0] = true;
+    //  256 prescaler at 31250 compare match => 8e6/31250*256 = 1MHz
+    config_tc.clock_prescaler = TC_CLOCK_PRESCALER_DIV256;
+    config_tc.counter_16_bit.compare_capture_channel[TC_COMPARE_CAPTURE_CHANNEL_0] = 0x7a11; // 31250-1
+    config_tc.wave_generation = TC_WAVE_GENERATION_MATCH_FREQ;
+    config_tc.enable_capture_on_channel[TC_COMPARE_CAPTURE_CHANNEL_0] = true;
 
     tc_init(&screen_timer, TC0, &config_tc);
-    tc_init_enable(&screen_timer);
+    tc_enable(&screen_timer);
 
-    rtc_calendar_register_callback(&screen_timer, screen_timer_callback, TC_CALLBACK_OVERFLOW);
-    rtc_calendar_enable_callback(&screen_timer, TC_CALLBACK_OVERFLOW);
+    tc_register_callback(&screen_timer, screen_timer_callback, TC_CALLBACK_OVERFLOW);
+    tc_enable_callback(&screen_timer, TC_CALLBACK_OVERFLOW);
 
-    rtc_calendar_register_callback(&screen_timer, screen_timer_callback, TC_CALLBACK_CC_CHANNEL0);
-    rtc_calendar_enable_callback(&screen_timer, TC_CALLBACK_CC_CHANNEL0);
+    tc_register_callback(&screen_timer, screen_timer_callback, TC_CALLBACK_CC_CHANNEL0);
+    tc_enable_callback(&screen_timer, TC_CALLBACK_CC_CHANNEL0);
 
     screen_timeout = 1;
 }
@@ -84,10 +84,10 @@ void rtc_get_time (struct rtc_calendar_time *const time) {
     rtc_calendar_get_time(&rtc_instance, time);
 }
 
-static const char** day_str= {"Wed\0", "Thu\0", "Fri\0", "Sat\0", "Sun\0", "Mon\0", "Tue\0"};
+static const char** day_str= {{'W','e','d','\0'}, {'T','h','u','\0'}, {'F','r','i','\0'}, {'S','a','t','\0'}, {'S','u','n','\0'}, {'M','o','n','\0'}, {'T','u','e','\0'}};
 
 char* calendar_day_str(char* str, struct rtc_calendar_time *const time) {
-    str = day_str[(int)date_to_day_number(time.year, time.month, time.day)%7];
+    str = day_str[(int)date_to_day_number(time->year, time->month, time->day)%7];
     return str;
 }
 

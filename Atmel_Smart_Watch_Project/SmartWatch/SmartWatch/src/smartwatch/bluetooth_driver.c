@@ -39,7 +39,7 @@ void bluetooth_driver_init(void) {
     for (int i=0; i< BT_MAX_RX_BUFFER_LENGTH; i++)
         rx_buffer[i] = 0;
 
-    usart_read_buffer_job(usart_instance, rx_buffer, BT_MAX_RX_BUFFER_LENGTH);
+    usart_read_buffer_job(&usart_instance, rx_buffer, BT_MAX_RX_BUFFER_LENGTH);
 }
 
 uint8_t is_bt_active_soft(void) {
@@ -59,7 +59,7 @@ void bt_task(void) {
 
 void bt_write(uint8_t *tx_data, uint16_t length) {
     write_busy = 1;
-    usart_write_buffer_job(usart_instance, tx_data, length);
+    usart_write_buffer_job(&usart_instance, tx_data, length);
 }
 
 uint8_t bt_amt_notifications(void) {
@@ -76,7 +76,7 @@ uint8_t bt_connection_state(void) {
 
 static void bt_read_callback(struct usart_module *const usart_module) {
     data_available++;
-    usart_read_buffer_job(usart_instance, rx_buffer, BT_MAX_RX_BUFFER_LENGTH);
+    usart_read_buffer_job(&usart_instance, rx_buffer, BT_MAX_RX_BUFFER_LENGTH);
     connection_state = BT_CONNECTED;
 }
 

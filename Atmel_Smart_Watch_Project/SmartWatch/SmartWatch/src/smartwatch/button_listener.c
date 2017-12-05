@@ -3,7 +3,7 @@
 
 #include "button_listener.h"
 
-static volatile uint8_t button_pressed;
+static volatile uint8_t button_pressed, button_interrupt_flag;
 
 static void button_listener_callback_L(void);
 static void button_listener_callback_R(void);
