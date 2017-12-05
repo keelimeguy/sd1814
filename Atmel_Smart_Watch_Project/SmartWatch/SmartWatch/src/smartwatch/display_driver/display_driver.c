@@ -61,6 +61,7 @@ void disp_init() {
     textsize = 1;
     rotation = 0;
     disp_sub_init();
+	disp_fill_rect(0,0,_width,_height,DISP_PIXEL_BLUE);
 }
 
 static void disp_set_pos_internal(uint8_t x, uint8_t y) {

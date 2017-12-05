@@ -50,23 +50,23 @@
 #ifndef CONF_BOARD_H
 #define CONF_BOARD_H
 
-#define BOARD_BT_SERCOM            SERCOM0                  // PA08, PA09, PA10, PA11
-#define BOARD_BT_SERCOM_SETTING    USART_RX_3_TX_0_XCK_1    //  RX ,  XCK,  -  ,  TX
+#define BOARD_BT_SERCOM            SERCOM0                  // PA08:13, PA09:14, PA10:15, PA11:16
+#define BOARD_BT_SERCOM_SETTING    USART_RX_3_TX_0_XCK_1    //    RX  ,   XCK  ,    -   ,    TX
 
-#define BOARD_DISP_SERCOM          SERCOM1                  // PA16, PA17, PA18, PA19
-#define BOARD_DISP_SERCOM_SETTING  SPI_SIGNAL_MUX_SETTING_A // MOSI, SCLK,  -  ,  -
+#define BOARD_DISP_SERCOM          SERCOM1                  // PA16:25, PA17:26, PA18:27, PA19:28
+#define BOARD_DISP_SERCOM_SETTING  SPI_SIGNAL_MUX_SETTING_A //   MOSI ,   SCLK ,    -   ,    -
 
-#define BOARD_DISP_DC_PIN          PIN_PA20
-#define BOARD_DISP_RES_PIN         PIN_PA21
-#define BOARD_DISP_CS_PIN          PIN_PA22
+#define BOARD_DISP_DC_PIN          PIN_PA20 // 29
+#define BOARD_DISP_RES_PIN         PIN_PA21 // 30
+#define BOARD_DISP_CS_PIN          PIN_PA22 // 31
 
-#define BOARD_BUTTON_L_PIN         PIN_PA00
-#define BOARD_BUTTON_R_PIN         PIN_PA01
+#define BOARD_BUTTON_L_PIN         PIN_PA00 // 1
+#define BOARD_BUTTON_R_PIN         PIN_PA01 // 2
 
-#define BOARD_LED_PIN_1            PIN_PB10
+#define BOARD_LED_PIN_1            PIN_PB10 // 19
 // etc
 
-#define BOARD_PHOTODIODE_PIN_1     PIN_PB11
+#define BOARD_PHOTODIODE_PIN_1     PIN_PB11 // 20
 // etc
 
 // TODO: Other pins as they turn up

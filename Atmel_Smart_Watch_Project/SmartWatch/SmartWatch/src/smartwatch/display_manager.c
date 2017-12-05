@@ -4,16 +4,16 @@
 #include "display_manager.h"
 #include "display_driver/display_driver.h"
 #include "display_driver/grapher/util.h"
-
+/*
 #include "display_driver/GFXfont/Fonts/FreeSans9pt7b.h"
 #include "display_driver/GFXfont/Fonts/FreeSans12pt7b.h"
 #include "display_driver/GFXfont/Fonts/FreeSans24pt7b.h"
-
+*/
 #include "display_driver/grapher/grapher.h"
 
-#define FONT_9PT                 &FreeSans9pt7b
-#define FONT_12PT                &FreeSans12pt7b
-#define FONT_24PT                &FreeSans24pt7b
+#define FONT_9PT                 0//&FreeSans9pt7b
+#define FONT_12PT                0//&FreeSans12pt7b
+#define FONT_24PT                0//&FreeSans24pt7b
 
 #define FONT_DEFAULT             FONT_9PT
 
