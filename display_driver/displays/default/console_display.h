@@ -22,6 +22,9 @@ typedef unsigned int uint32_t;
 #define Abs(a) (((a) <  0 ) ? -(a) : (a))
 #define PROGMEM
 
+static inline void console_display_on(void) {
+}
+
 static inline void console_display_hard_reset(void) {
 }
 

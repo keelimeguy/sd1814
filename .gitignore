@@ -9,6 +9,7 @@
 *.exe
 *.lss
 *.sym
+*.zip
 *.pre
 *.hex
 *.out

@@ -61,6 +61,8 @@ void disp_init() {
     textsize = 1;
     rotation = 0;
     disp_sub_init();
+    disp_fill_rect(0,0,_width,_height,DISP_BG_COLOR);
+    disp_sub_display_on();
 }
 
 static void disp_set_pos_internal(uint8_t x, uint8_t y) {
@@ -138,7 +140,7 @@ void disp_fill_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t color) 
 }
 
 void disp_clear_screen(uint16_t color) {
-    disp_fill_rect(0, 0, DISP_WIDTH, DISP_HEIGHT, color);
+    disp_fill_rect(0, 0, DISP_WIDTH-1, DISP_HEIGHT-1, color);
 }
 
 static void disp_draw_char(uint8_t x, uint8_t y, unsigned char c, uint16_t color, uint16_t bg, uint8_t size) {

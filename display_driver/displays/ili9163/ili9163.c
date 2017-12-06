@@ -154,9 +154,6 @@ void ili9163_init(void) {
     // ili9163_write_data(0x2E); // p13
     // ili9163_write_data(0x34); // p14
     // ili9163_write_data(0x39); // p15
-
-    ili9163_write_command(ILI9163_CMD_SET_DISPLAY_ON); // Display On
-    ili9163_write_command(ILI9163_CMD_WRITE_RAM);
 }
 
 void ili9163_write_command(uint8_t command) {

@@ -131,10 +131,6 @@ void st7735s_init(void) {
 
 	st7735s_write_command(ST7735S_CMD_SET_PIXEL_FORMAT); // 65k mode
 	st7735s_write_data(0x05);
-
-	st7735s_write_command(ST7735S_CMD_SET_DISPLAY_ON); // Display on
-
-	st7735s_write_command(ST7735S_CMD_WRITE_RAM);
 }
 
 void st7735s_write_command(uint8_t command) {

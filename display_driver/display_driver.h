@@ -6,7 +6,7 @@
 
 #define NONE            0
 
-#define DISP_CONSOLE    1 // 1.44" TFT LCD
+#define DISP_CONSOLE    1 // console (printf)
 #define DISP_ST7735S    2 // 1.44" TFT LCD
 #define DISP_ILI9163    3 // 1.8" TFT LCD
 
@@ -24,6 +24,7 @@
     #define disp_set_row_address     console_display_set_row_address
     #define disp_set_column_address  console_display_set_column_address
     #define disp_sub_init            console_display_init
+    #define disp_sub_display_on      console_display_on
     #define disp_start_write         console_display_start_write
     #define disp_end_write           console_display_end_write
 
@@ -40,6 +41,7 @@
     #define disp_set_row_address     st7735s_set_row_address
     #define disp_set_column_address  st7735s_set_column_address
     #define disp_sub_init            st7735s_init
+    #define disp_sub_display_on      st7735s_display_on
     #define disp_start_write()       0
     #define disp_end_write()         0
 
@@ -67,6 +69,7 @@
     #define disp_set_row_address     ili9163_set_row_address
     #define disp_set_column_address  ili9163_set_column_address
     #define disp_sub_init            ili9163_init
+    #define disp_sub_display_on      ili9163_display_on
     #define disp_start_write()       0
     #define disp_end_write()         0
 
@@ -102,6 +105,7 @@
 #define DISP_DANGER_LOW   50.0
 
 #define DISP_PIXEL_BLACK          0x0000
+#define DISP_PIXEL_GREY           0x8410
 #define DISP_PIXEL_WHITE          0xffff
 #define DISP_PIXEL_RED            0xf800
 #define DISP_PIXEL_YELLOW         0xffe0
@@ -110,12 +114,14 @@
 #define DISP_PIXEL_BLUE           0x001f
 #define DISP_PIXEL_MAGENTA        0xf81f
 
+#define DISP_BG_COLOR             DISP_PIXEL_BLACK
+
 #define DISP_PIXEL_GRAPH_ON       DISP_PIXEL_WHITE
 #define DISP_PIXEL_GRAPH_WARNING  DISP_PIXEL_YELLOW
 #define DISP_PIXEL_GRAPH_DANGER   DISP_PIXEL_RED
 #define DISP_PIXEL_GRAPH_OFF      DISP_PIXEL_BLACK
 
-void disp_init();
+void disp_init(void);
 void disp_set_pos(uint8_t x, uint8_t y);
 void disp_write_pixel(uint16_t color);
 void disp_write_pixel_at(uint8_t x, uint8_t y, uint16_t color);
