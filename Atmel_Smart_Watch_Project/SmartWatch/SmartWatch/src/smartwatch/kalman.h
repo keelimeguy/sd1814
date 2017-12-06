@@ -1,6 +1,10 @@
 #ifndef KALMAN_H
 #define KALMAN_H
 
+#include <SmartWatch.h>
+#include <stdlib.h>
+#include <math.h>
+
 #define Q00 25
 #define Q11 400
 #define Q22 0.0036

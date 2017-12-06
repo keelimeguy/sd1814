@@ -102,15 +102,15 @@ void bt_task(void) {
             request_screen_on();
         } else if (rx_buffer[cur_rindx][0] == 'R') {
             memcpy(paramData, &rx_buffer[cur_rindx][1], BT_MAX_MSG_LENGTH - 1);
-            long val = strtol(paramData, &ptr, 10);
             char *ptr;
+            long val = strtol(paramData, &ptr, 10);
             kalman_setT(val/60);
             set_pulse_timeout(val*60*1000);
             request_screen_on();
         }
 
         if (cur_rindx == cur_windx) {
-            usart_read_buffer_job(usart_instance, rx_buffer[cur_windx], BT_MAX_MSG_LENGTH);
+            usart_read_buffer_job(&usart_instance, rx_buffer[cur_windx], BT_MAX_MSG_LENGTH);
         }
         if (++cur_rindx >= BT_MAX_RX_BUFFER_LENGTH) cur_rindx=0;
     }

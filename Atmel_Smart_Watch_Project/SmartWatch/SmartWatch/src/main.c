@@ -14,14 +14,10 @@
 
 int main (void) {
     init_all();
-    int i;
+    int i = 0;
     for(;;) {
         while (is_active()) {
             if (is_reading_timeout()) {
-                if (++i > 5) {
-                    i = 0;
-                    request_screen_on();
-                }
                 take_measurement();
             }
             if (is_bt_active()) {

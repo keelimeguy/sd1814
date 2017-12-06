@@ -46,12 +46,12 @@ void request_screen_on(void) {
 }
 
 void sleep(void) {
-    disp_sleep_enable();
+    //disp_sleep_enable();
     sleepmgr_enter_sleep();
 }
 
 void wakeup(void) {
     if (is_screen_active_soft()) {
-        disp_sleep_disable();
+        //disp_sleep_disable();
     }
 }

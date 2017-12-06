@@ -8,11 +8,12 @@ static struct rtc_module rtc_instance;
 static struct rtc_calendar_alarm_time alarm;
 static volatile uint8_t rtc_alarm_flag;
 
-static struct tc_module screen_timer;
-static volatile uint32_t screen_timeout;
+static struct tc_module screen_timer, pulse_timer;
+static volatile uint32_t screen_timeout, pulse_timeout;
 
 static void rtc_alarm_callback(void);
 static void screen_timer_callback(void);
+static void pulse_timer_callback(void);
 
 void clock_driver_init(void) {
     /* Initialize RTC in calendar mode. */
@@ -69,7 +70,6 @@ void clock_driver_init(void) {
     config_tc.enable_capture_on_channel[TC_COMPARE_CAPTURE_CHANNEL_0] = true;
 
     tc_init(&screen_timer, TC0, &config_tc);
-    tc_enable(&screen_timer);
 
     tc_register_callback(&screen_timer, screen_timer_callback, TC_CALLBACK_OVERFLOW);
     tc_enable_callback(&screen_timer, TC_CALLBACK_OVERFLOW);
@@ -77,7 +77,23 @@ void clock_driver_init(void) {
     tc_register_callback(&screen_timer, screen_timer_callback, TC_CALLBACK_CC_CHANNEL0);
     tc_enable_callback(&screen_timer, TC_CALLBACK_CC_CHANNEL0);
 
+    tc_enable(&screen_timer);
+
     screen_timeout = 1;
+
+    tc_init(&pulse_timer, TC2, &config_tc);
+
+    tc_register_callback(&pulse_timer, pulse_timer_callback, TC_CALLBACK_OVERFLOW);
+    tc_enable_callback(&pulse_timer, TC_CALLBACK_OVERFLOW);
+
+    tc_register_callback(&pulse_timer, pulse_timer_callback, TC_CALLBACK_CC_CHANNEL0);
+    tc_enable_callback(&pulse_timer, TC_CALLBACK_CC_CHANNEL0);
+
+    tc_enable(&pulse_timer);
+
+    pulse_timeout = 1;
+
+
 }
 
 void rtc_get_time (struct rtc_calendar_time *time) {
@@ -127,6 +143,28 @@ static void screen_timer_callback(void) {
     } else {
         tc_stop_counter(&screen_timer);
     }
+}
+
+uint8_t is_pulse_timeout_soft(void) {
+	return pulse_timeout==0;
+}
+
+uint8_t is_pulse_timeout(void) {
+	return pulse_timeout==0;
+}
+
+void set_pulse_timeout(uint32_t val) {
+	pulse_timeout = val;
+	tc_set_count_value(&pulse_timer, 0);
+	tc_start_counter(&pulse_timer);
+}
+
+static void pulse_timer_callback(void) {
+	if (pulse_timeout>0) {
+		pulse_timeout--;
+	} else {
+		tc_stop_counter(&pulse_timer);
+	}
 }
 
 static void rtc_alarm_callback(void) {

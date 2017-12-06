@@ -104,8 +104,8 @@ static inline void st7735s_sleep_enable(void) {
 
 static inline void st7735s_sleep_disable(void) {
     st7735s_write_command(ST7735S_CMD_SLEEP_OUT);
-    uint32_t delay_120ms = 120 * (system_gclk_gen_get_hz(0)/1000);
-    delay_cycles(delay_120ms); // At lest 120ms
+//    uint32_t delay_120ms = 120 * (system_gclk_gen_get_hz(0)/1000);
+//    delay_cycles(delay_120ms); // At lest 120ms
 }
 
 static inline void st7735s_set_row_address(uint8_t start_address, uint8_t end_address) {

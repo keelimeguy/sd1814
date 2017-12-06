@@ -86,7 +86,7 @@ void display_ui_task(uint8_t button) {
 }
 
 static void initHomeScreen() {
-    disp_fill_rect(0, DISP_HEADER_HEIGHT, DISP_WIDTH-1, DISP_HEIGHT-1, DISP_PIXEL_BLACK);
+    disp_fill_rect(0, DISP_HEADER_HEIGHT, DISP_WIDTH, DISP_HEIGHT, DISP_PIXEL_BLACK);
     rewriteTime = 1;
     rewriteMenu = 1;
 }
@@ -142,7 +142,7 @@ static void updateMainDisplay(uint8_t button) {
 static void viewNotifications(uint8_t button) {
     if (currentDisplayState != DISP_STATE_NOTIFICATION) {
         currentDisplayState = DISP_STATE_NOTIFICATION;
-        disp_fill_rect(0, DISP_HEADER_HEIGHT, DISP_WIDTH-1, DISP_HEIGHT-1, DISP_PIXEL_BLACK);
+        disp_fill_rect(0, DISP_HEADER_HEIGHT, DISP_WIDTH, DISP_HEIGHT, DISP_PIXEL_BLACK);
     }
     if (!button) {
         disp_set_font(FONT_12PT);
@@ -182,7 +182,7 @@ static void viewNotifications(uint8_t button) {
 static void showGraphView(uint8_t button) {
     if (currentDisplayState != DISP_STATE_GRAPH) {
         currentDisplayState = DISP_STATE_GRAPH;
-        disp_fill_rect(0, DISP_HEADER_HEIGHT, DISP_WIDTH-1, DISP_HEIGHT-1, DISP_PIXEL_BLACK);
+        disp_fill_rect(0, DISP_HEADER_HEIGHT, DISP_WIDTH, DISP_HEIGHT, DISP_PIXEL_BLACK);
     }
     if (!button) {
         disp_set_font(FONT_12PT);
@@ -194,7 +194,7 @@ static void showGraphView(uint8_t button) {
         } else {
             if (first_data) {
                 first_data = 0;
-                disp_fill_rect(0, DISP_HEADER_HEIGHT, DISP_WIDTH-1, DISP_HEIGHT-1, DISP_PIXEL_BLACK);
+                disp_fill_rect(0, DISP_HEADER_HEIGHT, DISP_WIDTH, DISP_HEIGHT, DISP_PIXEL_BLACK);
             }
             graph(0);
             ftoa(min_max_buffer, graph_max(), 1);
@@ -212,11 +212,12 @@ static void showGraphView(uint8_t button) {
             disp_get_text_bounds(buffer, 0, 0, &x1, &y1, &w1, &h);
             disp_get_text_bounds("mg/dL    ", 0, 0, &x1, &y1, &w2, &h);
             disp_set_pos(DISP_WIDTH-w1-w2-1, menuTextY[3]);
-            disp_write_str(buffer);
+            ftoa(buffer, lastGlucoseVal, 1);
+			disp_write_str(buffer);
             disp_write_str("mg/dL    ");
         }
 
-        disp_set_pos(0, menuTextY[3]);
+        disp_set_pos(0, menuTextY[4]);
         disp_write_str("< back");
     } else {
         if (button == GRAPH_BUTTON) {
@@ -243,8 +244,8 @@ static void updateDateDisplay(void) {
     lastDisplayedDay = time.day;
     disp_set_font(FONT_9PT);
     disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_BLACK);
-    disp_fill_rect(2, 1, 50, 20, DISP_PIXEL_BLACK);
-    disp_set_pos(2, 1);
+    disp_fill_rect(2, DISP_HEADER_HEIGHT/2, 50, 20, DISP_PIXEL_BLACK);
+    disp_set_pos(2, DISP_HEADER_HEIGHT/2);
     disp_write_str(calendar_day_str(buffer, &time));
     disp_write(' ');
     disp_write_str(itoa(time.month, buffer, 10));

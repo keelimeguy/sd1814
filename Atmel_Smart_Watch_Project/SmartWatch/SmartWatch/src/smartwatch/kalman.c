@@ -1,36 +1,32 @@
-#include <Arduino.h>
-#include <stdint.h>
 #include "kalman.h"
 
-static float P_result[36] = {225, 1, 0, 0, 0, 0, 1, 225, 0, 0, 0, 0, 0, 0, pow(3,2), 0, 0, 0, 0, 0, 0, pow(50,2), 0, 0, 0, 0, 0, 0, pow(0.1,2), 0, 0, 0, 0, 0, 0, pow(0.1,2)};
+static float P_result[36] = {225, 1, 0, 0, 0, 0, 1, 225, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 2500, 0, 0, 0, 0, 0, 0, 0.01, 0, 0, 0, 0, 0, 0, 0.01};
 static float T = 0.08333;
 
 static void setPointer(float* pointer, char sel, uint8_t sensorNum, float x_result[6]) {
     float F2 [36] = {exp(-1*x_result[2]*T), (1-exp(-1*x_result[2]*T)), ((x_result[1]-x_result[0])/x_result[2])*(1-exp(-1*x_result[2]*T)), (-1+x_result[2]*T+exp(-1*x_result[2]*T))/x_result[2], 0, 0, 0, 1, 0, T, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1};
     float H2 [6] = {x_result[4], 0, 0, 0, x_result[0], 1};
     float Hc [6] = {0, 1, 0, 0, 0, 0};
+	float *temp_point;
 
-    switch(sel){
+    switch(sel) {
         case 'F':
-            float *F_point;
-            F_point = &F2[0];
-            memcpy(pointer,F_point,144);
+            temp_point = &F2[0];
+            memcpy(pointer,temp_point,144);
             break;
 
         case 'H':
-            float *H_point;
             if(sensorNum == 1)
-                H_point = &H2[0];
+                temp_point = &H2[0];
             else
-                H_point = &Hc[0];
+                temp_point = &Hc[0];
 
-            memcpy(pointer,H_point,24);
+            memcpy(pointer,temp_point,24);
             break;
 
         case 'x':
-            float *x_point;
-            x_point = &x_result[0];
-            memcpy(pointer,x_point,24);
+            temp_point = &x_result[0];
+            memcpy(pointer,temp_point,24);
             break;
     }
 }

@@ -930,6 +930,12 @@
     <Compile Include="src\smartwatch\display_manager.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\smartwatch\kalman.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\kalman.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\smartwatch\measurement_controller.c">
       <SubType>compile</SubType>
     </Compile>

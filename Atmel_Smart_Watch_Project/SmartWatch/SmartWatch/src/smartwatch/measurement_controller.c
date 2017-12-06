@@ -9,16 +9,33 @@ static float x_result[6] = {125,125,6,0,70,1000};
 static volatile uint8_t new_measurement;
 static volatile uint8_t measure_busy;
 static volatile float glucose;
+static uint32_t pulseOne, pulseTwo, pulseThree;
 
 void measurement_controller_init(void) {
     new_measurement = 0;
     glucose = 0;
+	pulseOne = 1000;
+	pulseTwo = 1000;
+	pulseThree = 6000;
 }
 
 void take_measurement(void) {
     new_measurement = 1;
     glucose++;
     measure_busy = 1;
+}
+
+
+void measure_set_pulse_one(uint32_t pulse) {
+	pulseOne = pulse;
+}
+
+void measure_set_pulse_two(uint32_t pulse) {
+	pulseTwo = pulse;
+}
+
+void measure_set_pulse_three(uint32_t pulse) {
+	pulseThree = pulse;
 }
 
 void measurement_task(void) {

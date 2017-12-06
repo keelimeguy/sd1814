@@ -51,6 +51,7 @@ void st7735s_init(void) {
     port_pin_set_output_level(ST7735S_RES_PIN, true);
 
     // Exit sleep modes
+	st7735s_write_command(ST7735S_CMD_SET_DISPLAY_OFF);
     st7735s_sleep_disable();
 
     st7735s_write_command(ST7735S_CMD_FRAME_CTRL_1); // Frame rate 80Hz
