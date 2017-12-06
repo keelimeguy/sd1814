@@ -80,13 +80,17 @@ void clock_driver_init(void) {
     screen_timeout = 1;
 }
 
-void rtc_get_time (struct rtc_calendar_time *const time) {
+void rtc_get_time (struct rtc_calendar_time *time) {
     rtc_calendar_get_time(&rtc_instance, time);
 }
 
-static const char** day_str= {{'W','e','d','\0'}, {'T','h','u','\0'}, {'F','r','i','\0'}, {'S','a','t','\0'}, {'S','u','n','\0'}, {'M','o','n','\0'}, {'T','u','e','\0'}};
+void rtc_update_time(struct rtc_calendar_time *time) {
+    rtc_calendar_set_time(&rtc_instance, time);
+}
 
-char* calendar_day_str(char* str, struct rtc_calendar_time *const time) {
+static const char* day_str[7] = {"Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Tue"};
+
+char* calendar_day_str(char* str, struct rtc_calendar_time *time) {
     str = day_str[(int)date_to_day_number(time->year, time->month, time->day)%7];
     return str;
 }

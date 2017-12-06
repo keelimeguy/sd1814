@@ -11,5 +11,8 @@ void take_measurement(void);
 float get_measurement(void);
 uint8_t is_new_measurement_soft(void);
 uint8_t is_new_measurement(void);
+void do_kalman_bt_cmd(long calibration);
+void do_kalman(unsigned long freq, uint8_t sensorNum);
+void cal_kalman(void);
 
 #endif

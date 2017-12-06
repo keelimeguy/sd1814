@@ -89,6 +89,11 @@ void ili9163_write_command(uint8_t command);
 
 void ili9163_write_data(uint8_t data);
 
+static inline void ili9163_display_on(void) {
+    ili9163_write_command(ILI9163_CMD_SET_DISPLAY_ON); // Display On
+    ili9163_write_command(ILI9163_CMD_WRITE_RAM);
+}
+
 static inline void ili9163_hard_reset(void) {
     uint32_t delay_10us = 10 * (system_gclk_gen_get_hz(0)/1000000);
     uint32_t delay_5ms = 5 * (system_gclk_gen_get_hz(0)/1000);
@@ -112,8 +117,8 @@ static inline void ili9163_sleep_disable(void) {
 
 static inline void ili9163_set_row_address(uint8_t start_address, uint8_t end_address) {
     // Max address 160 : 0x00-0x9f
-    if (start_address>0x9f) start_address=0x9f;
-    if (end_address>0x9f) end_address=0x9f;
+    start_address+=ILI9163_Y_OFF;
+    end_address+=ILI9163_Y_OFF;
     ili9163_write_command(ILI9163_CMD_SET_ROW_ADDRESS);
     ili9163_write_data(0);
     ili9163_write_data(start_address);
@@ -124,11 +129,13 @@ static inline void ili9163_set_row_address(uint8_t start_address, uint8_t end_ad
 
 static inline void ili9163_set_column_address(uint8_t start_address, uint8_t end_address) {
     // Max address 128 : 0x00-0x7f
+    start_address+=ILI9163_X_OFF;
+    end_address+=ILI9163_X_OFF;
     ili9163_write_command(ILI9163_CMD_SET_COLUMN_ADDRESS);
     ili9163_write_data(0);
-    ili9163_write_data(start_address&0x7f);
+    ili9163_write_data(start_address);
     ili9163_write_data(0);
-    ili9163_write_data(end_address&0x7f);
+    ili9163_write_data(end_address);
     ili9163_write_command(ILI9163_CMD_WRITE_RAM);
 }
 

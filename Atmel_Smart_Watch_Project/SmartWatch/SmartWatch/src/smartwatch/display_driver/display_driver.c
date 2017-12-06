@@ -61,7 +61,8 @@ void disp_init() {
     textsize = 1;
     rotation = 0;
     disp_sub_init();
-	disp_fill_rect(0,0,_width,_height,DISP_PIXEL_BLUE);
+	disp_fill_rect(0,0,_width,_height,DISP_BG_COLOR);
+    disp_sub_display_on();
 }
 
 static void disp_set_pos_internal(uint8_t x, uint8_t y) {
@@ -139,7 +140,7 @@ void disp_fill_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t color) 
 }
 
 void disp_clear_screen(uint16_t color) {
-    disp_fill_rect(0, 0, DISP_WIDTH, DISP_HEIGHT, color);
+    disp_fill_rect(0, 0, DISP_WIDTH-1, DISP_HEIGHT-1, color);
 }
 
 static void disp_draw_char(uint8_t x, uint8_t y, unsigned char c, uint16_t color, uint16_t bg, uint8_t size) {
@@ -170,7 +171,7 @@ static void disp_draw_char(uint8_t x, uint8_t y, unsigned char c, uint16_t color
                 }
                 if(bits & 0x80) {
                     if(size == 1) {
-                        disp_write_pixel_at(x+xo+xx, y+yy+yo+xa, color);
+                        disp_write_pixel_at(x+xo+xx, y+yy+yo, color);
                     } else {
                         disp_fill_rect(x+(xo16+xx)*size, y+(yo16+yy)*size, size, size, color);
                     }
@@ -235,7 +236,7 @@ static void disp_char_bounds(char c, uint8_t *x, uint8_t *y, uint8_t *minx, uint
                     *y += textsize * (int8_t)pgm_read_byte(&gfxFont->yAdvance);
                 }
                 int8_t x1 = *x + xo * textsize,
-                        y1 = *y + (yo+xa) * textsize,
+                        y1 = *y + yo * textsize,
                         x2 = x1 + gw * textsize - 1,
                         y2 = y1 + gh * textsize - 1;
                 if (x1 < (int8_t)*minx) *minx = x1;

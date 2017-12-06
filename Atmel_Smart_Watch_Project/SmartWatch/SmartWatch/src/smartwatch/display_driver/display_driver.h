@@ -24,6 +24,7 @@
     #define disp_set_row_address     console_display_set_row_address
     #define disp_set_column_address  console_display_set_column_address
     #define disp_sub_init            console_display_init
+    #define disp_sub_display_on      console_display_on
     #define disp_start_write         console_display_start_write
     #define disp_end_write           console_display_end_write
 
@@ -40,6 +41,7 @@
     #define disp_set_row_address     st7735s_set_row_address
     #define disp_set_column_address  st7735s_set_column_address
     #define disp_sub_init            st7735s_init
+    #define disp_sub_display_on      st7735s_display_on
     #define disp_start_write()       0
     #define disp_end_write()         0
 
@@ -67,6 +69,7 @@
     #define disp_set_row_address     ili9163_set_row_address
     #define disp_set_column_address  ili9163_set_column_address
     #define disp_sub_init            ili9163_init
+    #define disp_sub_display_on      ili9163_display_on
     #define disp_start_write()       0
     #define disp_end_write()         0
 
@@ -110,6 +113,8 @@
 #define DISP_PIXEL_CYAN           0x07ff
 #define DISP_PIXEL_BLUE           0x001f
 #define DISP_PIXEL_MAGENTA        0xf81f
+
+#define DISP_BG_COLOR             DISP_PIXEL_BLUE
 
 #define DISP_PIXEL_GRAPH_ON       DISP_PIXEL_WHITE
 #define DISP_PIXEL_GRAPH_WARNING  DISP_PIXEL_YELLOW

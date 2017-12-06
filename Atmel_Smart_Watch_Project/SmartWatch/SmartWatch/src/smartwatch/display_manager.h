@@ -15,6 +15,11 @@
 #define DISP_STATE_GRAPH         1
 #define DISP_STATE_NOTIFICATION  2
 
+#define DISP_HEADER_HEIGHT   12
+#define DISP_DIVISIONS       4
+#define DISP_DIVISION_HEIGHT (DISP_HEIGHT-DISP_HEADER_HEIGHT)/DISP_DIVISIONS
+
+
 void display_manager_init(void);
 void display_ui_task(uint8_t button);
 

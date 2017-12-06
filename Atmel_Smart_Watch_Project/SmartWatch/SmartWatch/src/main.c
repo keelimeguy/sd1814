@@ -12,27 +12,26 @@
         user input (external interrupt)
 */
 
-int main (void) {	
+int main (void) {
     init_all();
-	int i;
+    int i;
     for(;;) {
-        while (is_active()||i<8) {
+        while (is_active()) {
             if (is_reading_timeout()) {
-				if (++i > 10) {
-					i =0;
-				}
+                if (++i > 5) {
+                    i = 0;
+                    request_screen_on();
+                }
                 take_measurement();
             }
             if (is_bt_active()) {
                 bt_task();
             }
-            if (is_screen_active()||i<8) {
+            if (is_screen_active()) {
                 smartwatch_task();
             }
         }
         sleep();
         wakeup();
-		if (i<8)
-		disp_sleep_disable();
     }
 }

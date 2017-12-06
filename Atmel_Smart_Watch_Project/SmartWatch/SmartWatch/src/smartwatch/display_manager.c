@@ -26,12 +26,12 @@ static uint8_t lastHourDisplayed;
 static uint8_t lastMinuteDisplayed;
 static uint8_t lastSecondDisplayed;
 static uint8_t ble_connection_displayed_state;
+static uint8_t first_data;
 static float lastGlucoseVal;
 
-static int diff = 1, i = 0;
-static double k = DISP_WARNING_LOW;
 static char buffer[12], min_max_buffer[12];
-
+static uint8_t menuTextY[4] = { DISP_DIVISION_HEIGHT/2+DISP_HEADER_HEIGHT, DISP_DIVISION_HEIGHT+DISP_HEADER_HEIGHT,
+                                3*DISP_DIVISION_HEIGHT/2+DISP_HEADER_HEIGHT, 2*DISP_DIVISION_HEIGHT+DISP_HEADER_HEIGHT };
 static void initHomeScreen(void);
 static void updateMainDisplay(uint8_t button);
 static void updateGraph(float glucose);
@@ -58,16 +58,11 @@ void display_manager_init(void) {
     lastMinuteDisplayed = 0;
     lastSecondDisplayed = 0;
     ble_connection_displayed_state = 2;
+    first_data = 0;
     lastGlucoseVal = 0;
 }
 
 void display_ui_task(uint8_t button) {
-    // k+=diff*i;
-    // if (k>DISP_DANGER_HIGH || k<DISP_DANGER_LOW) {
-    //         diff = -diff;
-    // }
-    // updateGraph(k);
-
     if (is_new_measurement()) {
         updateGraph(get_measurement());
     }
@@ -91,13 +86,12 @@ void display_ui_task(uint8_t button) {
 }
 
 static void initHomeScreen() {
-    disp_fill_rect(0, 12, 96, 64, DISP_PIXEL_BLACK);
+    disp_fill_rect(0, DISP_HEADER_HEIGHT, DISP_WIDTH-1, DISP_HEIGHT-1, DISP_PIXEL_BLACK);
     rewriteTime = 1;
     rewriteMenu = 1;
 }
 
 static void updateMainDisplay(uint8_t button) {
-    uint8_t menuTextY[4] = {12, 25, 38, 51};
     // uint8_t brightness = 3;
     // uint8_t lastSetBrightness = 100;
     // if (lastSetBrightness != brightness) {
@@ -133,7 +127,12 @@ static void updateMainDisplay(uint8_t button) {
             disp_set_font(FONT_12PT);
             disp_set_pos(0, menuTextY[3]);
             disp_write_str("< Graph");
-            disp_set_pos(56, menuTextY[3]);
+            uint8_t x1;
+            uint8_t w;
+            uint8_t y1;
+            uint8_t h;
+            disp_get_text_bounds("View >", 0, 0, &x1, &y1, &w, &h);
+            disp_set_pos(DISP_WIDTH-w-1, menuTextY[3]);
             disp_write_str("View >");
             rewriteMenu = 0;
         }
@@ -141,24 +140,34 @@ static void updateMainDisplay(uint8_t button) {
 }
 
 static void viewNotifications(uint8_t button) {
-    uint8_t menuTextY[4] = {12, 25, 38, 51};
-    if (!button) {
+    if (currentDisplayState != DISP_STATE_NOTIFICATION) {
         currentDisplayState = DISP_STATE_NOTIFICATION;
-        disp_fill_rect(0, 12, 96, 64, DISP_PIXEL_BLACK);
+        disp_fill_rect(0, DISP_HEADER_HEIGHT, DISP_WIDTH-1, DISP_HEIGHT-1, DISP_PIXEL_BLACK);
+    }
+    if (!button) {
         disp_set_font(FONT_12PT);
-        disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_WHITE);
-
+        disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_BLACK);
         if (bt_amt_notifications()) {
             disp_set_pos(0, menuTextY[0]);
-            //disp_write_str(bt_get_notification(0));
+            disp_write_str(bt_get_notification_1());
             disp_set_pos(0, menuTextY[1]);
-            //disp_write_str(bt_get_notification(1));
-            disp_set_pos(56, menuTextY[3]);
+            disp_write_str(bt_get_notification_2());
+            uint8_t x1;
+            uint8_t w;
+            uint8_t y1;
+            uint8_t h;
+            disp_get_text_bounds("clear >", 0, 0, &x1, &y1, &w, &h);
+            disp_set_pos(DISP_WIDTH-w-1, menuTextY[3]);
             disp_write_str("clear >");
         } else {
             disp_set_pos(0, menuTextY[0]);
             disp_write_str(" No notifications.   ");
-            disp_set_pos(59, menuTextY[3]);
+            uint8_t x1;
+            uint8_t w;
+            uint8_t y1;
+            uint8_t h;
+            disp_get_text_bounds("back >", 0, 0, &x1, &y1, &w, &h);
+            disp_set_pos(DISP_WIDTH-w-1, menuTextY[3]);
             disp_write_str("back >");
         }
     } else {
@@ -171,10 +180,9 @@ static void viewNotifications(uint8_t button) {
 }
 
 static void showGraphView(uint8_t button) {
-    uint8_t menuTextY[4] = {12, 25, 38, 51};
     if (currentDisplayState != DISP_STATE_GRAPH) {
-        disp_fill_rect(0, 12, 96, 64, DISP_PIXEL_BLACK);
         currentDisplayState = DISP_STATE_GRAPH;
+        disp_fill_rect(0, DISP_HEADER_HEIGHT, DISP_WIDTH-1, DISP_HEIGHT-1, DISP_PIXEL_BLACK);
     }
     if (!button) {
         disp_set_font(FONT_12PT);
@@ -184,8 +192,9 @@ static void showGraphView(uint8_t button) {
             disp_set_pos(0, menuTextY[0]);
             disp_write_str(" No Data.   ");
         } else {
-            if (graph_length()==1) {
-                disp_fill_rect(0, 12, 96, 64, DISP_PIXEL_BLACK);
+            if (first_data) {
+                first_data = 0;
+                disp_fill_rect(0, DISP_HEADER_HEIGHT, DISP_WIDTH-1, DISP_HEIGHT-1, DISP_PIXEL_BLACK);
             }
             graph(0);
             ftoa(min_max_buffer, graph_max(), 1);
@@ -196,7 +205,13 @@ static void showGraphView(uint8_t button) {
 			disp_write_str(min_max_buffer);
 
             disp_set_font(FONT_9PT);
-            disp_set_pos(42, menuTextY[3]);
+            uint8_t x1;
+            uint8_t w1, w2;
+            uint8_t y1;
+            uint8_t h;
+            disp_get_text_bounds(buffer, 0, 0, &x1, &y1, &w1, &h);
+            disp_get_text_bounds("mg/dL    ", 0, 0, &x1, &y1, &w2, &h);
+            disp_set_pos(DISP_WIDTH-w1-w2-1, menuTextY[3]);
             disp_write_str(buffer);
             disp_write_str("mg/dL    ");
         }
@@ -212,8 +227,11 @@ static void showGraphView(uint8_t button) {
 }
 
 static void updateGraph(float glucose) {
+    if (!graph_length()) {
+        first_data = 1;
+    }
     lastGlucoseVal = glucose;
-    i = add_to_graph(glucose);
+    add_to_graph(glucose);
 }
 
 static void updateDateDisplay(void) {
@@ -238,7 +256,6 @@ static void updateDateDisplay(void) {
 #define round(f) ( (f-(float)((int)f)) > 0.5 ? (int)f+1 : (int)f )
 
 static void updateGlucoseDisplay(float glucose) {
-    uint8_t timeY = 14;
     if (currentDisplayState != DISP_STATE_HOME)
         return;
     disp_set_font(FONT_24PT);
@@ -250,21 +267,24 @@ static void updateGlucoseDisplay(float glucose) {
     else
          disp_set_color(DISP_PIXEL_GREEN, DISP_PIXEL_BLACK);
 
-    disp_fill_rect(46, timeY, 37, 20, DISP_PIXEL_BLACK);
-    if(round(glucose)<10)
-        disp_set_pos(70, timeY);
-    else if(round(glucose < 100))
-        disp_set_pos(58, timeY);
-    else
-        disp_set_pos(46, timeY);
-    disp_write_str(itoa(round(glucose), buffer, 10));
+    disp_fill_rect(0.48*DISP_WIDTH, menuTextY[0], 37, 20, DISP_PIXEL_BLACK);
+
+    uint8_t x1;
+    uint8_t w;
+    uint8_t y1;
+    uint8_t h;
+    disp_get_text_bounds(itoa(round(glucose), buffer, 10), 0, menuTextY[0], &x1, &y1, &w, &h);
+    disp_set_pos(0.86*DISP_WIDTH - w, (menuTextY[0]+menuTextY[1])/2);
+    disp_write_str(buffer);
+
     disp_set_font(FONT_9PT);
     disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_BLACK);
-    disp_set_pos(83,timeY-4);
+    disp_set_pos(0.86*DISP_WIDTH,menuTextY[0]);
     disp_write_str("mg");
-    disp_set_pos(83,timeY+7);
-    disp_write_str("----");
-    disp_set_pos(83,timeY+15);
+
+    disp_get_text_bounds("mg", 0.86*DISP_WIDTH, menuTextY[0], &x1, &y1, &w, &h);
+    disp_draw_line(x1-2, y1+h+2, w+4 , 2 ,DISP_PIXEL_WHITE);
+    disp_set_pos(0.86*DISP_WIDTH, y1+h+6);
     disp_write_str("dL");
 }
 
@@ -280,10 +300,8 @@ static void updateTimeDisplay(void) {
     struct rtc_calendar_time time;
     rtc_get_time(&time);
 
-    uint8_t timeY = 14;
     if (currentDisplayState != DISP_STATE_HOME)
         return;
-    uint8_t displayX;
     uint8_t hour12 = time.hour;
     uint8_t AMPM = 0;
     if (hour12 > 12) {
@@ -294,8 +312,7 @@ static void updateTimeDisplay(void) {
     if (rewriteTime || lastHourDisplayed != hour12) {
         disp_set_font(FONT_12PT);
         lastHourDisplayed = hour12;
-        displayX = 0;
-        disp_set_pos(displayX, timeY);
+        disp_set_pos(0, menuTextY[0]);
         if (lastHourDisplayed < 10) disp_write('0');
         disp_write_str(itoa(lastHourDisplayed, buffer, 10));
         disp_write(':');
@@ -303,14 +320,14 @@ static void updateTimeDisplay(void) {
             if (AMPM)
                 disp_set_color(DISP_PIXEL_GREY, DISP_PIXEL_BLACK);
             disp_set_font(FONT_9PT);
-            disp_set_pos(0, timeY + 13);
+            disp_set_pos(0, menuTextY[1]);
             disp_write_str("AM");
             if (AMPM) {
                 disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_BLACK);
             } else {
                 disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_BLACK);
             }
-            disp_set_pos(22, timeY + 13);
+            disp_set_pos(0.23*DISP_WIDTH, menuTextY[1]);
             disp_write_str("PM");
             disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_BLACK);
         }
@@ -319,8 +336,7 @@ static void updateTimeDisplay(void) {
     if (rewriteTime || lastMinuteDisplayed != time.minute) {
         disp_set_font(FONT_12PT);
         lastMinuteDisplayed = time.minute;
-        displayX = 16;
-        disp_set_pos(displayX, timeY);
+        disp_set_pos(DISP_WIDTH/6, menuTextY[0]);
         if (lastMinuteDisplayed < 10) disp_write('0');
         disp_write_str(itoa(lastMinuteDisplayed, buffer, 10));
         disp_write(':');
@@ -329,8 +345,7 @@ static void updateTimeDisplay(void) {
     if (rewriteTime || lastSecondDisplayed != time.second) {
         disp_set_font(FONT_12PT);
         lastSecondDisplayed = time.second;
-        displayX = 32;
-        disp_set_pos(displayX, timeY);
+        disp_set_pos(DISP_WIDTH/3, menuTextY[0]);
         if (lastSecondDisplayed < 10) disp_write('0');
         disp_write_str(itoa(lastSecondDisplayed, buffer, 10));
     }
@@ -341,7 +356,7 @@ static void updateBLEstatusDisplay(void) {
     if (bt_connection_state() == ble_connection_displayed_state)
         return;
     ble_connection_displayed_state = bt_connection_state();
-    int x = 62;
+    int x = 0.65*DISP_WIDTH;
     int y = 6;
     int s = 2;
     uint16_t color = DISP_PIXEL_RED;
@@ -380,7 +395,8 @@ static void displayBattery(void) {
 //    while (ADC->STATUS.bit.SYNCBUSY == 1);
     SYSCTRL->VREF.reg &= ~SYSCTRL_VREF_BGOUTEN;
     result = (((1100L * 1024L) / valueRead) + 5L) / 10L;
-*/    uint8_t x = 70;
+*/
+    uint8_t x = 0.73*DISP_WIDTH;
     uint8_t y = 3;
     uint8_t height = 5;
     uint8_t length = 20;

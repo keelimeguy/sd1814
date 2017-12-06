@@ -6,7 +6,8 @@
 
 #include <SmartWatch.h>
 
-#define BT_MAX_RX_BUFFER_LENGTH   2
+#define BT_MAX_MSG_LENGTH         15   // Maximum length of BT message
+#define BT_MAX_RX_BUFFER_LENGTH   10  // Maximum amount of queued messages
 
 #define BT_USART                 BOARD_BT_SERCOM
 
@@ -28,6 +29,8 @@ void bt_task(void);
 void bt_write(uint8_t *tx_data, uint16_t length);
 uint8_t bt_amt_notifications(void);
 void bt_clear_amt_notifications(void);
+char* bt_get_notification_1(void);
+char* bt_get_notification_2(void);
 uint8_t bt_connection_state(void);
 
 #endif

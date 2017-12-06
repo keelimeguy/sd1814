@@ -20,11 +20,20 @@ extern "C" {
 #define BAR_PADDING_LOW     DISP_GRAPH_BAR_PADDING_LOW
 #define BAR_PADDING_HIGH    DISP_GRAPH_BAR_PADDING_HIGH
 
-#define GRAPH_PIXEL_ON(i, j)        disp_write_pixel_at(DISP_GRAPH_X+i, DISP_GRAPH_Y+DISP_GRAPH_HEIGHT-j-1, DISP_PIXEL_GRAPH_ON)
-#define GRAPH_PIXEL_WARNING(i, j)   disp_write_pixel_at(DISP_GRAPH_X+i, DISP_GRAPH_Y+DISP_GRAPH_HEIGHT-j-1, DISP_PIXEL_GRAPH_WARNING)
-#define GRAPH_PIXEL_DANGER(i, j)    disp_write_pixel_at(DISP_GRAPH_X+i, DISP_GRAPH_Y+DISP_GRAPH_HEIGHT-j-1, DISP_PIXEL_GRAPH_DANGER)
-#define GRAPH_PIXEL_OFF(i, j)       disp_write_pixel_at(DISP_GRAPH_X+i, DISP_GRAPH_Y+DISP_GRAPH_HEIGHT-j-1, DISP_PIXEL_GRAPH_OFF)
-#define GRAPH_NEXT_ROW()            0
+#if DISP_SCREEN == DISP_CONSOLE
+    #define GRAPH_PIXEL_ON(i, j)        disp_write_pixel_at(DISP_GRAPH_X+i, DISP_GRAPH_Y+j, DISP_PIXEL_GRAPH_ON)
+    #define GRAPH_PIXEL_WARNING(i, j)   disp_write_pixel_at(DISP_GRAPH_X+i, DISP_GRAPH_Y+j, DISP_PIXEL_GRAPH_WARNING)
+    #define GRAPH_PIXEL_DANGER(i, j)    disp_write_pixel_at(DISP_GRAPH_X+i, DISP_GRAPH_Y+j, DISP_PIXEL_GRAPH_DANGER)
+    #define GRAPH_PIXEL_OFF(i, j)       disp_write_pixel_at(DISP_GRAPH_X+i, DISP_GRAPH_Y+j, DISP_PIXEL_GRAPH_OFF)
+    #define GRAPH_NEXT_ROW()            printf("\n");
+#else
+    #define GRAPH_PIXEL_ON(i, j)        disp_write_pixel_at(DISP_GRAPH_X+i, DISP_GRAPH_Y+DISP_GRAPH_HEIGHT-j-1, DISP_PIXEL_GRAPH_ON)
+    #define GRAPH_PIXEL_WARNING(i, j)   disp_write_pixel_at(DISP_GRAPH_X+i, DISP_GRAPH_Y+DISP_GRAPH_HEIGHT-j-1, DISP_PIXEL_GRAPH_WARNING)
+    #define GRAPH_PIXEL_DANGER(i, j)    disp_write_pixel_at(DISP_GRAPH_X+i, DISP_GRAPH_Y+DISP_GRAPH_HEIGHT-j-1, DISP_PIXEL_GRAPH_DANGER)
+    #define GRAPH_PIXEL_OFF(i, j)       disp_write_pixel_at(DISP_GRAPH_X+i, DISP_GRAPH_Y+DISP_GRAPH_HEIGHT-j-1, DISP_PIXEL_GRAPH_OFF)
+    #define GRAPH_NEXT_ROW()            0
+#endif
+
 #define GRAPH_RESET()               disp_fill_rect(DISP_GRAPH_X,DISP_GRAPH_Y,GRAPH_WIDTH-1,DISP_GRAPH_HEIGHT-1, DISP_PIXEL_GRAPH_OFF)
 
 int add_to_graph(int val);

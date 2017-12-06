@@ -84,6 +84,11 @@ void st7735s_write_command(uint8_t command);
 
 void st7735s_write_data(uint8_t data);
 
+static inline void st7735s_display_on(void) {
+    st7735s_write_command(ST7735S_CMD_SET_DISPLAY_ON); // Display On
+    st7735s_write_command(ST7735S_CMD_WRITE_RAM);
+}
+
 static inline void st7735s_hard_reset(void) {
     uint32_t delay_10us = 10 * (system_gclk_gen_get_hz(0)/1000000);
     uint32_t delay_5ms = 5 * (system_gclk_gen_get_hz(0)/1000);
@@ -105,8 +110,8 @@ static inline void st7735s_sleep_disable(void) {
 
 static inline void st7735s_set_row_address(uint8_t start_address, uint8_t end_address) {
     // Max address 128 : 0x00-0x7f
-	start_address+=ST7735S_Y_OFF;
-	end_address+=ST7735S_Y_OFF;
+    start_address+=ST7735S_Y_OFF;
+    end_address+=ST7735S_Y_OFF;
     st7735s_write_command(ST7735S_CMD_SET_ROW_ADDRESS);
     st7735s_write_data(0);
     st7735s_write_data(start_address);
@@ -117,8 +122,8 @@ static inline void st7735s_set_row_address(uint8_t start_address, uint8_t end_ad
 
 static inline void st7735s_set_column_address(uint8_t start_address, uint8_t end_address) {
     // Max address 128 : 0x00-0x7f
-	start_address+=ST7735S_X_OFF;
-	end_address+=ST7735S_X_OFF;
+    start_address+=ST7735S_X_OFF;
+    end_address+=ST7735S_X_OFF;
     st7735s_write_command(ST7735S_CMD_SET_COLUMN_ADDRESS);
     st7735s_write_data(0);
     st7735s_write_data(start_address);
