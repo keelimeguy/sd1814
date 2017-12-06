@@ -198,11 +198,11 @@ static void showGraphView(uint8_t button) {
             }
             graph(0);
             ftoa(min_max_buffer, graph_max(), 1);
-			disp_set_pos(0, menuTextY[0]);
+            disp_set_pos(0, menuTextY[0]);
             disp_write_str(min_max_buffer);
             ftoa(min_max_buffer, graph_min(), 1);
             disp_set_pos(0, menuTextY[2]);
-			disp_write_str(min_max_buffer);
+            disp_write_str(min_max_buffer);
 
             disp_set_font(FONT_9PT);
             uint8_t x1;

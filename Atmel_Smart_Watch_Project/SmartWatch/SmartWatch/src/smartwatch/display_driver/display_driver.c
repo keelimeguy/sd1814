@@ -61,7 +61,7 @@ void disp_init() {
     textsize = 1;
     rotation = 0;
     disp_sub_init();
-	disp_fill_rect(0,0,_width,_height,DISP_BG_COLOR);
+    disp_fill_rect(0,0,_width,_height,DISP_BG_COLOR);
     disp_sub_display_on();
 }
 
