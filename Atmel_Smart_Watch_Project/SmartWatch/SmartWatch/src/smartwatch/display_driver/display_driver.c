@@ -30,6 +30,8 @@ static uint8_t _width, _height, // Display w/h as modified by current rotation
                 cursor_x, cursor_y;
 static uint16_t textcolor, textbgcolor;
 static uint8_t textsize, rotation;
+static uint8_t lastx[MAX_WRITE_ID], lasty[MAX_WRITE_ID], lastwidth[MAX_WRITE_ID], lastheight[MAX_WRITE_ID];
+static uint8_t keep_group;
 
 void disp_set_font(GFXfont *font) {
     gfxFont = font;
@@ -60,6 +62,15 @@ void disp_init() {
     textbgcolor = DISP_PIXEL_BLACK;
     textsize = 1;
     rotation = 0;
+    keep_group = 0;
+
+    for (int i = 0; i<MAX_WRITE_ID; i++) {
+        lastx[i] = 0;
+        lasty[i] = 0;
+        lastwidth[i] = 0;
+        lastheight[i] = 0;
+    }
+
     disp_sub_init();
     disp_fill_rect(0,0,_width,_height,DISP_BG_COLOR);
     disp_sub_display_on();
@@ -213,6 +224,52 @@ void disp_write_str(char *str) {
     char c;
     while((c = *str++))
         disp_write((uint8_t)c);
+}
+
+void disp_write_str_group(char *str, uint8_t replace_last) {
+    if (replace_last>0 && replace_last<=MAX_WRITE_ID) {
+        uint8_t x, y, w h;
+        disp_get_text_bounds(str, cursor_x, cursor_y, &x, &y, &w, &h);
+
+        if (!keep_group && lastwidth[replace_last-1] > 0) {
+            disp_fill_rect(lastx[replace_last-1], lasty[replace_last-1], lastwidth[replace_last-1], lastheight[replace_last-1], DISP_BG_COLOR);
+        }
+
+        if (keep_group && lastwidth[replace_last-1] > 0) { // Assumes a single line
+            if (y < lasty[replace_last-1]) {
+                if (lasty[replace_last-1]+lastheight[replace_last-1] >= y+h) {
+                    lastheight[replace_last-1] = lasty[replace_last-1]-y+lastheight[replace_last-1];
+                } else {
+                    lastheight[replace_last-1] = h;
+                }
+                lasty[replace_last-1] = y;
+            } else if (lasty[replace_last-1]+lastheight[replace_last-1] < y+h) {
+                lastheight[replace_last-1] = y-lasty[replace_last-1]+h;
+            }
+            lastwidth[replace_last-1] += w;
+        } else {
+            lastx[replace_last-1] = x;
+            lasty[replace_last-1] = y;
+            lastwidth[replace_last-1] = w;
+            lastheight[replace_last-1] = h;
+        }
+    }
+    keep_group = 1;
+    disp_write_str(str);
+}
+
+void disp_remove_str_group(uint8_t replace_last) {
+    if (replace_last>0 && replace_last<=MAX_WRITE_ID && lastwidth[replace_last-1] > 0) {
+        disp_fill_rect(lastx[replace_last-1], lasty[replace_last-1], lastwidth[replace_last-1], lastheight[replace_last-1], DISP_BG_COLOR);
+        lastx[replace_last-1] = 0;
+        lasty[replace_last-1] = 0;
+        lastwidth[replace_last-1] = 0;
+        lastheight[replace_last-1] = 0;
+    }
+}
+
+void disp_end_group(void) {
+    keep_group = 0;
 }
 
 static void disp_char_bounds(char c, uint8_t *x, uint8_t *y, uint8_t *minx, uint8_t *miny, uint8_t *maxx, uint8_t *maxy) {

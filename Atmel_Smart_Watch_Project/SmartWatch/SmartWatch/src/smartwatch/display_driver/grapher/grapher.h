@@ -36,9 +36,11 @@ extern "C" {
 
 #define GRAPH_RESET()               disp_fill_rect(DISP_GRAPH_X,DISP_GRAPH_Y,GRAPH_WIDTH-1,DISP_GRAPH_HEIGHT-1, DISP_PIXEL_GRAPH_OFF)
 
+void reset_graph();
 int add_to_graph(int val);
 void graph(int clear);
 
+unsigned char graph_changed();
 int graph_length();
 double graph_min();
 double graph_max();

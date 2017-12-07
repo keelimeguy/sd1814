@@ -22,6 +22,11 @@ const int data_size = GRAPH_WIDTH/BAR_WIDTH;
 static int data_index = 0, data_length = 0, data_start = 0;
 static double data[GRAPH_WIDTH/BAR_WIDTH];
 static int bar_cache[GRAPH_WIDTH/BAR_WIDTH];
+static char is_changed = 0;
+
+unsigned char graph_changed() {
+    return is_changed;
+}
 
 int graph_length(){
     return data_length;
@@ -67,7 +72,30 @@ static double get_max(int size) {
     return max;
 }
 
+void reset_graph() {
+    is_changed = 1;
+    data_index = 0;
+    data_length = 0;
+    data_start = 0;
+
+    #ifdef DEFAULT_MIN
+        data_min = DEFAULT_MIN;
+    #else
+        data_min = 0;
+    #endif
+
+    #ifdef DEFAULT_MAX
+        data_max = DEFAULT_MAX;
+    #else
+        data_max = 0;
+    #endif
+
+    min_index = 0;
+    max_index = 0;
+}
+
 int add_to_graph(int val) {
+    is_changed = 1;
     data[data_index] = val;
     if (data_length == 0 || val<data_min) {
         data_min = val;

@@ -121,6 +121,10 @@
 #define DISP_PIXEL_GRAPH_DANGER   DISP_PIXEL_RED
 #define DISP_PIXEL_GRAPH_OFF      DISP_PIXEL_BLACK
 
+#ifndef MAX_WRITE_ID
+    #define MAX_WRITE_ID 6
+#endif
+
 void disp_init(void);
 void disp_set_pos(uint8_t x, uint8_t y);
 void disp_write_pixel(uint16_t color);
@@ -131,6 +135,9 @@ void disp_fill_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t color);
 void disp_clear_screen(uint16_t color);
 void disp_write(uint8_t c);
 void disp_write_str(char *str);
+void disp_write_str_group(char *str, uint8_t replace_last);
+void disp_remove_str_group(uint8_t replace_last);
+void disp_end_group(void);
 void disp_get_text_bounds(char *str, uint8_t x, uint8_t y, uint8_t *x1, uint8_t *y1, uint8_t *w, uint8_t *h);
 void disp_set_font(GFXfont *font);
 void disp_set_font_scale(uint8_t scale);

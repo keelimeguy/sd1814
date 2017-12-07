@@ -19,6 +19,13 @@
 #define DISP_DIVISIONS       4
 #define DISP_DIVISION_HEIGHT (DISP_HEIGHT-DISP_HEADER_HEIGHT)/DISP_DIVISIONS
 
+ // IDs must be > 0 and <= MAX_WRITE_ID defined in display_driver.h
+#define NOTIFICATION_NUM_ID  1
+#define TIME_ID              2
+#define DATE_ID              3
+#define GLUCOSE_VAL_ID       4
+#define DATA_TOP_ID          5
+#define DATA_BOTTOM_ID       6
 
 void display_manager_init(void);
 void display_ui_task(uint8_t button);
