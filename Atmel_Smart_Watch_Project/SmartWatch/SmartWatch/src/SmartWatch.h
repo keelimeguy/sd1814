@@ -52,7 +52,7 @@
     #define BUTTON_R_VAL 2
     static inline uint8_t is_new_measurement() {return 0;}
     static inline uint8_t get_measurement() {return 0;}
-    static inline uint8_t bt_amt_notifications() {return 0;}
+    static inline uint8_t bt_amt_notifications() {return 2;}
     static inline uint8_t bt_connection_state() {return 1;}
     static inline void bt_clear_amt_notifications() {}
     static inline char* bt_get_notification_1() {return "1";}
