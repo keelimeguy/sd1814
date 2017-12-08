@@ -30,7 +30,7 @@ static uint8_t _width, _height, // Display w/h as modified by current rotation
                 cursor_x, cursor_y;
 static uint16_t textcolor, textbgcolor;
 static uint8_t textsize, rotation;
-static uint8_t lastx[MAX_WRITE_ID], lasty[MAX_WRITE_ID], lastwidth[MAX_WRITE_ID], lastheight[MAX_WRITE_ID];
+static int16_t lastx[MAX_WRITE_ID], lasty[MAX_WRITE_ID], lastwidth[MAX_WRITE_ID], lastheight[MAX_WRITE_ID];
 static uint8_t keep_group;
 
 void disp_set_font(GFXfont *font) {
@@ -93,8 +93,10 @@ void disp_write_pixel(uint16_t color) {
 }
 
 void disp_write_pixel_at(uint8_t x, uint8_t y, uint16_t color) {
-    disp_set_pos_internal(x, y);
-    disp_write_pixel(color);
+    if (x<DISP_WIDTH && y<DISP_HEIGHT) {
+        disp_set_pos_internal(x, y);
+        disp_write_pixel(color);
+    }
 }
 
 // Bresenham's algorithm
@@ -228,7 +230,7 @@ void disp_write_str(char *str) {
 
 void disp_write_str_group(char *str, uint8_t replace_last) {
     if (replace_last>0 && replace_last<=MAX_WRITE_ID) {
-        uint8_t x, y, w h;
+        uint8_t x, y, w, h;
         disp_get_text_bounds(str, cursor_x, cursor_y, &x, &y, &w, &h);
 
         if (!keep_group && lastwidth[replace_last-1] > 0) {
@@ -272,7 +274,7 @@ void disp_end_group(void) {
     keep_group = 0;
 }
 
-static void disp_char_bounds(char c, uint8_t *x, uint8_t *y, uint8_t *minx, uint8_t *miny, uint8_t *maxx, uint8_t *maxy) {
+static void disp_char_bounds(char c, uint8_t *x, uint8_t *y, int16_t *minx, int16_t *miny, int16_t *maxx, int16_t *maxy) {
     if (gfxFont) {
         if (c == '\n') { // Newline?
             *x  = 0;    // Reset x to zero, advance y by one line
@@ -296,10 +298,10 @@ static void disp_char_bounds(char c, uint8_t *x, uint8_t *y, uint8_t *minx, uint
                         y1 = *y + yo * textsize,
                         x2 = x1 + gw * textsize - 1,
                         y2 = y1 + gh * textsize - 1;
-                if (x1 < (int8_t)*minx) *minx = x1;
-                if (y1 < (int8_t)*miny) *miny = y1;
-                if (x2 > (int8_t)*maxx) *maxx = x2;
-                if (y2 > (int8_t)*maxy) *maxy = y2;
+                if (x1 < *minx) *minx = x1>0? x1: 0;
+                if (y1 < *miny) *miny = y1>0? y1: 0;
+                if (x2 > *maxx && x1<DISP_WIDTH) *maxx = x2;
+                if (y2 > *maxy && y1<DISP_HEIGHT) *maxy = y2;
                 *x += xa * textsize;
             }
         }
@@ -314,16 +316,16 @@ void disp_get_text_bounds(char *str, uint8_t x, uint8_t y, uint8_t *x1, uint8_t 
     *y1 = y;
     *w  = *h = 0;
 
-    int8_t minx = _width, miny = _height, maxx = -1, maxy = -1;
+    int16_t minx = _width-1, miny = _height-1, maxx = 0, maxy = 0;
 
     while((c = *str++))
         disp_char_bounds(c, &x, &y, &minx, &miny, &maxx, &maxy);
 
-    if(maxx >= minx) {
+    if(maxx >= minx && maxx<DISP_WIDTH && minx>=0) {
         *x1 = minx;
         *w  = maxx - minx + 1;
     }
-    if(maxy >= miny) {
+    if(maxy >= miny && maxy<DISP_HEIGHT && miny>=0) {
         *y1 = miny;
         *h  = maxy - miny + 1;
     }

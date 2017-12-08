@@ -16,8 +16,12 @@ typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 
-#define CONSOLE_DISPLAY_WIDTH 100
-#define CONSOLE_DISPLAY_HEIGHT 100
+#ifndef CONSOLE_DISPLAY_WIDTH
+    #define CONSOLE_DISPLAY_WIDTH 100
+#endif
+#ifndef CONSOLE_DISPLAY_HEIGHT
+    #define CONSOLE_DISPLAY_HEIGHT 100
+#endif
 
 #define Abs(a) (((a) <  0 ) ? -(a) : (a))
 #define PROGMEM

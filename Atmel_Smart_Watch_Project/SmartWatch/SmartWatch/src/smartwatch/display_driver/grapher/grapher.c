@@ -165,4 +165,5 @@ void graph(int clear) {
         }
         GRAPH_NEXT_ROW();
     }
+    is_changed = 0;
 }

@@ -31,6 +31,17 @@
     #define DISP_WIDTH               CONSOLE_DISPLAY_WIDTH
     #define DISP_HEIGHT              CONSOLE_DISPLAY_HEIGHT
 
+    #define DISP_GRAPH_WIDTH             60 // pixels
+    #define DISP_GRAPH_HEIGHT            38 // pixels
+    #define DISP_GRAPH_BAR_WIDTH         2  // pixels
+    #define DISP_GRAPH_MIN_BAR_HEIGHT    1  // pixels
+    #define DISP_GRAPH_MAX_BAR_HEIGHT    DISP_GRAPH_HEIGHT
+    #define DISP_GRAPH_BAR_PADDING_LOW   1
+    #define DISP_GRAPH_BAR_PADDING_HIGH  1
+
+    #define DISP_GRAPH_X DISP_WIDTH/2
+    #define DISP_GRAPH_Y 32
+
 #elif DISP_SCREEN == DISP_ST7735S
     #include "displays/st7735s/st7735s.h"
     #define disp_write_command       st7735s_write_command
@@ -56,8 +67,8 @@
     #define DISP_GRAPH_BAR_PADDING_LOW   1
     #define DISP_GRAPH_BAR_PADDING_HIGH  1
 
-    #define DISP_GRAPH_X 32
-    #define DISP_GRAPH_Y 14
+    #define DISP_GRAPH_X DISP_WIDTH/2
+    #define DISP_GRAPH_Y 32
 
 #elif DISP_SCREEN == DISP_ILI9163
     #include "displays/ili9163/ili9163.h"
@@ -84,8 +95,8 @@
     #define DISP_GRAPH_BAR_PADDING_LOW   1
     #define DISP_GRAPH_BAR_PADDING_HIGH  1
 
-    #define DISP_GRAPH_X 32
-    #define DISP_GRAPH_Y 14
+    #define DISP_GRAPH_X DISP_WIDTH/2
+    #define DISP_GRAPH_Y 33
 
 #endif
 
@@ -122,7 +133,7 @@
 #define DISP_PIXEL_GRAPH_OFF      DISP_PIXEL_BLACK
 
 #ifndef MAX_WRITE_ID
-    #define MAX_WRITE_ID 6
+    #define MAX_WRITE_ID 10
 #endif
 
 void disp_init(void);
