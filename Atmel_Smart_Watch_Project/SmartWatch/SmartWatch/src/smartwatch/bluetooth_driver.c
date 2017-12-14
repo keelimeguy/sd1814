@@ -3,12 +3,14 @@
 
 #include "bluetooth_driver.h"
 
-static struct usart_module usart_instance;
-static volatile uint8_t rx_buffer[BT_MAX_RX_BUFFER_LENGTH][BT_MAX_MSG_LENGTH];
-static volatile uint8_t data_available, write_busy;
+struct spi_module bt_master;
+struct spi_slave_inst bt_slave;
+static volatile uint8_t rx_buffer[BT_MAX_BUFFER_LENGTH][BT_MAX_MSG_LENGTH];
+static volatile uint8_t tx_buffer[BT_MAX_BUFFER_LENGTH][BT_MAX_MSG_LENGTH];
+static volatile uint8_t tx_buffer_len, rx_buffer_len, write_busy;
 static volatile uint8_t connection_state;
-static volatile uint8_t cur_windx;
-static uint8_t num_notifications, cur_rindx;
+static volatile uint8_t cur_rxindx, cur_txindx;
+static uint8_t num_notifications, cur_rindx, cur_tindx;
 static char notificationLine1[BT_MAX_MSG_LENGTH];
 static char notificationLine2[BT_MAX_MSG_LENGTH];
 static char paramData[BT_MAX_MSG_LENGTH];
@@ -17,50 +19,67 @@ static void bt_read_callback(struct usart_module *const usart_module);
 static void bt_write_callback(struct usart_module *const usart_module);
 
 void bluetooth_driver_init(void) {
-    struct usart_config config_usart;
-    usart_get_config_defaults(&config_usart);
+    struct spi_config config;
+    struct spi_slave_inst_config slave_config;
 
-    config_usart.mux_setting = BT_USART_PINMUX_SETTING;
-    config_usart.pinmux_pad0 = BT_USART_PINMUX_PAD0;
-    config_usart.pinmux_pad1 = BT_USART_PINMUX_PAD1;
-    config_usart.pinmux_pad2 = BT_USART_PINMUX_PAD2;
-    config_usart.pinmux_pad3 = BT_USART_PINMUX_PAD3;
-    config_usart.baudrate    = BT_USART_BAUDRATE;
+    spi_slave_inst_get_config_defaults(&slave_config);
+    slave_config.ss_pin = BT_CS_PIN;
+    spi_attach_slave(&bt_slave, &slave_config);
 
-    while (usart_init(&usart_instance, BT_USART, &config_usart) != STATUS_OK) {
-    }
+    spi_get_config_defaults(&config);
 
-    usart_enable(&usart_instance);
+    config.mux_setting = BT_SPI_PINMUX_SETTING;
+    config.pinmux_pad0 = BT_SPI_PINMUX_PAD0;
+    config.pinmux_pad1 = BT_SPI_PINMUX_PAD1;
+    config.pinmux_pad2 = BT_SPI_PINMUX_PAD2;
+    config.pinmux_pad3 = BT_SPI_PINMUX_PAD3;
+    config.mode_specific.master.baudrate = BT_CLOCK_SPEED;
 
-    usart_register_callback(&usart_instance, bt_write_callback, USART_CALLBACK_BUFFER_TRANSMITTED);
-    usart_register_callback(&usart_instance, bt_read_callback, USART_CALLBACK_BUFFER_RECEIVED);
+    spi_init(&bt_master, ST7735S_SPI, &config);
+    spi_enable(&bt_master);
 
-    usart_enable_callback(&usart_instance, USART_CALLBACK_BUFFER_TRANSMITTED);
-    usart_enable_callback(&usart_instance, USART_CALLBACK_BUFFER_RECEIVED);
+	struct port_config pin;
+	port_get_config_defaults(&pin);
+	pin.direction = PORT_PIN_DIR_OUTPUT;
 
-    data_available = 0;
-    cur_windx = 0;
+	port_pin_set_config(BT_RES_PIN, &pin);
+
+    //usart_register_callback(&usart_instance, bt_write_callback, USART_CALLBACK_BUFFER_TRANSMITTED);
+    //usart_register_callback(&usart_instance, bt_read_callback, USART_CALLBACK_BUFFER_RECEIVED);
+
+    //usart_enable_callback(&usart_instance, USART_CALLBACK_BUFFER_TRANSMITTED);
+    //usart_enable_callback(&usart_instance, USART_CALLBACK_BUFFER_RECEIVED);
+
+    rx_buffer_len = 0;
+	tx_buffer_len = 0;
+    cur_rxindx = 0;
+    cur_txindx = 0;
     cur_rindx = 0;
     write_busy = 0;
     connection_state = BT_DISCONNECTED;
-    for (int i=0; i< BT_MAX_RX_BUFFER_LENGTH; i++)
+    for (int i=0; i< BT_MAX_BUFFER_LENGTH; i++)
         for (int j=0; j< BT_MAX_MSG_LENGTH; j++)
             rx_buffer[i][j] = 0;
 
-    usart_read_buffer_job(&usart_instance, rx_buffer, BT_MAX_RX_BUFFER_LENGTH);
+  //usart_read_buffer_job(&usart_instance, rx_buffer, BT_MAX_BUFFER_LENGTH);
 }
 
 uint8_t is_bt_active_soft(void) {
-    return data_available|write_busy;
+    return rx_buffer_len|write_busy;
 }
 
 uint8_t is_bt_active(void) {
-    return data_available|write_busy;
+    return rx_buffer_len|write_busy;
 }
 
 void bt_task(void) {
-    if (data_available) {
-        data_available--;
+	if (tx_buffer_len) {
+		tx_buffer_len--;
+		if (++cur_tindx >= BT_MAX_BUFFER_LENGTH) cur_tindx=0;
+	}
+
+    if (rx_buffer_len) {
+        rx_buffer_len--;
 
         if (rx_buffer[cur_rindx][0] == 'D') {
             // expect date/time string- example: DYYYY MM DD HH MM SS (D[Year] [Month] [Day] [Hr] [Min] [Sec])
@@ -109,16 +128,27 @@ void bt_task(void) {
             request_screen_on();
         }
 
-        if (cur_rindx == cur_windx) {
-            usart_read_buffer_job(&usart_instance, rx_buffer[cur_windx], BT_MAX_MSG_LENGTH);
+        if (cur_rindx == cur_rxindx) {
+            //usart_read_buffer_job(&usart_instance, rx_buffer[cur_rxindx], BT_MAX_MSG_LENGTH);
         }
-        if (++cur_rindx >= BT_MAX_RX_BUFFER_LENGTH) cur_rindx=0;
+        if (++cur_rindx >= BT_MAX_BUFFER_LENGTH) cur_rindx=0;
     }
 }
 
-void bt_write(uint8_t *tx_data, uint16_t length) {
+uint8_t bt_write(uint8_t *tx_data, uint16_t length) {
     write_busy = 1;
-    usart_write_buffer_job(&usart_instance, tx_data, length);
+	if(tx_buffer_len == BT_MAX_BUFFER_LENGTH || length > BT_MAX_MSG_LENGTH)
+		return 0;
+	for (int i = 0; i < length; i++) {
+		tx_buffer[cur_txindx][i] = tx_data[i];
+	}
+	for (int i = length; i < BT_MAX_MSG_LENGTH; i++) {
+		tx_buffer[cur_txindx][i] = 0;
+	}
+	tx_buffer_len++;
+	if (++cur_txindx >= BT_MAX_BUFFER_LENGTH) cur_txindx = 0;
+	return 1;
+    //usart_write_buffer_job(&usart_instance, tx_data, length);
 }
 
 uint8_t bt_amt_notifications(void) {
@@ -143,9 +173,9 @@ uint8_t bt_connection_state(void) {
 
 static void bt_read_callback(struct usart_module *const usart_module) {
     connection_state = BT_CONNECTED;
-    if (++data_available < BT_MAX_RX_BUFFER_LENGTH) {
-        if(++cur_windx >= BT_MAX_RX_BUFFER_LENGTH) cur_windx = 0;
-        usart_read_buffer_job(&usart_instance, rx_buffer[cur_windx], BT_MAX_MSG_LENGTH);
+    if (++rx_buffer_len < BT_MAX_BUFFER_LENGTH) {
+        if(++cur_rxindx >= BT_MAX_BUFFER_LENGTH) cur_rxindx = 0;
+        //usart_read_buffer_job(&usart_instance, rx_buffer[cur_rxindx], BT_MAX_MSG_LENGTH);
     }
 }
 

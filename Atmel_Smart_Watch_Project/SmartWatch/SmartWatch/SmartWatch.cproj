@@ -729,6 +729,9 @@
     <Compile Include="src\smartwatch\clock_driver.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\smartwatch\conf_bluetooth.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\smartwatch\display_driver\displays\ili9163\conf_ili9163.h">
       <SubType>compile</SubType>
     </Compile>

@@ -51,14 +51,17 @@
 #define CONF_BOARD_H
 
 #define BOARD_BT_SERCOM            SERCOM0                  // PA08:13, PA09:14, PA10:15, PA11:16
-#define BOARD_BT_SERCOM_SETTING    USART_RX_3_TX_0_XCK_1    //    RX  ,   XCK  ,    -   ,    TX
+#define BOARD_BT_SERCOM_SETTING    SPI_SIGNAL_MUX_SETTING_D //   MOSI ,   SCLK ,    -   ,   MISO
+
+#define BOARD_BT_RES_PIN           0 // PIN_P // -1
+#define BOARD_BT_CS_PIN            0 // PIN_P // -1
 
 #define BOARD_DISP_SERCOM          SERCOM1                  // PA16:25, PA17:26, PA18:27, PA19:28
 #define BOARD_DISP_SERCOM_SETTING  SPI_SIGNAL_MUX_SETTING_A //   MOSI ,   SCLK ,    -   ,    -
 
-#define BOARD_DISP_DC_PIN          PIN_PA20 // 29
-#define BOARD_DISP_RES_PIN         PIN_PA21 // 30
-#define BOARD_DISP_CS_PIN          PIN_PA22 // 31
+#define BOARD_DISP_CS_PIN          PIN_PA20 // 29
+#define BOARD_DISP_DC_PIN          PIN_PA21 // 30
+#define BOARD_DISP_RES_PIN         PIN_PA22 // 31
 
 #define BOARD_BUTTON_L_PIN         PIN_PA00 // 1
 #define BOARD_BUTTON_R_PIN         PIN_PA01 // 2
