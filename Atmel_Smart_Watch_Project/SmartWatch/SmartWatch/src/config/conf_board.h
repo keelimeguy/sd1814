@@ -53,8 +53,9 @@
 #define BOARD_BT_SERCOM            SERCOM0                  // PA08:13, PA09:14, PA10:15, PA11:16
 #define BOARD_BT_SERCOM_SETTING    SPI_SIGNAL_MUX_SETTING_D //   MOSI ,   SCLK ,    -   ,   MISO
 
+#define BOARD_BT_RDY_PIN           PIN_PA28 // 41
 #define BOARD_BT_RES_PIN           PIN_PB10 // 19
-#define BOARD_BT_CS_PIN            PIN_PB11 // 20
+#define BOARD_BT_REQ_PIN           PIN_PB11 // 20
 
 #define BOARD_DISP_SERCOM          SERCOM1                  // PA16:25, PA17:26, PA18:27, PA19:28
 #define BOARD_DISP_SERCOM_SETTING  SPI_SIGNAL_MUX_SETTING_A //   MOSI ,   SCLK ,    -   ,    -

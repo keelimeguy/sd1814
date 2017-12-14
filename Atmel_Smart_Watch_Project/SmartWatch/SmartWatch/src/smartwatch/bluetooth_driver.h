@@ -5,6 +5,7 @@
 #define BLUETOOTH_DRIVER_H
 
 #include "conf_bluetooth.h"
+#include "UART.h"
 
 #define BT_CMD_TEST                                 0x01
 #define BT_CMD_ECHO                                 0x02

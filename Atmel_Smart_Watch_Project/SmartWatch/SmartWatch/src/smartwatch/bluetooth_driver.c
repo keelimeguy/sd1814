@@ -3,8 +3,6 @@
 
 #include "bluetooth_driver.h"
 
-struct spi_module bt_master;
-struct spi_slave_inst bt_slave;
 static volatile uint8_t rx_buffer[BT_MAX_BUFFER_LENGTH][BT_MAX_MSG_LENGTH];
 static volatile uint8_t tx_buffer[BT_MAX_BUFFER_LENGTH][BT_MAX_MSG_LENGTH];
 static volatile uint8_t tx_buffer_len, rx_buffer_len, write_busy;
@@ -19,36 +17,8 @@ static void bt_read_callback(struct usart_module *const usart_module);
 static void bt_write_callback(struct usart_module *const usart_module);
 
 void bluetooth_driver_init(void) {
-    struct spi_config config;
-    struct spi_slave_inst_config slave_config;
 
-    spi_slave_inst_get_config_defaults(&slave_config);
-    slave_config.ss_pin = BT_CS_PIN;
-    spi_attach_slave(&bt_slave, &slave_config);
-
-    spi_get_config_defaults(&config);
-
-    config.mux_setting = BT_SPI_PINMUX_SETTING;
-    config.pinmux_pad0 = BT_SPI_PINMUX_PAD0;
-    config.pinmux_pad1 = BT_SPI_PINMUX_PAD1;
-    config.pinmux_pad2 = BT_SPI_PINMUX_PAD2;
-    config.pinmux_pad3 = BT_SPI_PINMUX_PAD3;
-    config.mode_specific.master.baudrate = BT_CLOCK_SPEED;
-
-    spi_init(&bt_master, ST7735S_SPI, &config);
-    spi_enable(&bt_master);
-
-	struct port_config pin;
-	port_get_config_defaults(&pin);
-	pin.direction = PORT_PIN_DIR_OUTPUT;
-
-	port_pin_set_config(BT_RES_PIN, &pin);
-
-    //usart_register_callback(&usart_instance, bt_write_callback, USART_CALLBACK_BUFFER_TRANSMITTED);
-    //usart_register_callback(&usart_instance, bt_read_callback, USART_CALLBACK_BUFFER_RECEIVED);
-
-    //usart_enable_callback(&usart_instance, USART_CALLBACK_BUFFER_TRANSMITTED);
-    //usart_enable_callback(&usart_instance, USART_CALLBACK_BUFFER_RECEIVED);
+    BLEsetup();
 
     rx_buffer_len = 0;
 	tx_buffer_len = 0;
