@@ -46,7 +46,7 @@
 #define BT_EVENT_KEY_REQUEST                        0x8F
 
 #define BT_MAX_MSG_LENGTH         15   // Maximum length, in bytes, of BT packet
-#define BT_MAX_BUFFER_LENGTH   10  // Maximum amount of queued messages
+#define BT_MAX_BUFFER_LENGTH      10   // Maximum amount of queued messages
 
 #define BT_DISCONNECTED        0
 #define BT_CONNECTED           1
