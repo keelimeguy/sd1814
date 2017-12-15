@@ -71,9 +71,26 @@ void disp_init() {
         lastheight[i] = 0;
     }
 
+	struct port_config pin;
+	port_get_config_defaults(&pin);
+	pin.direction = PORT_PIN_DIR_OUTPUT;
+
+	port_pin_set_config(BOARD_DISP_BACKLIGHT_PIN, &pin);
+
     disp_sub_init();
     disp_fill_rect(0,0,_width,_height,DISP_BG_COLOR);
     disp_sub_display_on();
+	port_pin_set_output_level(BOARD_DISP_BACKLIGHT_PIN, true);
+}
+
+void disp_sleep_enable() {
+	port_pin_set_output_level(BOARD_DISP_BACKLIGHT_PIN, false);
+	disp_sub_sleep_enable();
+}
+
+void disp_sleep_disable() {
+	disp_sub_sleep_disable();
+	port_pin_set_output_level(BOARD_DISP_BACKLIGHT_PIN, true);
 }
 
 static void disp_set_pos_internal(uint8_t x, uint8_t y) {

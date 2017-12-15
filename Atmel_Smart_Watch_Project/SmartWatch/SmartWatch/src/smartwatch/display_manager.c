@@ -320,7 +320,6 @@ static void updateTimeDisplay(void) {
     if (rewriteTime || lastHourDisplayed != hour12) {
         disp_set_font(FONT_12PT);
         disp_set_pos(0, menuTextY[0]);
-        disp_end_group();
         if (hour12 < 10) disp_write_str_group("0", HOUR_ID);
         disp_write_str_group(itoa(hour12, buffer, 10), HOUR_ID);
         disp_write_str_group(":", HOUR_ID);

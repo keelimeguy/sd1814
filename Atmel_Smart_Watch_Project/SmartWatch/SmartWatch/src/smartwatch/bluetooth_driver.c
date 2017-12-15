@@ -13,9 +13,6 @@ static char notificationLine1[BT_MAX_MSG_LENGTH];
 static char notificationLine2[BT_MAX_MSG_LENGTH];
 static char paramData[BT_MAX_MSG_LENGTH];
 
-static void bt_read_callback(struct usart_module *const usart_module);
-static void bt_write_callback(struct usart_module *const usart_module);
-
 void bluetooth_driver_init(void) {
 
     BLEsetup();
@@ -141,14 +138,22 @@ uint8_t bt_connection_state(void) {
     return connection_state;
 }
 
-static void bt_read_callback(struct usart_module *const usart_module) {
-    connection_state = BT_CONNECTED;
+void bt_set_connection_state(uint8_t state) {
+	connection_state = state;
+}
+
+void set_ble_rx_buffer(int i, uint8_t val) {
+	if (i < BT_MAX_MSG_LENGTH)
+		rx_buffer[cur_rxindx][i] = val;
+}
+
+void bt_read_callback() {
     if (++rx_buffer_len < BT_MAX_BUFFER_LENGTH) {
         if(++cur_rxindx >= BT_MAX_BUFFER_LENGTH) cur_rxindx = 0;
         //usart_read_buffer_job(&usart_instance, rx_buffer[cur_rxindx], BT_MAX_MSG_LENGTH);
     }
 }
 
-static void bt_write_callback(struct usart_module *const usart_module) {
+void bt_write_callback() {
     write_busy = 0;
 }

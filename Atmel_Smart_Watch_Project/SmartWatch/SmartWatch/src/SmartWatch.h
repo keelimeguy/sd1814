@@ -12,6 +12,8 @@
     #define PROGMEM
     #endif
 
+	#define LED_PIN  BOARD_DEBUG_LED
+
     #include "smartwatch/clock_driver.h"
     #include "smartwatch/display_manager.h"
     #include "smartwatch/button_listener.h"

@@ -56,7 +56,7 @@ and the received ACI event is placed in the tail of the event queue.
 /************************************************************************/
 /* Unused nRF8001 pin                                                    */
 /************************************************************************/
-#define UNUSED		    255
+#define HAL_UNUSED		    255
 
 /** Data type for ACI commands and events */
 typedef struct {

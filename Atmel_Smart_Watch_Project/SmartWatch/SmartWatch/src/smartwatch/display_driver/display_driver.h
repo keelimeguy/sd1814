@@ -19,8 +19,8 @@
     #define disp_write_command       console_display_write_command
     #define disp_write_data          console_display_write_data
     #define disp_hard_reset          console_display_hard_reset
-    #define disp_sleep_enable        console_display_sleep_enable
-    #define disp_sleep_disable       console_display_sleep_disable
+    #define disp_sub_sleep_enable    console_display_sleep_enable
+    #define disp_sub_sleep_disable   console_display_sleep_disable
     #define disp_set_row_address     console_display_set_row_address
     #define disp_set_column_address  console_display_set_column_address
     #define disp_sub_init            console_display_init
@@ -47,8 +47,8 @@
     #define disp_write_command       st7735s_write_command
     #define disp_write_data          st7735s_write_data
     #define disp_hard_reset          st7735s_hard_reset
-    #define disp_sleep_enable        st7735s_sleep_enable
-    #define disp_sleep_disable       st7735s_sleep_disable
+    #define disp_sub_sleep_enable    st7735s_sleep_enable
+    #define disp_sub_sleep_disable   st7735s_sleep_disable
     #define disp_set_row_address     st7735s_set_row_address
     #define disp_set_column_address  st7735s_set_column_address
     #define disp_sub_init            st7735s_init
@@ -75,8 +75,8 @@
     #define disp_write_command       ili9163_write_command
     #define disp_write_data          ili9163_write_data
     #define disp_hard_reset          ili9163_hard_reset
-    #define disp_sleep_enable        ili9163_sleep_enable
-    #define disp_sleep_disable       ili9163_sleep_disable
+    #define disp_sub_sleep_enable    ili9163_sleep_enable
+    #define disp_sub_sleep_disable   ili9163_sleep_disable
     #define disp_set_row_address     ili9163_set_row_address
     #define disp_set_column_address  ili9163_set_column_address
     #define disp_sub_init            ili9163_init
@@ -155,5 +155,7 @@ void disp_set_font_scale(uint8_t scale);
 void disp_set_wrap(uint8_t val);
 void disp_set_cp437(uint8_t val);
 void disp_set_color(uint16_t text, uint16_t bg);
+void disp_sleep_enable();
+void disp_sleep_disable();
 
 #endif

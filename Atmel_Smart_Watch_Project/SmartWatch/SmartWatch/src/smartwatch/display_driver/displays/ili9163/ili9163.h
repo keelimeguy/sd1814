@@ -95,24 +95,20 @@ static inline void ili9163_display_on(void) {
 }
 
 static inline void ili9163_hard_reset(void) {
-    uint32_t delay_10us = 10 * (system_gclk_gen_get_hz(0)/1000000);
-    uint32_t delay_5ms = 5 * (system_gclk_gen_get_hz(0)/1000);
     port_pin_set_output_level(ILI9163_RES_PIN, false);
-    delay_cycles(delay_10us); // At least 10us
+    delay_cycles_us(10); // At least 10us
     port_pin_set_output_level(ILI9163_RES_PIN, true);
-    delay_cycles(delay_5ms); // At least 5ms
+    delay_cycles_ms(5); // At least 5ms
 }
 
 static inline void ili9163_sleep_enable(void) {
     ili9163_write_command(ILI9163_CMD_SLEEP_IN);
-    uint32_t delay_5ms = 5 * (system_gclk_gen_get_hz(0)/1000);
-    delay_cycles(delay_5ms); // At least 5ms
+    delay_cycles_ms(5); // At least 5ms
 }
 
 static inline void ili9163_sleep_disable(void) {
     ili9163_write_command(ILI9163_CMD_SLEEP_OUT);
-    uint32_t delay_120ms = 120 * (system_gclk_gen_get_hz(0)/1000);
-    delay_cycles(delay_120ms); // At least 120ms
+    delay_cycles_ms(120); // At least 120ms
 }
 
 static inline void ili9163_set_row_address(uint8_t start_address, uint8_t end_address) {

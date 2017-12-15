@@ -170,7 +170,8 @@ typedef enum
   */
   ACI_CMD_INVALID                 = 0xFF
 
-} _aci_packed_ aci_cmd_opcode_t;
+} aci_cmd_opcode_t;
+//} _aci_packed_ aci_cmd_opcode_t;
 
 ACI_ASSERT_SIZE(aci_cmd_opcode_t, 1);
 
@@ -181,7 +182,8 @@ ACI_ASSERT_SIZE(aci_cmd_opcode_t, 1);
 typedef struct
 {
   aci_test_mode_change_t test_mode_change; /**< enum aci_test_mode_change_t */
-} _aci_packed_ aci_cmd_params_test_t;
+} aci_cmd_params_test_t;
+//} _aci_packed_ aci_cmd_params_test_t;
 
 ACI_ASSERT_SIZE(aci_cmd_params_test_t, 1);
 
@@ -192,7 +194,8 @@ ACI_ASSERT_SIZE(aci_cmd_params_test_t, 1);
 typedef struct
 {
   uint8_t echo_data[ACI_ECHO_DATA_MAX_LEN];
-} _aci_packed_ aci_cmd_params_echo_t;
+} aci_cmd_params_echo_t;
+//} _aci_packed_ aci_cmd_params_echo_t;
 
 ACI_ASSERT_SIZE(aci_cmd_params_echo_t, ACI_ECHO_DATA_MAX_LEN);
 
@@ -204,7 +207,8 @@ typedef struct
 {
   uint8_t                 cmd_msb;
   uint8_t                 cmd_lsb;
-} _aci_packed_ aci_cmd_params_dtm_cmd_t;
+} aci_cmd_params_dtm_cmd_t;
+//} _aci_packed_ aci_cmd_params_dtm_cmd_t;
 
 /**
  * @struct aci_cmd_params_setup_t
@@ -213,7 +217,8 @@ typedef struct
 typedef struct
 {
   uint8_t                 setup_data[1];
-} _aci_packed_ aci_cmd_params_setup_t;
+} aci_cmd_params_setup_t;
+//} _aci_packed_ aci_cmd_params_setup_t;
 
 ACI_ASSERT_SIZE(aci_cmd_params_setup_t, 1);
 
@@ -226,7 +231,8 @@ typedef struct
 {
   uint8_t                 seq_no;
   uint8_t                 dynamic_data[1];
-} _aci_packed_ aci_cmd_params_write_dynamic_data_t;
+} aci_cmd_params_write_dynamic_data_t;
+//} _aci_packed_ aci_cmd_params_write_dynamic_data_t;
 
 /**
  * @define aci_cmd_params_set_local_data_t
@@ -235,7 +241,8 @@ typedef struct
 typedef struct
 {
   aci_tx_data_t tx_data;
-} _aci_packed_ aci_cmd_params_set_local_data_t;
+} aci_cmd_params_set_local_data_t;
+//} _aci_packed_ aci_cmd_params_set_local_data_t;
 
 /**
  * @struct aci_cmd_params_connect_t
@@ -245,7 +252,8 @@ typedef struct
 {
   uint16_t        timeout;  /**< 0x0000 (no timeout) to 0x3FFF */
   uint16_t        adv_interval;     /**< 16 bits of advertising interval for general discovery */
-} _aci_packed_ aci_cmd_params_connect_t;
+} aci_cmd_params_connect_t;
+//} _aci_packed_ aci_cmd_params_connect_t;
 
 ACI_ASSERT_SIZE(aci_cmd_params_connect_t, 4);
 
@@ -257,7 +265,8 @@ typedef struct
 {
   uint16_t        timeout;  /**< 0x0000 (no timeout) to 0x3FFF */
   uint16_t        adv_interval;     /**< 16 bits of advertising interval for general discovery */
-} _aci_packed_ aci_cmd_params_bond_t;
+} aci_cmd_params_bond_t;
+//} _aci_packed_ aci_cmd_params_bond_t;
 
 ACI_ASSERT_SIZE(aci_cmd_params_bond_t, 4);
 
@@ -268,7 +277,8 @@ ACI_ASSERT_SIZE(aci_cmd_params_bond_t, 4);
 typedef struct
 {
   aci_disconnect_reason_t         reason; /**< enum aci_disconnect_reason_t */
-} _aci_packed_ aci_cmd_params_disconnect_t;
+} aci_cmd_params_disconnect_t;
+//} _aci_packed_ aci_cmd_params_disconnect_t;
 
 ACI_ASSERT_SIZE(aci_cmd_params_disconnect_t, 1);
 
@@ -279,7 +289,8 @@ ACI_ASSERT_SIZE(aci_cmd_params_disconnect_t, 1);
 typedef struct
 {
   aci_device_output_power_t   device_power; /**< enum aci_device_output_power_t */
-} _aci_packed_ aci_cmd_params_set_tx_power_t;
+} aci_cmd_params_set_tx_power_t;
+//} _aci_packed_ aci_cmd_params_set_tx_power_t;
 
 ACI_ASSERT_SIZE(aci_cmd_params_set_tx_power_t, 1);
 /**
@@ -289,7 +300,8 @@ ACI_ASSERT_SIZE(aci_cmd_params_set_tx_power_t, 1);
 typedef struct
 {
   aci_ll_conn_params_t    conn_params;
-} _aci_packed_ aci_cmd_params_change_timing_t;
+} aci_cmd_params_change_timing_t;
+//} _aci_packed_ aci_cmd_params_change_timing_t;
 
 ACI_ASSERT_SIZE(aci_cmd_params_change_timing_t, 8);
 
@@ -300,7 +312,8 @@ ACI_ASSERT_SIZE(aci_cmd_params_change_timing_t, 8);
 typedef struct
 {
   uint8_t pipe_number;
-} _aci_packed_ aci_cmd_params_open_remote_pipe_t;
+} aci_cmd_params_open_remote_pipe_t;
+//} _aci_packed_ aci_cmd_params_open_remote_pipe_t;
 
 /**
  * @struct aci_cmd_params_send_data_t
@@ -309,7 +322,8 @@ typedef struct
 typedef struct
 {
   aci_tx_data_t tx_data;
-} _aci_packed_ aci_cmd_params_send_data_t;
+} aci_cmd_params_send_data_t;
+//} _aci_packed_ aci_cmd_params_send_data_t;
 
 /**
  * @define aci_cmd_params_send_data_ack_t
@@ -318,7 +332,8 @@ typedef struct
 typedef struct
 {
   uint8_t pipe_number;
-} _aci_packed_ aci_cmd_params_send_data_ack_t;
+} aci_cmd_params_send_data_ack_t;
+//} _aci_packed_ aci_cmd_params_send_data_ack_t;
 
 /**
  * @struct aci_cmd_params_send_data_t
@@ -327,7 +342,8 @@ typedef struct
 typedef struct
 {
   uint8_t pipe_number;
-} _aci_packed_ aci_cmd_params_request_data_t;
+} aci_cmd_params_request_data_t;
+//} _aci_packed_ aci_cmd_params_request_data_t;
 
 /**
  * @define aci_cmd_params_send_data_nack_t
@@ -337,7 +353,8 @@ typedef struct
 {
   uint8_t pipe_number;
   uint8_t error_code;
-} _aci_packed_ aci_cmd_params_send_data_nack_t;
+} aci_cmd_params_send_data_nack_t;
+//} _aci_packed_ aci_cmd_params_send_data_nack_t;
 
 ACI_ASSERT_SIZE(aci_cmd_params_send_data_nack_t, 2);
 
@@ -349,7 +366,8 @@ typedef struct
 {
   aci_app_latency_mode_t mode;
   uint16_t latency;
-} _aci_packed_ aci_cmd_params_set_app_latency_t;
+} aci_cmd_params_set_app_latency_t;
+//} _aci_packed_ aci_cmd_params_set_app_latency_t;
 
 ACI_ASSERT_SIZE(aci_cmd_params_set_app_latency_t, 3);
 /**
@@ -364,7 +382,8 @@ typedef struct
     uint8_t passkey[6];
     uint8_t oob_key[16];
   } key;
-} _aci_packed_ aci_cmd_params_set_key_t;
+} aci_cmd_params_set_key_t;
+//} _aci_packed_ aci_cmd_params_set_key_t;
 
 ACI_ASSERT_SIZE(aci_cmd_params_set_key_t, 17);
 /**
@@ -374,7 +393,8 @@ ACI_ASSERT_SIZE(aci_cmd_params_set_key_t, 17);
 typedef struct
 {
   uint8_t pipes[8];
-} _aci_packed_ aci_cmd_params_open_adv_pipe_t;
+} aci_cmd_params_open_adv_pipe_t;
+//} _aci_packed_ aci_cmd_params_open_adv_pipe_t;
 
 /**
  * @define aci_cmd_params_broadcast_t
@@ -384,7 +404,8 @@ typedef struct
 {
   uint16_t        timeout;  /**< 0x0000 (no timeout) to 0x3FFF */
   uint16_t        adv_interval;     /**< 16 bits of advertising interval for general discovery */
-} _aci_packed_ aci_cmd_params_broadcast_t;
+} aci_cmd_params_broadcast_t;
+//} _aci_packed_ aci_cmd_params_broadcast_t;
 
 /**
  * @struct aci_cmd_params_close_remote_pipe_t
@@ -393,7 +414,8 @@ typedef struct
 typedef struct
 {
   uint8_t pipe_number;
-} _aci_packed_ aci_cmd_params_close_remote_pipe_t;
+} aci_cmd_params_close_remote_pipe_t;
+//} _aci_packed_ aci_cmd_params_close_remote_pipe_t;
 
 /**
  * @struct aci_cmd_t
@@ -428,7 +450,8 @@ typedef struct
     aci_cmd_params_close_remote_pipe_t          close_remote_pipe;
 
   } params;
-} _aci_packed_ aci_cmd_t;
+} aci_cmd_t;
+//} _aci_packed_ aci_cmd_t;
 
 #endif // ACI_CMDS_H__
 

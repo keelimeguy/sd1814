@@ -109,8 +109,7 @@ void lib_aci_board_init(aci_state_t *aci_stat)
 	  The Bluetooth low energy Arduino shield v1.1 requires about 100ms to reset.
 	  This is not required for the nRF2740, nRF2741 modules
 	  */
-    uint32_t delay_100ms = 100 * (system_gclk_gen_get_hz(0)/1000);
-    delay_cycles(delay_100ms);
+    delay_cycles_ms(100);
 
 	  /*
 	  Send the soft reset command to the nRF8001 to get the nRF8001 to a known state.

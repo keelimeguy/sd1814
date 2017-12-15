@@ -31,8 +31,6 @@
 #include <spi.h>
 #include <delay.h>
 
-#include "conf_st7735s.h"
-
 #include "hal_platform.h"
 #include "hal_aci_tl.h"
 #include "aci_queue.h"
@@ -76,19 +74,19 @@ aci_queue_t    aci_rx_q;
 
 static aci_pins_t	 *a_pins_local_ptr;
 
-void m_aci_data_print(hal_aci_data_t *p_data)
-{
-  const uint8_t length = p_data->buffer[0];
-  uint8_t i;
-  Serial.print(length, DEC);
-  Serial.print(" :");
-  for (i=0; i<=length; i++)
-  {
-    Serial.print(p_data->buffer[i], HEX);
-    Serial.print(F(", "));
-  }
-  Serial.println(F(""));
-}
+// void m_aci_data_print(hal_aci_data_t *p_data)
+// {
+//   const uint8_t length = p_data->buffer[0];
+//   uint8_t i;
+//   Serial.print(length, DEC);
+//   Serial.print(" :");
+//   for (i=0; i<=length; i++)
+//   {
+//     Serial.print(p_data->buffer[i], HEX);
+//     Serial.print(F(", "));
+//   }
+//   Serial.println(F(""));
+// }
 
 /*
   Interrupt service routine called when the RDYN line goes low. Runs the SPI transfer.
@@ -127,10 +125,10 @@ static void m_aci_isr(void)
     }
 
     // Disable ready line interrupt until we have room to store incoming messages
-    if (aci_queue_is_full_from_isr(&aci_rx_q))
-    {
-      detachInterrupt(a_pins_local_ptr->interrupt_number);
-    }
+//     if (aci_queue_is_full_from_isr(&aci_rx_q))
+//     {
+//       detachInterrupt(a_pins_local_ptr->interrupt_number);
+//     }
   }
 
   return;
@@ -265,14 +263,14 @@ static bool m_aci_spi_transfer(hal_aci_data_t * data_to_send, hal_aci_data_t * r
   return (max_bytes > 0);
 }
 
-void hal_aci_tl_debug_print(bool enable)
-{
-	//aci_debug_print = enable;
-}
+// void hal_aci_tl_debug_print(bool enable)
+// {
+// 	//aci_debug_print = enable;
+// }
 
 void hal_aci_tl_pin_reset(void)
 {
-    if (UNUSED != a_pins_local_ptr->reset_pin)
+    if (HAL_UNUSED != a_pins_local_ptr->reset_pin)
     {
         if ((REDBEARLAB_SHIELD_V1_1     == a_pins_local_ptr->board_name) ||
             (REDBEARLAB_SHIELD_V2012_07 == a_pins_local_ptr->board_name))
@@ -280,16 +278,14 @@ void hal_aci_tl_pin_reset(void)
             //The reset for the Redbearlab v1.1 and v2012.07 boards are inverted and has a Power On Reset
             //circuit that takes about 100ms to trigger the reset
             digitalWrite(a_pins_local_ptr->reset_pin, 1);
-            uint32_t delay_100ms = 100 * (system_gclk_gen_get_hz(0)/1000);
-            delay_cycles(delay_100ms);
+            delay_cycles_ms(100);
             digitalWrite(a_pins_local_ptr->reset_pin, 0);
         }
         else
         {
             digitalWrite(a_pins_local_ptr->reset_pin, 1);
             digitalWrite(a_pins_local_ptr->reset_pin, 0);
-            uint32_t delay_10ms = 10 * (system_gclk_gen_get_hz(0)/1000);
-            delay_cycles(delay_10ms);
+            delay_cycles_ms(10);
             digitalWrite(a_pins_local_ptr->reset_pin, 1);
         }
     }
@@ -323,10 +319,10 @@ bool hal_aci_tl_event_get(hal_aci_data_t *p_aci_data)
 
   if (aci_queue_dequeue(&aci_rx_q, p_aci_data))
   {
-    #if aci_debug_print
-      Serial.print(" E");
-      m_aci_data_print(p_aci_data);
-    #endif
+//     #if aci_debug_print
+//       Serial.print(" E");
+//       m_aci_data_print(p_aci_data);
+//     #endif
 
     // if (was_full && a_pins_local_ptr->interface_is_interrupt)
     // {
@@ -421,10 +417,10 @@ bool hal_aci_tl_send(hal_aci_data_t *p_aci_cmd)
       m_aci_reqn_enable();
     }
 
-    #if aci_debug_print
-      Serial.print("C"); //ACI Command
-      m_aci_data_print(p_aci_cmd);
-    #endif
+//     #if aci_debug_print
+//       Serial.print("C"); //ACI Command
+//       m_aci_data_print(p_aci_cmd);
+//     #endif
   }
 
   return ret_val;

@@ -3,7 +3,7 @@
 
 #include <SmartWatch.h>
 
-static uint8_t screen_request;
+static uint8_t screen_request, screen_sleep;
 
 void init_all() {
     system_init();
@@ -17,7 +17,15 @@ void init_all() {
 
     system_interrupt_enable_global();
 
+	struct port_config pin;
+	port_get_config_defaults(&pin);
+	pin.direction = PORT_PIN_DIR_OUTPUT;
+
+	port_pin_set_config(LED_PIN, &pin);
+	port_pin_set_output_level(LED_PIN, true);
+
     screen_request = 1;
+	screen_sleep = 0;
 }
 
 void smartwatch_task(void) {
@@ -25,6 +33,10 @@ void smartwatch_task(void) {
     display_ui_task(buttons);
     if (screen_request || buttons) {
         screen_request = 0;
+		if (screen_sleep) {
+			screen_sleep = 0;
+			disp_sleep_disable();
+		}
         set_screen_timeout(READING_TIMEOUT);
     }
 }
@@ -46,12 +58,16 @@ void request_screen_on(void) {
 }
 
 void sleep(void) {
-    //disp_sleep_enable();
+    disp_sleep_enable();
+	screen_sleep = 1;
+	port_pin_set_output_level(LED_PIN, false);
     sleepmgr_enter_sleep();
 }
 
 void wakeup(void) {
+	port_pin_set_output_level(LED_PIN, true);
     if (is_screen_active_soft()) {
-        //disp_sleep_disable();
+        screen_sleep = 0;
+		disp_sleep_disable();
     }
 }

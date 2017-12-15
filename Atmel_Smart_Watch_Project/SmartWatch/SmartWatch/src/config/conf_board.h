@@ -50,6 +50,8 @@
 #ifndef CONF_BOARD_H
 #define CONF_BOARD_H
 
+#define BOARD_DEBUG_LED            PIN_PA05 // 10
+
 #define BOARD_BT_SERCOM            SERCOM0                  // PA08:13, PA09:14, PA10:15, PA11:16
 #define BOARD_BT_SERCOM_SETTING    SPI_SIGNAL_MUX_SETTING_D //   MOSI ,   SCLK ,    -   ,   MISO
 
@@ -63,9 +65,10 @@
 #define BOARD_DISP_CS_PIN          PIN_PA20 // 29
 #define BOARD_DISP_DC_PIN          PIN_PA21 // 30
 #define BOARD_DISP_RES_PIN         PIN_PA22 // 31
+#define BOARD_DISP_BACKLIGHT_PIN   PIN_PA00 // 1
 
-#define BOARD_BUTTON_L_PIN         PIN_PA00 // 1
-#define BOARD_BUTTON_R_PIN         PIN_PA01 // 2
+#define BOARD_BUTTON_L_PIN         PIN_PB09 // 8
+#define BOARD_BUTTON_R_PIN         PIN_PA04 // 9
 
 //#define BOARD_LED_PIN_1            PIN_PB10 // 19
 // etc

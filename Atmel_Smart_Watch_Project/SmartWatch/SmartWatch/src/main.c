@@ -28,6 +28,7 @@ int main (void) {
             }
         }
         sleep();
+		request_screen_on();
         wakeup();
     }
 }

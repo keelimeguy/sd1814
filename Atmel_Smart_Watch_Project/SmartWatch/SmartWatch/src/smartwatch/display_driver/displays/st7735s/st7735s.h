@@ -13,6 +13,8 @@
 #include <spi.h>
 #include <delay.h>
 
+#include "conf_st7735s.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -88,12 +90,10 @@ static inline void st7735s_display_on(void) {
 }
 
 static inline void st7735s_hard_reset(void) {
-    uint32_t delay_10us = 10 * (system_gclk_gen_get_hz(0)/1000000);
-    uint32_t delay_5ms = 5 * (system_gclk_gen_get_hz(0)/1000);
     port_pin_set_output_level(ST7735S_RES_PIN, false);
-    delay_cycles(delay_10us); // At least 10us
+    delay_cycles_us(10); // At least 10us
     port_pin_set_output_level(ST7735S_RES_PIN, true);
-    delay_cycles(delay_5ms); // At least 5ms
+    delay_cycles_ms(5); // At least 5ms
 }
 
 static inline void st7735s_sleep_enable(void) {
@@ -102,8 +102,7 @@ static inline void st7735s_sleep_enable(void) {
 
 static inline void st7735s_sleep_disable(void) {
     st7735s_write_command(ST7735S_CMD_SLEEP_OUT);
-    uint32_t delay_500ms = 500 * (system_gclk_gen_get_hz(0)/1000);
-    delay_cycles(delay_500ms); // At least 120ms
+    delay_cycles(500); // At least 120ms
 }
 
 static inline void st7735s_set_row_address(uint8_t start_address, uint8_t end_address) {
