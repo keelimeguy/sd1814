@@ -60,7 +60,6 @@ static void m_aci_pins_set(aci_pins_t *a_pins_ptr);
 static inline void m_aci_reqn_disable (void);
 static inline void m_aci_reqn_enable (void);
 static void m_aci_q_flush(void);
-static bool m_aci_spi_transfer(hal_aci_data_t * data_to_send, hal_aci_data_t * received_data);
 
 static uint8_t        spi_readwrite(uint8_t aci_byte);
 
@@ -87,6 +86,10 @@ static aci_pins_t	 *a_pins_local_ptr;
 //   }
 //   Serial.println(F(""));
 // }
+
+void* get_aci_rx_q_ptr() {
+	return (void*)&aci_rx_q;
+}
 
 /*
   Interrupt service routine called when the RDYN line goes low. Runs the SPI transfer.
@@ -204,12 +207,12 @@ static void m_aci_pins_set(aci_pins_t *a_pins_ptr)
 
 static inline void m_aci_reqn_disable (void)
 {
-  // digitalWrite(a_pins_local_ptr->reqn_pin, 1);
+  digitalWrite(a_pins_local_ptr->reqn_pin, 1);
 }
 
 static inline void m_aci_reqn_enable (void)
 {
-  // digitalWrite(a_pins_local_ptr->reqn_pin, 0);
+  digitalWrite(a_pins_local_ptr->reqn_pin, 0);
 }
 
 static void m_aci_q_flush(void)
@@ -221,7 +224,7 @@ static void m_aci_q_flush(void)
   interrupts();
 }
 
-static bool m_aci_spi_transfer(hal_aci_data_t * data_to_send, hal_aci_data_t * received_data)
+bool m_aci_spi_transfer(hal_aci_data_t * data_to_send, hal_aci_data_t * received_data)
 {
   uint8_t byte_cnt;
   uint8_t byte_sent_cnt;
@@ -362,6 +365,8 @@ void hal_aci_tl_init(aci_pins_t *a_pins, bool debug)
   config.pinmux_pad2 = a_pins->pinmux_pad2;
   config.pinmux_pad3 = a_pins->pinmux_pad3;
   config.mode_specific.master.baudrate = a_pins->baudrate;
+  config.data_order = a_pins->dord;
+  config.receiver_enable = true;
 
   spi_init(&bt_master, a_pins->spi, &config);
   spi_enable(&bt_master);
@@ -386,9 +391,7 @@ void hal_aci_tl_init(aci_pins_t *a_pins, bool debug)
 
   /* Pin reset the nRF8001, required when the nRF8001 setup is being changed */
   hal_aci_tl_pin_reset();
-
-  uint32_t delay_30ms = 30 * (system_gclk_gen_get_hz(0)/1000);
-  delay_cycles(delay_30ms); //Wait for the nRF8001 to get hold of its lines - the lines float for a few ms after the reset
+  delay_cycles_ms(30); //Wait for the nRF8001 to get hold of its lines - the lines float for a few ms after the reset
 
   /* Attach the interrupt to the RDYN line as requested by the caller */
   // if (a_pins->interface_is_interrupt)
@@ -428,22 +431,9 @@ bool hal_aci_tl_send(hal_aci_data_t *p_aci_cmd)
 
 static uint8_t spi_readwrite(const uint8_t aci_byte)
 {
-    spi_select_slave(&bt_master, &bt_slave, true);
-    spi_write_buffer_wait(&bt_master, &aci_byte, 1);
-    spi_select_slave(&bt_master, &bt_slave, false);
-	//Board dependent defines
-// #if defined (__AVR__)
-//     //For Arduino the transmission does not have to be reversed
-//     return SPI.transfer(aci_byte);
-// #elif defined(ARDUINO_ARCH_SAMD)
-//     //For Arduino the transmission does not have to be reversed
-//     return SPI.transfer(aci_byte);
-// #elif defined(__PIC32MX__)
-//     //For ChipKit the transmission has to be reversed
-//     uint8_t tmp_bits;
-//     tmp_bits = SPI.transfer(REVERSE_BITS(aci_byte));
-// 	return REVERSE_BITS(tmp_bits);
-// #endif
+	uint16_t ret;
+	spi_transceive_wait(&bt_master, &aci_byte, &ret);
+	return (uint8_t)ret;
 }
 
 bool hal_aci_tl_rx_q_empty (void)

@@ -105,7 +105,8 @@ typedef enum
   */
   ACI_EVT_KEY_REQUEST                 = 0x8F
 
-} _aci_packed_ aci_evt_opcode_t;
+} aci_evt_opcode_t;
+//} _aci_packed_ aci_evt_opcode_t;
 
 ACI_ASSERT_SIZE(aci_evt_opcode_t, 1);
 

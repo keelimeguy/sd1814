@@ -1,3 +1,6 @@
+/* UConn Senior Design Team 1814, December 2017
+     Using code adapted from:
+
 /* Copyright (c) 2014, Nordic Semiconductor ASA
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy

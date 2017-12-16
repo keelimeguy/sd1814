@@ -169,6 +169,7 @@ void BLEsetup(void)
   aci_state.aci_pins.pinmux_pad2 = BT_SPI_PINMUX_PAD2;
   aci_state.aci_pins.pinmux_pad3 = BT_SPI_PINMUX_PAD3;
   aci_state.aci_pins.baudrate = BT_CLOCK_SPEED;
+  aci_state.aci_pins.dord = BT_DATA_ORDER;
 
 //#if defined(ARDUINO_ARCH_SAMD)
 //  aci_state.aci_pins.spi_clock_divider      = 48;

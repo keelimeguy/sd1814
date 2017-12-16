@@ -4,23 +4,19 @@
 #include "bluetooth_driver.h"
 
 static volatile uint8_t rx_buffer[BT_MAX_BUFFER_LENGTH][BT_MAX_MSG_LENGTH];
-static volatile uint8_t tx_buffer[BT_MAX_BUFFER_LENGTH][BT_MAX_MSG_LENGTH];
-static volatile uint8_t tx_buffer_len, rx_buffer_len, write_busy;
+static volatile uint8_t tx_buffer[BT_MAX_MSG_LENGTH];
+static volatile uint8_t rx_buffer_len, write_busy;
 static volatile uint8_t connection_state;
-static volatile uint8_t cur_rxindx, cur_txindx;
-static uint8_t num_notifications, cur_rindx, cur_tindx;
+static volatile uint8_t cur_rxindx;
+static uint8_t num_notifications, cur_rindx;
 static char notificationLine1[BT_MAX_MSG_LENGTH];
 static char notificationLine2[BT_MAX_MSG_LENGTH];
 static char paramData[BT_MAX_MSG_LENGTH];
 
 void bluetooth_driver_init(void) {
 
-    BLEsetup();
-
     rx_buffer_len = 0;
-	tx_buffer_len = 0;
     cur_rxindx = 0;
-    cur_txindx = 0;
     cur_rindx = 0;
     write_busy = 0;
     connection_state = BT_DISCONNECTED;
@@ -28,6 +24,7 @@ void bluetooth_driver_init(void) {
         for (int j=0; j< BT_MAX_MSG_LENGTH; j++)
             rx_buffer[i][j] = 0;
 
+    BLEsetup();
   //usart_read_buffer_job(&usart_instance, rx_buffer, BT_MAX_BUFFER_LENGTH);
 }
 
@@ -40,11 +37,6 @@ uint8_t is_bt_active(void) {
 }
 
 void bt_task(void) {
-	if (tx_buffer_len) {
-		tx_buffer_len--;
-		if (++cur_tindx >= BT_MAX_BUFFER_LENGTH) cur_tindx=0;
-	}
-
     if (rx_buffer_len) {
         rx_buffer_len--;
 
@@ -96,26 +88,18 @@ void bt_task(void) {
         }
 
         if (cur_rindx == cur_rxindx) {
-            //usart_read_buffer_job(&usart_instance, rx_buffer[cur_rxindx], BT_MAX_MSG_LENGTH);
+            //start_read();
         }
         if (++cur_rindx >= BT_MAX_BUFFER_LENGTH) cur_rindx=0;
     }
 }
 
 uint8_t bt_write(uint8_t *tx_data, uint16_t length) {
-    write_busy = 1;
-	if(tx_buffer_len == BT_MAX_BUFFER_LENGTH || length > BT_MAX_MSG_LENGTH)
+    if (length > BT_MAX_MSG_LENGTH-1)
 		return 0;
-	for (int i = 0; i < length; i++) {
-		tx_buffer[cur_txindx][i] = tx_data[i];
-	}
-	for (int i = length; i < BT_MAX_MSG_LENGTH; i++) {
-		tx_buffer[cur_txindx][i] = 0;
-	}
-	tx_buffer_len++;
-	if (++cur_txindx >= BT_MAX_BUFFER_LENGTH) cur_txindx = 0;
+	write_busy = 1;
+	uart_tx(tx_data, length);
 	return 1;
-    //usart_write_buffer_job(&usart_instance, tx_data, length);
 }
 
 uint8_t bt_amt_notifications(void) {
@@ -150,7 +134,7 @@ void set_ble_rx_buffer(int i, uint8_t val) {
 void bt_read_callback() {
     if (++rx_buffer_len < BT_MAX_BUFFER_LENGTH) {
         if(++cur_rxindx >= BT_MAX_BUFFER_LENGTH) cur_rxindx = 0;
-        //usart_read_buffer_job(&usart_instance, rx_buffer[cur_rxindx], BT_MAX_MSG_LENGTH);
+        //start_read();
     }
 }
 

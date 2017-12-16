@@ -1,3 +1,6 @@
+/* UConn Senior Design Team 1814, December 2017
+     Using code adapted from:
+
 /* Copyright (c) 2014, Nordic Semiconductor ASA
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -553,5 +556,7 @@ void lib_aci_flush(void);
 //@}
 
 /** @} */
+
+hal_aci_data_t* get_msg_to_send_ptr();
 
 #endif /* LIB_ACI_H__ */

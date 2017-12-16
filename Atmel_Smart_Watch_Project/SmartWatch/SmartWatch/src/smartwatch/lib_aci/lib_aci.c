@@ -1,3 +1,6 @@
+/* UConn Senior Design Team 1814, December 2017
+     Using code adapted from:
+
 /* Copyright (c) 2014, Nordic Semiconductor ASA
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -46,9 +49,6 @@ hal_aci_data_t  msg_to_send;
 static services_pipe_type_mapping_t * p_services_pipe_type_map;
 static hal_aci_data_t *               p_setup_msgs;
 
-
-
-
 static bool is_request_operation_pending;
 static bool is_indicate_operation_pending;
 static bool is_open_remote_pipe_pending;
@@ -62,10 +62,9 @@ static uint8_t indicate_operation_pipe = 0;
 // including the pipes to be opened.
 static aci_cmd_params_open_adv_pipe_t aci_cmd_params_open_adv_pipe;
 
-
-
-extern aci_queue_t    aci_rx_q;
-extern aci_queue_t    aci_tx_q;
+hal_aci_data_t* get_msg_to_send_ptr() {
+	return &msg_to_send;
+}
 
 bool lib_aci_is_pipe_available(aci_state_t *aci_stat, uint8_t pipe)
 {
@@ -100,78 +99,11 @@ bool lib_aci_is_discovery_finished(aci_state_t *aci_stat)
 
 void lib_aci_board_init(aci_state_t *aci_stat)
 {
-	hal_aci_evt_t *aci_data = NULL;
-	aci_data = (hal_aci_evt_t *)&msg_to_send;
-
-	if (REDBEARLAB_SHIELD_V1_1 == aci_stat->aci_pins.board_name)
-	{
 	  /*
 	  The Bluetooth low energy Arduino shield v1.1 requires about 100ms to reset.
 	  This is not required for the nRF2740, nRF2741 modules
 	  */
-    delay_cycles_ms(100);
-
-	  /*
-	  Send the soft reset command to the nRF8001 to get the nRF8001 to a known state.
-	  */
-	  lib_aci_radio_reset();
-
-	  while (1)
-	  {
-  		/*Wait for the command response of the radio reset command.
-  		as the nRF8001 will be in either SETUP or STANDBY after the ACI Reset Radio is processed
-  		*/
-
-
-  		if (true == lib_aci_event_get(aci_stat, aci_data))
-  		{
-  		  aci_evt_t * aci_evt;
-  		  aci_evt = &(aci_data->evt);
-
-  		  if (ACI_EVT_CMD_RSP == aci_evt->evt_opcode)
-  		  {
-  				if (ACI_STATUS_ERROR_DEVICE_STATE_INVALID == aci_evt->params.cmd_rsp.cmd_status) //in SETUP
-  				{
-  					//Inject a Device Started Event Setup to the ACI Event Queue
-  					msg_to_send.buffer[0] = 4;    //Length
-  					msg_to_send.buffer[1] = 0x81; //Device Started Event
-  					msg_to_send.buffer[2] = 0x02; //Setup
-  					msg_to_send.buffer[3] = 0;    //Hardware Error -> None
-  					msg_to_send.buffer[4] = 2;    //Data Credit Available
-  					aci_queue_enqueue(&aci_rx_q, &msg_to_send);
-  				}
-  				else if (ACI_STATUS_SUCCESS == aci_evt->params.cmd_rsp.cmd_status) //We are now in STANDBY
-  				{
-  					//Inject a Device Started Event Standby to the ACI Event Queue
-  					msg_to_send.buffer[0] = 4;    //Length
-  					msg_to_send.buffer[1] = 0x81; //Device Started Event
-  					msg_to_send.buffer[2] = 0x03; //Standby
-  					msg_to_send.buffer[3] = 0;    //Hardware Error -> None
-  					msg_to_send.buffer[4] = 2;    //Data Credit Available
-  					aci_queue_enqueue(&aci_rx_q, &msg_to_send);
-  				}
-  				else if (ACI_STATUS_ERROR_CMD_UNKNOWN == aci_evt->params.cmd_rsp.cmd_status) //We are now in TEST
-  				{
-  					//Inject a Device Started Event Test to the ACI Event Queue
-  					msg_to_send.buffer[0] = 4;    //Length
-  					msg_to_send.buffer[1] = 0x81; //Device Started Event
-  					msg_to_send.buffer[2] = 0x01; //Test
-  					msg_to_send.buffer[3] = 0;    //Hardware Error -> None
-  					msg_to_send.buffer[4] = 0;    //Data Credit Available
-  					aci_queue_enqueue(&aci_rx_q, &msg_to_send);
-  				}
-
-  				//Break out of the while loop
-  				break;
-  		  }
-  		  else
-  		  {
-  			//Serial.println(F("Discard any other ACI Events"));
-  		  }
-
-  		}
-	  }
-	}
+      delay_cycles_ms(100);
 }
 
 
@@ -186,22 +118,13 @@ void lib_aci_init(aci_state_t *aci_stat, bool debug)
     aci_cmd_params_open_adv_pipe.pipes[i]   = 0;
   }
 
-
-
-
   is_request_operation_pending     = false;
   is_indicate_operation_pending    = false;
   is_open_remote_pipe_pending      = false;
   is_close_remote_pipe_pending     = false;
 
-
-
-
-
   request_operation_pipe           = 0;
   indicate_operation_pipe          = 0;
-
-
 
   p_services_pipe_type_map = aci_stat->aci_setup_info.services_pipe_type_mapping;
 
@@ -557,14 +480,31 @@ bool lib_aci_bond_request()
 
 bool lib_aci_event_peek(hal_aci_evt_t *p_aci_evt_data)
 {
-  return hal_aci_tl_event_peek((hal_aci_data_t *)p_aci_evt_data);
+  hal_aci_data_t p_aci_data;
+  bool status;
+  
+  status = hal_aci_tl_event_peek(&p_aci_data);
+  
+  p_aci_evt_data->debug_byte = p_aci_data.status_byte;
+  p_aci_evt_data->evt.len = p_aci_data.buffer[0];
+  p_aci_evt_data->evt.evt_opcode = p_aci_data.buffer[1];
+  for (int i = 0; i < 29; i++)
+	p_aci_evt_data->evt.params.echo.echo_data[i] = p_aci_data.buffer[2+i];
+
+  return status;
 }
 
 bool lib_aci_event_get(aci_state_t *aci_stat, hal_aci_evt_t *p_aci_evt_data)
 {
   bool status = false;
+  hal_aci_data_t p_aci_data;
+  status = hal_aci_tl_event_get(&p_aci_data);
 
-  status = hal_aci_tl_event_get((hal_aci_data_t *)p_aci_evt_data);
+  p_aci_evt_data->debug_byte = p_aci_data.status_byte;
+  p_aci_evt_data->evt.len = p_aci_data.buffer[0];
+  p_aci_evt_data->evt.evt_opcode = p_aci_data.buffer[1];
+  for (int i = 0; i < 29; i++)
+	p_aci_evt_data->evt.params.echo.echo_data[i] = p_aci_data.buffer[2+i];
 
   /**
   Update the state of the ACI with the

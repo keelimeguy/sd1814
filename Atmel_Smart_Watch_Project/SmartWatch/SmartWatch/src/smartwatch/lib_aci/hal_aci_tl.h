@@ -62,7 +62,8 @@ and the received ACI event is placed in the tail of the event queue.
 typedef struct {
   uint8_t status_byte;
   uint8_t buffer[HAL_ACI_MAX_LENGTH+1];
-} _aci_packed_ hal_aci_data_t;
+} hal_aci_data_t;
+//} _aci_packed_ hal_aci_data_t;
 
 ACI_ASSERT_SIZE(hal_aci_data_t, HAL_ACI_MAX_LENGTH + 2);
 
@@ -79,6 +80,7 @@ typedef struct aci_pins_t
 	uint32_t pinmux_pad2;
 	uint32_t pinmux_pad3;
 	uint32_t baudrate;
+	uint32_t dord;
 
 	uint8_t spi_clock_divider;      //Required : Clock divider on the SPI clock : nRF8001 supports a maximum clock of 3MHz
 
@@ -181,6 +183,9 @@ void hal_aci_tl_pin_reset(void);
  *  Call this function in the main thread
  */
 void hal_aci_tl_q_flush(void);
+
+void* get_aci_rx_q_ptr();
+bool m_aci_spi_transfer(hal_aci_data_t * data_to_send, hal_aci_data_t * received_data);
 
 #endif // HAL_ACI_TL_H__
 /** @} */

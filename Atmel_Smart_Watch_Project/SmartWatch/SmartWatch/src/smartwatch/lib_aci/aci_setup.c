@@ -35,10 +35,6 @@
 // Current State of the the GATT client (Service Discovery status)
 
 
-extern hal_aci_data_t msg_to_send;
-
-
-
 /**************************************************************************                */
 /* Utility function to fill the the ACI command queue                                      */
 /* aci_stat               Pointer to the ACI state                                         */
@@ -70,7 +66,7 @@ static bool aci_setup_fill(aci_state_t *aci_stat, uint8_t *num_cmd_offset)
 	#endif
 
     //Put the Setup ACI message in the command queue
-    if (!hal_aci_tl_send(&msg_to_send))
+    if (!hal_aci_tl_send(get_msg_to_send_ptr()))
     {
       //ACI Command Queue is full
       // *num_cmd_offset is now pointing to the index of the Setup command that did not get sent
@@ -96,7 +92,13 @@ uint8_t do_aci_setup(aci_state_t *aci_stat)
   We are using the same buffer since we are copying the contents of the buffer
   when queuing and immediately processing the buffer when receiving
   */
-  hal_aci_evt_t  *aci_data = (hal_aci_evt_t *)&msg_to_send;
+  hal_aci_data_t  *p_aci_data = get_msg_to_send_ptr();
+  hal_aci_evt_t aci_evt_data;
+  aci_evt_data.debug_byte = p_aci_data->status_byte;
+  aci_evt_data.evt.len = p_aci_data->buffer[0];
+  aci_evt_data.evt.evt_opcode = p_aci_data->buffer[1];
+  for (int j = 0; j < 29; j++)
+	aci_evt_data.evt.params.echo.echo_data[j] = p_aci_data->buffer[2+j];
 
   /* Messages in the outgoing queue must be handled before the Setup routine can run.
    * If it is non-empty we return. The user should then process the messages before calling
@@ -111,7 +113,7 @@ uint8_t do_aci_setup(aci_state_t *aci_stat)
    * so that the user can handle them. At this point we don't care what the event is,
    * as any event is an error.
    */
-  if (lib_aci_event_peek(aci_data))
+  if (lib_aci_event_peek(&aci_evt_data))
   {
     return SETUP_FAIL_EVENT_QUEUE_NOT_EMPTY;
   }
@@ -129,9 +131,9 @@ uint8_t do_aci_setup(aci_state_t *aci_stat)
       return SETUP_FAIL_TIMEOUT;
     }
 
-    if (lib_aci_event_peek(aci_data))
+    if (lib_aci_event_peek(&aci_evt_data))
     {
-      aci_evt = &(aci_data->evt);
+      aci_evt = &(aci_evt_data.evt);
 
       if (ACI_EVT_CMD_RSP != aci_evt->evt_opcode)
       {
@@ -165,7 +167,7 @@ uint8_t do_aci_setup(aci_state_t *aci_stat)
        * or ACI_STATUS_TRANSACTION_COMPLETE. We don't need the event itself, so we simply
        * remove it from the queue.
        */
-       lib_aci_event_get (aci_stat, aci_data);
+       lib_aci_event_get(aci_stat, &aci_evt_data);
     }
   }
 
