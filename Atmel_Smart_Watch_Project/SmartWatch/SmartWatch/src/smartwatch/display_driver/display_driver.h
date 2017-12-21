@@ -6,9 +6,13 @@
 
 #define NONE            0
 
-#define DISP_CONSOLE    1 // 1.44" TFT LCD
+#define DISP_CONSOLE    1 // printf
 #define DISP_ST7735S    2 // 1.44" TFT LCD
 #define DISP_ILI9163    3 // 1.8" TFT LCD
+
+#ifdef CONSOLE_VERSION
+    #include "../Smartwatch.h"
+#endif
 
 #ifndef DISP_SCREEN
     #define DISP_SCREEN NONE

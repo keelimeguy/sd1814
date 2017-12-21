@@ -326,7 +326,7 @@ static void updateTimeDisplay(void) {
         disp_end_group();
     }
     if (rewriteTime || lastMinuteDisplayed != time.minute) {
-        if (lastHourDisplayed != hour12) {
+        if (lastHourDisplayed != hour12 || rewriteTime) {
             uint8_t x0, x1, y, w0, w1, h;
             if (hour12 < 10) disp_get_text_bounds("0:", 0, menuTextY[0], &x0, &y ,&w0, &h);
             else disp_get_text_bounds(":", 0, menuTextY[0], &x0, &y ,&w0, &h);
@@ -342,7 +342,7 @@ static void updateTimeDisplay(void) {
     }
 
     if (rewriteTime || lastSecondDisplayed != time.second) {
-        if (lastMinuteDisplayed != time.minute) {
+        if (lastMinuteDisplayed != time.minute || rewriteTime) {
             uint8_t x0, x1, y, w0, w1, h;
             if (time.minute < 10) disp_get_text_bounds("0:", 0, menuTextY[0], &x0, &y ,&w0, &h);
             else disp_get_text_bounds(":", 0, menuTextY[0], &x0, &y ,&w0, &h);

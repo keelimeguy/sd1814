@@ -49,9 +49,48 @@
         /** Year value */
         uint16_t year;
     };
+    enum port_pin_dir {
+        /** The pin's input buffer should be enabled, so that the pin state can
+         *  be read */
+        PORT_PIN_DIR_INPUT               = 0,
+        /** The pin's output buffer should be enabled, so that the pin state can
+         *  be set */
+        PORT_PIN_DIR_OUTPUT              = 1,
+        /** The pin's output and input buffers should be enabled, so that the pin
+         *  state can be set and read back */
+        PORT_PIN_DIR_OUTPUT_WTH_READBACK = 2,
+    };
+    enum port_pin_pull {
+        /** No logical pull should be applied to the pin */
+        PORT_PIN_PULL_NONE = 0,
+        /** Pin should be pulled up when idle */
+        PORT_PIN_PULL_UP   = 1,
+        /** Pin should be pulled down when idle */
+        PORT_PIN_PULL_DOWN = 2,
+    };
+    struct port_config {
+        /** Port buffer input/output direction */
+        enum port_pin_dir  direction;
+
+        /** Port pull-up/pull-down for input pins */
+        enum port_pin_pull input_pull;
+
+        /** Enable lowest possible powerstate on the pin
+         *
+         *  \note All other configurations will be ignored, the pin will be disabled.
+         */
+        bool powersave;
+    };
     #include "smartwatch/display_manager.h"
+    #define port_get_config_defaults(A)
+    #define port_pin_set_config(A,B)
+    #define port_pin_set_output_level(A,B)
+    #define BOARD_DISP_BACKLIGHT_PIN 0
+    #define PORT_PIN_DIR_OUTPUT 0
     #define BUTTON_L_VAL 1
     #define BUTTON_R_VAL 2
+    #define true 1
+    #define false 0
     static inline uint8_t is_new_measurement() {return 0;}
     static inline uint8_t get_measurement() {return 0;}
     static inline uint8_t bt_amt_notifications() {return 2;}
