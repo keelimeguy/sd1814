@@ -14,27 +14,22 @@
 
 int main (void) {
     init_all();
-	lib_aci_echo_msg(2, "hi");
-	while(1) {
-		aci_loop();
-	}
-	return 0;
-//     for(;;) {
-//         while (is_active()) {
-// 			aci_loop();
-//             if (is_reading_timeout()) {
-//                 take_measurement();
-//             }
-//             if (is_bt_active()) {
-//                 bt_task();
-//             }
-//             if (is_screen_active()) {
-//                 smartwatch_task();
-//             }
-//         }
-//         sleep();
-// 		request_screen_on();
-//         wakeup();
-//     }
-//     return 0;
+    for(;;) {
+        while (is_active()) {
+            aci_loop();
+            if (is_reading_timeout()) {
+                take_measurement();
+            }
+            if (is_bt_active()) {
+                bt_task();
+            }
+            if (is_screen_active()) {
+                smartwatch_task();
+            }
+        }
+        sleep();
+		request_screen_on();
+        wakeup();
+    }
+    return 0;
 }
