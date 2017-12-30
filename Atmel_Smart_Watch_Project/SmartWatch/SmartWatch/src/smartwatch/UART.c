@@ -177,12 +177,12 @@ void BLEsetup(void)
 //  aci_state.aci_pins.spi_clock_divider      = SPI_CLOCK_DIV8;
 //#endif
 
-  aci_state.aci_pins.reset_pin              = BT_RES_PIN; //4 for Nordic board, UNUSED for REDBEARLAB_SHIELD_V1_1
+  aci_state.aci_pins.reset_pin              = BT_RES_PIN;
   aci_state.aci_pins.active_pin             = HAL_UNUSED;
   aci_state.aci_pins.optional_chip_sel_pin  = HAL_UNUSED;
 
-  aci_state.aci_pins.interface_is_interrupt = false; //Interrupts still not available in Chipkit
-  aci_state.aci_pins.interrupt_number       = 1;
+  aci_state.aci_pins.interface_is_interrupt = true;
+  aci_state.aci_pins.interrupt_number       = BLE_RDY_EIC;
 
   //We reset the nRF8001 here by toggling the RESET line connected to the nRF8001
   //If the RESET line is not available we call the ACI Radio Reset to soft reset the nRF8001

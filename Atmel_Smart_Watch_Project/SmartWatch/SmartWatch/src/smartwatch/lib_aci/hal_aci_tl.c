@@ -128,10 +128,11 @@ static void m_aci_isr(void)
     }
 
     // Disable ready line interrupt until we have room to store incoming messages
-//     if (aci_queue_is_full_from_isr(&aci_rx_q))
-//     {
-//       detachInterrupt(a_pins_local_ptr->interrupt_number);
-//     }
+    if (aci_queue_is_full_from_isr(&aci_rx_q))
+    {
+      // detachInterrupt(a_pins_local_ptr->interrupt_number);
+      extint_chan_disable_callback(a_pins->interrupt_number);
+    }
   }
 
   return;
@@ -296,10 +297,10 @@ void hal_aci_tl_pin_reset(void)
 
 bool hal_aci_tl_event_peek(hal_aci_data_t *p_aci_data)
 {
-  // if (!a_pins_local_ptr->interface_is_interrupt)
-  // {
-  //   m_aci_event_check();
-  // }
+  if (!a_pins_local_ptr->interface_is_interrupt)
+  {
+    m_aci_event_check();
+  }
 
   if (aci_queue_peek(&aci_rx_q, p_aci_data))
   {
@@ -327,11 +328,12 @@ bool hal_aci_tl_event_get(hal_aci_data_t *p_aci_data)
 //       m_aci_data_print(p_aci_data);
 //     #endif
 
-    // if (was_full && a_pins_local_ptr->interface_is_interrupt)
-    // {
+    if (was_full && a_pins_local_ptr->interface_is_interrupt)
+    {
       /* Enable RDY line interrupt again */
-    //   attachInterrupt(a_pins_local_ptr->interrupt_number, m_aci_isr, LOW);
-    // }
+      // attachInterrupt(a_pins_local_ptr->interrupt_number, m_aci_isr, LOW);
+      extint_chan_enable_callback(a_pins->interrupt_number, EXTINT_CALLBACK_TYPE_DETECT);
+    }
 
     /* Attempt to pull REQN LOW since we've made room for new messages */
     if (!aci_queue_is_full(&aci_rx_q) && !aci_queue_is_empty(&aci_tx_q))
@@ -380,10 +382,29 @@ void hal_aci_tl_init(aci_pins_t *a_pins, bool debug)
   port_pin_set_config(a_pins->reset_pin, &pin);
   digitalWrite(a_pins->reset_pin, true);
 
-  port_get_config_defaults(&pin);
-  pin.input_pull = PORT_PIN_PULL_UP;
+  /* Attach the interrupt to the RDYN line as requested by the caller */
+  if (a_pins->interface_is_interrupt) {
 
-  port_pin_set_config(a_pins->rdyn_pin, &pin);
+    // // We use the LOW level of the RDYN line as the atmega328 can wakeup from sleep only on LOW
+    // attachInterrupt(a_pins->interrupt_number, m_aci_isr, LOW);
+
+    struct extint_chan_conf config_extint_chan;
+    extint_chan_get_config_defaults(&config_extint_chan);
+
+    config_extint_chan.gpio_pin           = a_pins->rdyn_pin;
+    config_extint_chan.gpio_pin_pull      = EXTINT_PULL_UP;
+    config_extint_chan.detection_criteria = EXTINT_DETECT_FALLING;
+    extint_chan_set_config(a_pins->interrupt_number, &config_extint_chan);
+
+    extint_register_callback(m_aci_isr, a_pins->interrupt_number, EXTINT_CALLBACK_TYPE_DETECT);
+    extint_chan_enable_callback(a_pins->interrupt_number, EXTINT_CALLBACK_TYPE_DETECT);
+
+  } else {
+    port_get_config_defaults(&pin);
+    pin.input_pull = PORT_PIN_PULL_UP;
+
+    port_pin_set_config(a_pins->rdyn_pin, &pin);
+  }
 
   /* Initialize the ACI Command queue. This must be called after the delay above. */
   aci_queue_init(&aci_tx_q);
@@ -392,13 +413,6 @@ void hal_aci_tl_init(aci_pins_t *a_pins, bool debug)
   /* Pin reset the nRF8001, required when the nRF8001 setup is being changed */
   hal_aci_tl_pin_reset();
   delay_cycles_ms(30); //Wait for the nRF8001 to get hold of its lines - the lines float for a few ms after the reset
-
-  /* Attach the interrupt to the RDYN line as requested by the caller */
-  // if (a_pins->interface_is_interrupt)
-  // {
-  //   // We use the LOW level of the RDYN line as the atmega328 can wakeup from sleep only on LOW
-  //   attachInterrupt(a_pins->interrupt_number, m_aci_isr, LOW);
-  // }
 }
 
 bool hal_aci_tl_send(hal_aci_data_t *p_aci_cmd)

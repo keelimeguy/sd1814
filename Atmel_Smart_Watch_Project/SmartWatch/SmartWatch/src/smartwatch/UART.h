@@ -71,6 +71,7 @@
 #include "lib_aci/services.h"
 
 #define BLE_DEBUG false
+#define BLE_RDY_EIC 2
 
 void __ble_assert(const char *file, uint16_t line);
 void BLEsetup(void);
