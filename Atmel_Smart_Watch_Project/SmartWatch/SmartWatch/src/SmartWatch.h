@@ -30,55 +30,34 @@
     void sleep(void);
     void wakeup(void);
 
+
+// The following is specifically for console testing code,
+// e.g. compiled with flag: -D CONSOLE_VERSION=<anything>
 #else
     #include <stdint.h>
     typedef uint8_t bool;
     struct rtc_calendar_time {
-        /** Second value */
         uint8_t  second;
-        /** Minute value */
         uint8_t  minute;
-        /** Hour value */
         uint8_t  hour;
-        /** PM/AM value, \c true for PM, or \c false for AM */
         bool     pm;
-        /** Day value, where day 1 is the first day of the month */
         uint8_t  day;
-        /** Month value, where month 1 is January */
         uint8_t  month;
-        /** Year value */
         uint16_t year;
     };
     enum port_pin_dir {
-        /** The pin's input buffer should be enabled, so that the pin state can
-         *  be read */
         PORT_PIN_DIR_INPUT               = 0,
-        /** The pin's output buffer should be enabled, so that the pin state can
-         *  be set */
         PORT_PIN_DIR_OUTPUT              = 1,
-        /** The pin's output and input buffers should be enabled, so that the pin
-         *  state can be set and read back */
         PORT_PIN_DIR_OUTPUT_WTH_READBACK = 2,
     };
     enum port_pin_pull {
-        /** No logical pull should be applied to the pin */
         PORT_PIN_PULL_NONE = 0,
-        /** Pin should be pulled up when idle */
         PORT_PIN_PULL_UP   = 1,
-        /** Pin should be pulled down when idle */
         PORT_PIN_PULL_DOWN = 2,
     };
     struct port_config {
-        /** Port buffer input/output direction */
         enum port_pin_dir  direction;
-
-        /** Port pull-up/pull-down for input pins */
         enum port_pin_pull input_pull;
-
-        /** Enable lowest possible powerstate on the pin
-         *
-         *  \note All other configurations will be ignored, the pin will be disabled.
-         */
         bool powersave;
     };
     #include "smartwatch/display_manager.h"

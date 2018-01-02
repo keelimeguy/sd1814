@@ -15,6 +15,7 @@
 #define FONT_24PT                &FreeSans12pt7b
 
 #define FONT_DEFAULT             FONT_9PT
+#define round(f) ( (f-(float)((int)f)) > 0.5 ? (int)f+1 : (int)f )
 
 static volatile uint8_t rewriteMenu;
 static volatile uint8_t rewriteTime;
@@ -261,8 +262,6 @@ static void updateDateDisplay(void) {
     disp_write_str_group("  ", DATE_ID);
     disp_end_group();
 }
-
-#define round(f) ( (f-(float)((int)f)) > 0.5 ? (int)f+1 : (int)f )
 
 static void updateGlucoseDisplay(float glucose) {
     if (currentDisplayState != DISP_STATE_HOME)

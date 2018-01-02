@@ -25,7 +25,6 @@ void take_measurement(void) {
     measure_busy = 1;
 }
 
-
 void measure_set_pulse_one(uint32_t pulse) {
 	pulseOne = pulse;
 }
