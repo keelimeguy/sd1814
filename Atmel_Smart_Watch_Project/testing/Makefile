@@ -1,5 +1,5 @@
 CUR_DIR := $(subst C:,/c,${PWD})
-SRC_DIR := ${CUR_DIR}/Smartwatch/Smartwatch/src
+SRC_DIR := ${CUR_DIR}/../Smartwatch/Smartwatch/src
 
 GCC_FLAGS := \
 -Wno-all \
