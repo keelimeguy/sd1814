@@ -3,6 +3,8 @@
 
 #include <display_manager.h>
 
+// For testing GUI, compile using: -D DISP_SCREEN=DISP_CONSOLE
+
 int main (void) {
     display_manager_init();
     for (int i = 0; i < 2; i ++) {

@@ -10,6 +10,7 @@ static volatile uint8_t rtc_alarm_flag;
 
 static struct tc_module screen_timer, pulse_timer;
 static volatile uint32_t screen_timeout, pulse_timeout;
+static const char* day_str[7] = {"Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Tue"};
 
 static void rtc_alarm_callback(void);
 static void screen_timer_callback(void);
@@ -92,19 +93,15 @@ void clock_driver_init(void) {
     tc_enable(&pulse_timer);
 
     pulse_timeout = 1;
-
-
 }
 
-void rtc_get_time (struct rtc_calendar_time *time) {
+void rtc_get_time(struct rtc_calendar_time *time) {
     rtc_calendar_get_time(&rtc_instance, time);
 }
 
 void rtc_update_time(struct rtc_calendar_time *time) {
     rtc_calendar_set_time(&rtc_instance, time);
 }
-
-static const char* day_str[7] = {"Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Tue"};
 
 char* calendar_day_str(char* str, struct rtc_calendar_time *time) {
     str = day_str[(int)date_to_day_number(time->year, time->month, time->day)%7];

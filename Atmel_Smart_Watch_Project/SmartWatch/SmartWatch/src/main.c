@@ -7,16 +7,18 @@
         RTC Alarm (RTC interrupt)
     is_bt_active() triggered by:
         BT message send request
-        BT received (aci_loop must always run)
+        BT received (aci_loop must always run) // TODO: implement interrupt-driven bluetooth
     is_screen_active() triggered by:
         user input (external interrupt)
 */
 
-int main (void) {
+int main(void) {
     init_all();
+
+    // TODO: future improvement may be running components as separate processes in an RTOS
     for(;;) {
         while (is_active()) {
-            aci_loop();
+            aci_loop(); // TODO: implement interrupt-driven bluetooth
             if (is_reading_timeout()) {
                 take_measurement();
             }
@@ -28,7 +30,7 @@ int main (void) {
             }
         }
         sleep();
-		request_screen_on();
+        request_screen_on(); // TODO: should be removed later
         wakeup();
     }
     return 0;
