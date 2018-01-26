@@ -45,14 +45,19 @@ static double get_min(int size) {
 
     #ifdef DEFAULT_MIN
         double min = DEFAULT_MIN;
+        min_index = -1;
         int i=0;
     #else
         double min = data[0];
+        min_index = 0;
         int i=1;
     #endif
 
     for (; i<size; i++)
-        if (data[i]<min) min = data[i];
+        if (data[i]<min) {
+            min = data[i];
+            min_index = i;
+        }
     return min;
 }
 
@@ -61,14 +66,19 @@ static double get_max(int size) {
 
     #ifdef DEFAULT_MAX
         double max = DEFAULT_MAX;
+        max_index = -1;
         int i=0;
     #else
         double max = data[0];
+        max_index = 0;
         int i=1;
     #endif
 
     for (; i<size; i++)
-        if (data[i]>max) max = data[i];
+        if (data[i]>max) {
+            max = data[i];
+            max_index = i;
+        }
     return max;
 }
 
@@ -95,29 +105,38 @@ void reset_graph() {
 }
 
 int add_to_graph(int val) {
+    int refresh_axis = 0;
     is_changed = 1;
     data[data_index] = val;
     if (data_length == 0 || val<data_min) {
         data_min = val;
         min_index = data_index;
+        refresh_axis = 1;
     } else if (min_index == data_index) {
         data_min = get_min(data_length);
+        refresh_axis = 1;
     }
 
     if (data_length == 0 || val>data_max) {
         data_max = val;
         max_index = data_index;
+        refresh_axis = 1;
     } else if (max_index == data_index) {
         data_max = get_max(data_length);
+        refresh_axis = 1;
     }
-
 
     double min = data_min - BAR_PADDING_LOW;
     double max = data_max + BAR_PADDING_HIGH;
 
     #define CONVERT(xx) ((int)(((xx-min)/(max-min))*(double)(MAX_BAR_HEIGHT-MIN_BAR_HEIGHT)) + MIN_BAR_HEIGHT)
-    bar_cache[data_index] = CONVERT(val);
+    if (refresh_axis) {
+        for (int i = 0; i <= data_length; i++)
+            bar_cache[i] = CONVERT(data[i]);
 
+    } else {
+        bar_cache[data_index] = CONVERT(val);
+    }
 
     data_index++;
     if (data_index >= data_size) data_index = 0;

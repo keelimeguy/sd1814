@@ -5,18 +5,24 @@
 
 // For testing GUI, compile using: -D DISP_SCREEN=DISP_CONSOLE
 
-int main (void) {
-    display_manager_init();
-    for (int i = 0; i < 2; i ++) {
-        display_ui_task(0);
-        disp_end_write();
+// Usage: ./main.exe [repeat]
+int main (int argc, char *argv[]) {
+    int repeat = 1;
+    if (argc > 1) {
+        repeat = atoi(argv[1]);
     }
-    add_to_graph(50);
-    add_to_graph(200);
-    add_to_graph(100);
-    for (;;) {
-        display_ui_task(0);
+
+    display_manager_init();
+    int button = 0;
+
+    add_to_graph(repeat);
+    // Negative repeat will loop forever
+    while (repeat > 0) {
+        display_ui_task(button);
         disp_end_write();
+        button = GRAPH_BUTTON;
+        if (repeat > 0) repeat--;
+        add_to_graph(repeat);
     }
     return 0;
 }

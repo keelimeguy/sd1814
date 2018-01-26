@@ -28,8 +28,9 @@
 #define SEC_ID               6
 #define DATE_ID              7
 #define GLUCOSE_VAL_ID       8
-#define DATA_TOP_ID          9
-#define DATA_BOTTOM_ID       10
+#define GLUCOSE_VAL_GRAPH_ID 9
+#define DATA_TOP_ID          10
+#define DATA_BOTTOM_ID       11
 
 void display_manager_init(void);
 void display_ui_task(uint8_t button);
