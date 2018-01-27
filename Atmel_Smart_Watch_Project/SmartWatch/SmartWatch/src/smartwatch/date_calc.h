@@ -13,17 +13,17 @@
 #define date_hex_get_month(hx) (((hx)>>8)&0xf)
 #define date_hex_get_day(hx) ((hx)&0xff)
 
-double date_to_day_number(unsigned int y, unsigned int m, unsigned int d) {
+static double date_to_day_number(unsigned int y, unsigned int m, unsigned int d) {
     m = (m + 9) % 12;
     double yy = y - m/10;
     return 365*yy + yy/4 - yy/100 + yy/400 + (m*306 + 5)/10 + ( d - 1 );
 }
 
-double date_hex_to_day_number(unsigned int da) {
+static double date_hex_to_day_number(unsigned int da) {
     return date_to_day_number(date_hex_get_year(da), date_hex_get_month(da), date_hex_get_day(da));
 }
 
-unsigned int day_number_to_date_hex(double g) {
+static unsigned int day_number_to_date_hex(double g) {
     int y = (10000*g + 14780)/3652425;
     int ddd = g - (365*y + y/4 - y/100 + y/400);
     if (ddd < 0) {

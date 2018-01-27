@@ -5,7 +5,12 @@
 #define BLUETOOTH_DRIVER_H
 
 #include "conf_bluetooth.h"
-#include "UART.h"
+#ifndef CONSOLE_VERSION
+	#include "UART.h"
+#else
+	#include <string.h>
+	#define HAL_ACI_MAX_LENGTH 16
+#endif
 
 #define BT_CMD_TEST                                 0x01
 #define BT_CMD_ECHO                                 0x02
@@ -61,6 +66,8 @@ uint8_t bt_amt_notifications(void);
 void bt_clear_amt_notifications(void);
 char* bt_get_notification_1(void);
 char* bt_get_notification_2(void);
+void bt_set_notification_1(char* str);
+void bt_set_notification_2(char* str);
 uint8_t bt_connection_state(void);
 void bt_set_connection_state(uint8_t state);
 void set_ble_rx_buffer(int i, uint8_t val);

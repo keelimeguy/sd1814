@@ -121,24 +121,23 @@ static void updateMainDisplay(uint8_t button) {
                 disp_write_str_group("No notifications.", NOTIFICATION_NUM_ID);
                 disp_end_group();
             } else {
-                disp_write_str_group("  ", NOTIFICATION_NUM_ID);
                 disp_write_str_group(itoa(bt_amt_notifications(), buffer, 10), NOTIFICATION_NUM_ID);
                 disp_write_str_group(" notification", NOTIFICATION_NUM_ID);
                 if (bt_amt_notifications() > 1)
                     disp_write_str_group("s", NOTIFICATION_NUM_ID);
-                disp_write_str_group(".   ", NOTIFICATION_NUM_ID);
+                disp_write_str_group(".", NOTIFICATION_NUM_ID);
                 disp_end_group();
             }
             disp_set_font(FONT_12PT);
             disp_set_pos(0, menuTextY[4]);
-            disp_write_str("< Graph");
+            disp_write_str("< graph");
             uint8_t x1;
             uint8_t w;
             uint8_t y1;
             uint8_t h;
-            disp_get_text_bounds("View >", 0, 0, &x1, &y1, &w, &h);
+            disp_get_text_bounds("view >", 0, 0, &x1, &y1, &w, &h);
             disp_set_pos(DISP_WIDTH-w-1, menuTextY[4]);
-            disp_write_str("View >");
+            disp_write_str("view >");
             rewriteMenu = 0;
         }
     }
@@ -150,7 +149,9 @@ static void viewNotifications(uint8_t button) {
         disp_fill_rect(0, DISP_HEADER_HEIGHT, DISP_WIDTH, DISP_HEIGHT, DISP_PIXEL_BLACK);
         startup = 0;
     }
-    if (button == CLR_BUTTON) {
+    if (button == VIEW_BUTTON) {
+        updateMainDisplay(0);
+    } else if (bt_amt_notifications() && button == CLR_BUTTON) {
         bt_clear_amt_notifications();
         updateMainDisplay(0);
     } else {
@@ -163,16 +164,18 @@ static void viewNotifications(uint8_t button) {
             disp_set_pos(0, menuTextY[1]);
             disp_write_str_group(bt_get_notification_2(), NOTIFICATION_2_ID);
             disp_end_group();
+            disp_set_pos(0, menuTextY[4]);
+            disp_write_str("< clear");
             uint8_t x1;
             uint8_t w;
             uint8_t y1;
             uint8_t h;
-            disp_get_text_bounds("clear >", 0, 0, &x1, &y1, &w, &h);
+            disp_get_text_bounds("back >", 0, 0, &x1, &y1, &w, &h);
             disp_set_pos(DISP_WIDTH-w-1, menuTextY[4]);
-            disp_write_str("clear >");
+            disp_write_str("back >");
         } else {
             disp_set_pos(0, menuTextY[0]);
-            disp_write_str_group(" No notifications.   ", NOTIFICATION_1_ID);
+            disp_write_str_group("No notifications.", NOTIFICATION_1_ID);
             disp_end_group();
             disp_remove_str_group(NOTIFICATION_2_ID);
             uint8_t x1;
@@ -201,7 +204,7 @@ static void showGraphView(uint8_t button) {
 
         if (graph_length()==0) {
             disp_set_pos(0, menuTextY[0]);
-            disp_write_str_group(" No Data.   ", DATA_TOP_ID);
+            disp_write_str_group("No Data.", DATA_TOP_ID);
             disp_end_group();
             disp_remove_str_group(DATA_BOTTOM_ID);
             disp_remove_str_group(GLUCOSE_VAL_GRAPH_ID);
@@ -226,12 +229,12 @@ static void showGraphView(uint8_t button) {
             uint8_t w1, w2;
             uint8_t y1;
             uint8_t h;
-            disp_get_text_bounds(buffer, 0, 0, &x1, &y1, &w1, &h);
-            disp_get_text_bounds("mg/dL    ", 0, 0, &x2, &y1, &w2, &h);
-            disp_set_pos(DISP_WIDTH-w1-w2-x1-x2-1, menuTextY[3]);
             ftoa(buffer, lastGlucoseVal, 1);
-			disp_write_str_group(buffer, GLUCOSE_VAL_GRAPH_ID);
-            disp_write_str_group("mg/dL    ", GLUCOSE_VAL_GRAPH_ID);
+            disp_get_text_bounds(buffer, 0, 0, &x1, &y1, &w1, &h);
+            disp_get_text_bounds("mg/dL", 0, 0, &x2, &y1, &w2, &h);
+            disp_set_pos(DISP_WIDTH-w1-w2-x1-x2-1, menuTextY[3]);
+            disp_write_str_group(buffer, GLUCOSE_VAL_GRAPH_ID);
+            disp_write_str_group("mg/dL", GLUCOSE_VAL_GRAPH_ID);
             disp_end_group();
         }
 
@@ -263,7 +266,6 @@ static void updateDateDisplay(void) {
     disp_write_str_group(itoa(time.month, buffer, 10), DATE_ID);
     disp_write_str_group("/", DATE_ID);
     disp_write_str_group(itoa(time.day, buffer, 10), DATE_ID);
-    disp_write_str_group("  ", DATE_ID);
     disp_end_group();
 }
 
@@ -314,11 +316,11 @@ static void updateTimeDisplay(void) {
     rtc_get_time(&time);
 
     uint8_t hour12 = time.hour;
-    uint8_t AMPM = 0;
-    if (hour12 > 12) {
-        AMPM = 1;
-        hour12 -= 12;
-    }
+    uint8_t AMPM = time.pm;
+    // if (hour12 > 12) {
+    //     AMPM = 1;
+    //     hour12 -= 12;
+    // }
     disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_BLACK);
     if (rewriteTime || lastHourDisplayed != hour12) {
         disp_set_font(FONT_12PT);
@@ -364,14 +366,14 @@ static void updateTimeDisplay(void) {
             disp_set_color(DISP_PIXEL_GREY, DISP_PIXEL_BLACK);
         disp_set_font(FONT_9PT);
         disp_set_pos(0, menuTextY[1]);
-        disp_write_str("AM");
+        disp_write_str(" AM");
         if (AMPM) {
             disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_BLACK);
         } else {
             disp_set_color(DISP_PIXEL_GREY, DISP_PIXEL_BLACK);
         }
         disp_set_pos(0.23*DISP_WIDTH, menuTextY[1]);
-        disp_write_str("PM");
+        disp_write_str(" PM");
         disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_BLACK);
     }
     lastHourDisplayed = hour12;

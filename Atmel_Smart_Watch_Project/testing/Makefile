@@ -16,10 +16,11 @@ GCC_FLAGS := \
 
 FILE_LIST := \
 ${CUR_DIR}/console_test_main.c \
+${SRC_DIR}/smartwatch/measurement_controller.c \
+${SRC_DIR}/smartwatch/bluetooth_driver.c \
 ${SRC_DIR}/smartwatch/display_manager.c \
 ${SRC_DIR}/smartwatch/display_driver/display_driver.c \
 ${SRC_DIR}/smartwatch/display_driver/displays/default/console_display.c \
-${SRC_DIR}/smartwatch/display_driver/GFXfont/gfxfont.h \
 ${SRC_DIR}/smartwatch/display_driver/grapher/grapher.c \
 ${SRC_DIR}/smartwatch/display_driver/grapher/util.c \
 

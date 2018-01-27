@@ -35,6 +35,7 @@
 // e.g. compiled with flag: -D CONSOLE_VERSION=<anything>
 #else
     #include <stdint.h>
+    #include "smartwatch/bluetooth_driver.h"
     typedef uint8_t bool;
     struct rtc_calendar_time {
         uint8_t  second;
@@ -60,7 +61,9 @@
         enum port_pin_pull input_pull;
         bool powersave;
     };
+    #include "smartwatch/measurement_controller.h"
     #include "smartwatch/display_manager.h"
+    #include "smartwatch/date_calc.h"
     #define port_get_config_defaults(A)
     #define port_pin_set_config(A,B)
     #define port_pin_set_output_level(A,B)
@@ -70,24 +73,42 @@
     #define BUTTON_R_VAL 2
     #define true 1
     #define false 0
-    static inline uint8_t is_new_measurement() {return 0;}
-    static inline uint8_t get_measurement() {return 0;}
-    static inline uint8_t bt_amt_notifications() {return 2;}
-    static inline uint8_t bt_connection_state() {return 1;}
-    static inline void bt_clear_amt_notifications() {}
-    static inline char* bt_get_notification_1() {return "1";}
-    static inline char* bt_get_notification_2() {return "2";}
+    static struct rtc_calendar_time rtc_instance = {
+        22,
+        22,
+        12,
+        1,
+        27,
+        1,
+        2018
+    };
     static inline void rtc_get_time(struct rtc_calendar_time *time) {
-        time->second = 23;
-        time->minute = 6;
-        time->hour = 8;
-        time->pm = 1;
-        time->day = 7;
-        time->month = 12;
-        time->year = 2017;
+        time->second = rtc_instance.second;
+        time->minute = rtc_instance.minute;
+        time->hour = rtc_instance.hour;
+        time->pm = rtc_instance.pm;
+        time->day = rtc_instance.day;
+        time->month = rtc_instance.month;
+        time->year = rtc_instance.year;
     }
+    static inline void rtc_update_time(struct rtc_calendar_time *time) {
+        rtc_instance.second = time->second;
+        rtc_instance.minute = time->minute;
+        rtc_instance.hour = time->hour;
+        rtc_instance.pm = time->pm;
+        rtc_instance.day = time->day;
+        rtc_instance.month = time->month;
+        rtc_instance.year = time->year;
+    }
+    static inline void request_screen_on(void) {}
+    static inline void kalman_setT(float val) {}
+    static inline void kalman_CGM(float z, float R, unsigned char sensorNum, float x_result[6]) {}
+    static inline void set_pulse_timeout(uint32_t val) {}
+    static inline bool uart_tx(uint8_t *buffer, uint8_t buffer_len) {}
+    static inline void BLEsetup(void) {}
+    static const char* day_str[7] = {"Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Tue"};
     static inline char* calendar_day_str(char* str, struct rtc_calendar_time *time) {
-        str = "Thu";
+        str = day_str[(int)date_to_day_number(time->year, time->month, time->day)%7];
         return str;
     }
 #endif

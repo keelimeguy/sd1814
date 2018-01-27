@@ -13,16 +13,22 @@ int main (int argc, char *argv[]) {
     }
 
     display_manager_init();
-    int button = 0;
+    int button = GRAPH_BUTTON;
 
-    add_to_graph(repeat);
+    bt_set_notification_1("test");
+    display_ui_task(0);
+    disp_end_write();
+    display_ui_task(VIEW_BUTTON);
+    disp_end_write();
+    display_ui_task(CLR_BUTTON);
+    disp_end_write();
     // Negative repeat will loop forever
     while (repeat > 0) {
         display_ui_task(button);
         disp_end_write();
         button = GRAPH_BUTTON;
         if (repeat > 0) repeat--;
-        add_to_graph(repeat);
+        take_measurement();
     }
     return 0;
 }

@@ -54,14 +54,10 @@ void bt_task(void) {
             rtc_update_time(&time);
             request_screen_on();
         } else if (rx_buffer[cur_rindx][0] == '1') {
-            num_notifications|=1;
-            memcpy(notificationLine1, &rx_buffer[cur_rindx][1], BT_MAX_MSG_LENGTH - 1);
-            notificationLine1[BT_MAX_MSG_LENGTH - 1] = '\0';
+            bt_set_notification_1(&rx_buffer[cur_rindx][1]);
             request_screen_on();
         } else if (rx_buffer[cur_rindx][0] == '2') {
-            num_notifications|=2;
-            memcpy(notificationLine2, &rx_buffer[cur_rindx][1], BT_MAX_MSG_LENGTH - 1);
-            notificationLine2[BT_MAX_MSG_LENGTH - 1] = '\0';
+            bt_set_notification_2(&rx_buffer[cur_rindx][1]);
             request_screen_on();
         }
 
@@ -116,6 +112,18 @@ char* bt_get_notification_1(void) {
 
 char* bt_get_notification_2(void) {
     return notificationLine2;
+}
+
+void bt_set_notification_1(char* str) {
+    num_notifications|=1;
+    memcpy(notificationLine1, str, BT_MAX_MSG_LENGTH - 1);
+    notificationLine1[BT_MAX_MSG_LENGTH - 1] = '\0';
+}
+
+void bt_set_notification_2(char* str) {
+    num_notifications|=2;
+    memcpy(notificationLine2, str, BT_MAX_MSG_LENGTH - 1);
+    notificationLine2[BT_MAX_MSG_LENGTH - 1] = '\0';
 }
 
 uint8_t bt_connection_state(void) {
