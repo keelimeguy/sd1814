@@ -1,3 +1,6 @@
+#ifndef FONT_Tiny3x3a2pt7b_H
+#define FONT_Tiny3x3a2pt7b_H
+
 /**
 ** The FontStruction “Tiny3x3a”
 ** (https://fontstruct.com/fontstructions/show/670512) by “Michaelangel007” is
@@ -128,3 +131,4 @@ const GFXfont Tiny3x3a2pt7b PROGMEM = {
   0x20, 0x7E, 4 };
 
 // Approx. 814 bytes
+#endif

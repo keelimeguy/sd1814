@@ -14,14 +14,21 @@ int main (int argc, char *argv[]) {
 
     display_manager_init();
     int button = GRAPH_BUTTON;
-
+    struct rtc_calendar_time *time;
     bt_set_notification_1("test");
+
     display_ui_task(0);
     disp_end_write();
+    rtc_next_time();
+
     display_ui_task(VIEW_BUTTON);
     disp_end_write();
+    rtc_next_time();
+
     display_ui_task(CLR_BUTTON);
     disp_end_write();
+    rtc_next_time();
+
     // Negative repeat will loop forever
     while (repeat > 0) {
         display_ui_task(button);
@@ -29,6 +36,7 @@ int main (int argc, char *argv[]) {
         button = GRAPH_BUTTON;
         if (repeat > 0) repeat--;
         take_measurement();
+        rtc_next_time();
     }
     return 0;
 }

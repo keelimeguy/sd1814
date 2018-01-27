@@ -265,7 +265,11 @@ void disp_write_str_group(char *str, uint8_t replace_last) {
             } else if (lasty[replace_last-1]+lastheight[replace_last-1] < y+h) {
                 lastheight[replace_last-1] = y-lasty[replace_last-1]+h;
             }
-            lastwidth[replace_last-1] += w;
+            if (x > lastx[replace_last-1]) {
+                lastwidth[replace_last-1] = x - lastx[replace_last-1] + w;
+            } else {
+                lastwidth[replace_last-1] += w;
+            }
         } else {
             lastx[replace_last-1] = x;
             lasty[replace_last-1] = y;

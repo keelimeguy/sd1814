@@ -15,8 +15,8 @@
 #define DISP_STATE_GRAPH         1
 #define DISP_STATE_NOTIFICATION  2
 
-#define DISP_HEADER_HEIGHT   24
-#define DISP_DIVISIONS       4
+#define DISP_HEADER_HEIGHT   14
+#define DISP_DIVISIONS       5
 #define DISP_DIVISION_HEIGHT (DISP_HEIGHT-DISP_HEADER_HEIGHT)/DISP_DIVISIONS
 
  // IDs must be > 0 and <= MAX_WRITE_ID defined in display_driver.h
@@ -31,6 +31,7 @@
 #define GLUCOSE_VAL_GRAPH_ID 9
 #define DATA_TOP_ID          10
 #define DATA_BOTTOM_ID       11
+#define AMPM_ID              12
 
 void display_manager_init(void);
 void display_ui_task(uint8_t button);

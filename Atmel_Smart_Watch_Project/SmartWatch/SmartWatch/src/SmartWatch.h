@@ -34,6 +34,7 @@
 // The following is specifically for console testing code,
 // e.g. compiled with flag: -D CONSOLE_VERSION=<anything>
 #else
+    #include <stdio.h>
     #include <stdint.h>
     #include "smartwatch/bluetooth_driver.h"
     typedef uint8_t bool;
@@ -73,33 +74,11 @@
     #define BUTTON_R_VAL 2
     #define true 1
     #define false 0
-    static struct rtc_calendar_time rtc_instance = {
-        22,
-        22,
-        12,
-        1,
-        27,
-        1,
-        2018
-    };
-    static inline void rtc_get_time(struct rtc_calendar_time *time) {
-        time->second = rtc_instance.second;
-        time->minute = rtc_instance.minute;
-        time->hour = rtc_instance.hour;
-        time->pm = rtc_instance.pm;
-        time->day = rtc_instance.day;
-        time->month = rtc_instance.month;
-        time->year = rtc_instance.year;
-    }
-    static inline void rtc_update_time(struct rtc_calendar_time *time) {
-        rtc_instance.second = time->second;
-        rtc_instance.minute = time->minute;
-        rtc_instance.hour = time->hour;
-        rtc_instance.pm = time->pm;
-        rtc_instance.day = time->day;
-        rtc_instance.month = time->month;
-        rtc_instance.year = time->year;
-    }
+
+    void rtc_get_time(struct rtc_calendar_time *time);
+    void rtc_update_time(struct rtc_calendar_time *time);
+    void rtc_next_time();
+
     static inline void request_screen_on(void) {}
     static inline void kalman_setT(float val) {}
     static inline void kalman_CGM(float z, float R, unsigned char sensorNum, float x_result[6]) {}

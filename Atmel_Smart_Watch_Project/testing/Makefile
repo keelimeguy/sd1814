@@ -16,6 +16,7 @@ GCC_FLAGS := \
 
 FILE_LIST := \
 ${CUR_DIR}/console_test_main.c \
+${SRC_DIR}/Smartwatch.c \
 ${SRC_DIR}/smartwatch/measurement_controller.c \
 ${SRC_DIR}/smartwatch/bluetooth_driver.c \
 ${SRC_DIR}/smartwatch/display_manager.c \
