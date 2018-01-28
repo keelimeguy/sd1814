@@ -18,7 +18,7 @@ int main(void) {
     // TODO: future improvement may be running components as separate processes in an RTOS
     for(;;) {
         while (is_active()) {
-            aci_loop(); // TODO: implement interrupt-driven bluetooth
+            aci_loop();
             if (is_reading_timeout()) {
                 take_measurement();
             }

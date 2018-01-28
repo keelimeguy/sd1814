@@ -71,7 +71,7 @@
 #include "lib_aci/services.h"
 
 #define BLE_DEBUG false
-#define BLE_RDY_EIC 2
+#define BLE_RDY_EIC SMARTWATCH_EIC_BLE
 
 void __ble_assert(const char *file, uint16_t line);
 void BLEsetup(void);

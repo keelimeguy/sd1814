@@ -17,9 +17,9 @@
 
 #define DISP_HEADER_HEIGHT   14
 #define DISP_DIVISIONS       5
-#define DISP_DIVISION_HEIGHT (DISP_HEIGHT-DISP_HEADER_HEIGHT)/DISP_DIVISIONS
+#define DISP_DIVISION_HEIGHT ((DISP_HEIGHT-DISP_HEADER_HEIGHT)/DISP_DIVISIONS)
 
- // IDs must be > 0 and <= MAX_WRITE_ID defined in display_driver.h
+// IDs must be > 0 and <= MAX_WRITE_ID defined in display_driver.h
 #define NOTIFICATION_NUM_ID  1
 #define NOTIFICATION_1_ID    2
 #define NOTIFICATION_2_ID    3

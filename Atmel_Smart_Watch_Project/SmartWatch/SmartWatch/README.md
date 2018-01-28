@@ -35,6 +35,12 @@
     - :alien: sleep()
     - :alien: wakeup()
 
+- **smartwatch/battery_reader.c**
+    - **_battery\_reader.h_**
+    - :x: battery_reader_init()
+    - :x: battery_reader_task()
+    - :x: get_battery_level()
+
 - **smartwatch/bluetooth_driver.c**
     - **_bluetooth\_driver.h_**
     - :raised_hand: bluetooth_driver_init()
@@ -59,6 +65,7 @@
     - :alien: button_listener_callback_R()
     - :alien: is_button_interrupt_soft()
     - :alien: is_button_interrupt()
+    - :alien: get_buttons_soft()
     - :alien: get_buttons()
 
 - **smartwatch/clock_driver.c**

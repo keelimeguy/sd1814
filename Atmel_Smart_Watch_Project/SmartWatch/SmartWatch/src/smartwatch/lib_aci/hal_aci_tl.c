@@ -238,7 +238,7 @@ bool m_aci_spi_transfer(hal_aci_data_t * data_to_send, hal_aci_data_t * received
   received_data->status_byte = spi_readwrite(data_to_send->buffer[byte_sent_cnt++]);
   // Send first byte, receive length from slave
   received_data->buffer[0] = spi_readwrite(data_to_send->buffer[byte_sent_cnt++]);
-  if (0 == data_to_send->buffer[0])
+  if (!data_to_send->buffer[0])
   {
     max_bytes = received_data->buffer[0];
   }

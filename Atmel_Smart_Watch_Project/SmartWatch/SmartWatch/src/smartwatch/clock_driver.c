@@ -16,6 +16,28 @@ static void rtc_alarm_callback(void);
 static void screen_timer_callback(void);
 static void pulse_timer_callback(void);
 
+// Configured assuming RTC_CALENDAR_ALARM_MASK_SEC
+static inline void next_alarm(void) {
+    alarm.time.second += READING_TIMEOUT;
+    if (alarm.time.second>=60) {
+        alarm.time.second = 0;
+        alarm.time.minute++;
+        if (alarm.time.minute>=60) {
+            alarm.time.minute = 0;
+            alarm.time.hour++;
+            if (alarm.time.hour > 11) {
+                if (alarm.time.hour == 12) {
+                    if (alarm.time.pm) {
+                        add_to_date_uchar(1, &(alarm.time.year), &(alarm.time.month), &(alarm.time.day));
+                        alarm.time.pm = !alarm.time.pm;
+                    }
+                } else
+                    alarm.time.hour = 1;
+            }
+        }
+    }
+}
+
 void clock_driver_init(void) {
     /* Initialize RTC in calendar mode. */
 
@@ -25,6 +47,7 @@ void clock_driver_init(void) {
     time.month  = RTC_MONTH_INIT;
     time.day    = RTC_DAY_INIT;
     time.hour   = RTC_HOUR_INIT;
+    time.pm     = RTC_PM_INIT;
     time.minute = RTC_MIN_INIT;
     time.second = RTC_SEC_INIT;
 
@@ -35,14 +58,14 @@ void clock_driver_init(void) {
     alarm.time.month     = time.month;
     alarm.time.day       = time.day;
     alarm.time.hour      = time.hour;
+    alarm.time.pm        = time.pm;
     alarm.time.minute    = time.minute;
     alarm.time.second    = time.second;
 
-    alarm.mask = RTC_CALENDAR_ALARM_MASK_SEC;
-    alarm.time.second += READING_TIMEOUT;
-    alarm.time.second = alarm.time.second % 60;
+    alarm.mask = RTC_ALARM_UNIT_MASK;
+    next_alarm();
 
-    config_rtc_calendar.clock_24h = true;
+    // config_rtc_calendar.clock_24h = true;
     config_rtc_calendar.alarm[0].time = alarm.time;
 
     rtc_calendar_init(&rtc_instance, RTC, &config_rtc_calendar);
@@ -168,8 +191,7 @@ static void rtc_alarm_callback(void) {
     rtc_alarm_flag = 1;
 
     /* Set new alarm */
-    alarm.time.second += READING_TIMEOUT;
-    alarm.time.second = alarm.time.second % 60;
+    next_alarm();
 
     rtc_calendar_set_alarm(&rtc_instance, &alarm, RTC_CALENDAR_ALARM_0);
 }

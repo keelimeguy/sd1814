@@ -137,7 +137,7 @@
 #define DISP_PIXEL_GRAPH_OFF      DISP_PIXEL_BLACK
 
 #ifndef MAX_WRITE_ID
-    #define MAX_WRITE_ID 10
+    #define MAX_WRITE_ID 12
 #endif
 
 void disp_init(void);

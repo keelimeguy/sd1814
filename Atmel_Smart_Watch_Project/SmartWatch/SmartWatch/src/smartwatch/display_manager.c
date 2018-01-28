@@ -33,8 +33,8 @@ static float lastGlucoseVal;
 static uint8_t last_bat_x, last_ble_x, last_date_x, last_hour_x, last_min_x, last_sec_x, last_ampm_x;
 
 static char buffer[12], min_max_buffer[12];
-static uint8_t headerTextY = 8;
-static uint8_t menuTextY[7] = { 2*DISP_DIVISION_HEIGHT/3+DISP_HEADER_HEIGHT-1, 4*DISP_DIVISION_HEIGHT/3+DISP_HEADER_HEIGHT-1,
+#define headerTextY 8
+static const uint8_t menuTextY[7] = { 2*DISP_DIVISION_HEIGHT/3+DISP_HEADER_HEIGHT-1, 4*DISP_DIVISION_HEIGHT/3+DISP_HEADER_HEIGHT-1,
                                 2*DISP_DIVISION_HEIGHT+DISP_HEADER_HEIGHT-1, 8*DISP_DIVISION_HEIGHT/3+DISP_HEADER_HEIGHT-1,
                                 10*DISP_DIVISION_HEIGHT/3+DISP_HEADER_HEIGHT-1, 4*DISP_DIVISION_HEIGHT+DISP_HEADER_HEIGHT-1,
                                 14*DISP_DIVISION_HEIGHT/3+DISP_HEADER_HEIGHT-1 };
@@ -395,79 +395,55 @@ static int updateTimeDisplay(int xoff) {
     return last_hour_x;
 }
 
+#define disp_ble_s  2
+#define disp_ble_y  6
 static int updateBLEstatusDisplay(int xoff) {
     int x = xoff - 8;
-    int s = 2;
-    int y = 6;
     if (bt_connection_state() == ble_connection_displayed_state && last_ble_x == x)
-        return x-s-4;
-    if (last_ble_x >= s)
-        disp_fill_rect(last_ble_x-s, y-s-s, 2*s+1, 9, DISP_PIXEL_BLACK);
+        return x-disp_ble_s-4;
+    if (last_ble_x >= disp_ble_s)
+        disp_fill_rect(last_ble_x-disp_ble_s, disp_ble_y-2*disp_ble_s, 2*disp_ble_s+1, 9, DISP_PIXEL_BLACK);
     last_ble_x = x;
     ble_connection_displayed_state = bt_connection_state();
     uint16_t color = DISP_PIXEL_RED;
     if (ble_connection_displayed_state)
         color = DISP_PIXEL_BLUE;
-    disp_draw_line(x, y + s + s, x, y - s - s, color);
-    disp_draw_line(x - s, y + s, x + s, y - s, color);
-    disp_draw_line(x + s, y + s, x - s, y - s, color);
-    disp_draw_line(x, y + s + s, x + s, y + s, color);
-    disp_draw_line(x, y - s - s, x + s, y - s, color);
-    return x-s-4;
+    disp_draw_line(x, disp_ble_y + 2*disp_ble_s, x, disp_ble_y - 2*disp_ble_s, color);
+    disp_draw_line(x - disp_ble_s, disp_ble_y + disp_ble_s, x + disp_ble_s, disp_ble_y - disp_ble_s, color);
+    disp_draw_line(x + disp_ble_s, disp_ble_y + disp_ble_s, x - disp_ble_s, disp_ble_y - disp_ble_s, color);
+    disp_draw_line(x, disp_ble_y + 2*disp_ble_s, x + disp_ble_s, disp_ble_y + disp_ble_s, color);
+    disp_draw_line(x, disp_ble_y - 2*disp_ble_s, x + disp_ble_s, disp_ble_y - disp_ble_s, color);
+    return x-disp_ble_s-4;
 }
 
 // TODO: make battery ADC read into interrupt and nonblocking
+#define disp_bat_height  6
+#define disp_bat_length  20
+#define disp_bat_y       3
 static int displayBattery(int xoff) {
-    int result = 0;
-/*    SYSCTRL->VREF.reg |= SYSCTRL_VREF_BGOUTEN;
-//    while (ADC->STATUS.bit.SYNCBUSY == 1);
-    ADC->SAMPCTRL.bit.SAMPLEN = 0x1;
-    while (ADC->STATUS.bit.SYNCBUSY == 1);
-    ADC->INPUTCTRL.bit.MUXPOS = 0x19;         // Internal bandgap input
-//    while (ADC->STATUS.bit.SYNCBUSY == 1);
-    ADC->CTRLA.bit.ENABLE = 0x01;             // Enable ADC
-    // Start conversion
-    while (ADC->STATUS.bit.SYNCBUSY == 1);
-    ADC->SWTRIG.bit.START = 1;
-    // Clear the Data Ready flag
-    ADC->INTFLAG.bit.RESRDY = 1;
-    // Start conversion again, since The first conversion after the reference is changed must not be used.
-    while (ADC->STATUS.bit.SYNCBUSY == 1);
-    ADC->SWTRIG.bit.START = 1;
-    // Store the value
-    while ( ADC->INTFLAG.bit.RESRDY == 0 );   // Waiting for conversion to complete
-    uint32_t valueRead = ADC->RESULT.reg;
-    while (ADC->STATUS.bit.SYNCBUSY == 1);
-    ADC->CTRLA.bit.ENABLE = 0x00;             // Disable ADC
-//    while (ADC->STATUS.bit.SYNCBUSY == 1);
-    SYSCTRL->VREF.reg &= ~SYSCTRL_VREF_BGOUTEN;
-    result = (((1100L * 1024L) / valueRead) + 5L) / 10L;
-*/
-    uint8_t height = 6;
-    uint8_t length = 20;
-    uint8_t x = xoff - length - 9;
-    uint8_t y = 3;
-    if (last_bat_x>0) {
+    uint8_t x = xoff - disp_bat_length - 9;
+    if (last_bat_x > 0) {
         if (x < last_bat_x) {
-            disp_fill_rect(x+length+1, y - 1, last_bat_x-x+1, height+3, DISP_PIXEL_BLACK);
+            disp_fill_rect(x+disp_bat_length+1, y - 1, last_bat_x-x+1, disp_bat_height+3, DISP_PIXEL_BLACK);
         } else if (x > last_bat_x) {
-            disp_fill_rect(last_bat_x-1, y - 1, x-last_bat_x+1, height+3, DISP_PIXEL_BLACK);
+            disp_fill_rect(last_bat_x-1, y - 1, x-last_bat_x+1, disp_bat_height+3, DISP_PIXEL_BLACK);
         }
     }
     last_bat_x = x;
+    int battery = get_battery_level(disp_bat_length);
     uint16_t color;
-    if (result > 325) {
+    if (battery > disp_bat_length) {
         color = DISP_PIXEL_GREEN;
     } else {
         color = DISP_PIXEL_RED;
     }
-    disp_draw_line(x - 1, y, x - 1, y + height, DISP_PIXEL_WHITE); //left boarder
-    disp_draw_line(x - 1, y - 1, x + length, y - 1, DISP_PIXEL_WHITE); //top border
-    disp_draw_line(x - 1, y + height + 1, x + length, y + height + 1, DISP_PIXEL_WHITE); //bottom border
-    disp_draw_line(x + length, y - 1, x + length, y + height + 1, DISP_PIXEL_WHITE); //right border
-    disp_draw_line(x + length + 1, y + 2, x + length + 1, y + height - 2, DISP_PIXEL_WHITE); //right border
-    for (uint8_t q = 0; q < length; q++) {
-        disp_draw_line(x + q, y, x + q, y + height, color);
+    disp_draw_line(x - 1, y, x - 1, y + disp_bat_height, DISP_PIXEL_WHITE); //left boarder
+    disp_draw_line(x - 1, y - 1, x + disp_bat_length, y - 1, DISP_PIXEL_WHITE); //top border
+    disp_draw_line(x - 1, y + disp_bat_height + 1, x + disp_bat_length, y + disp_bat_height + 1, DISP_PIXEL_WHITE); //bottom border
+    disp_draw_line(x + disp_bat_length, y - 1, x + disp_bat_length, y + disp_bat_height + 1, DISP_PIXEL_WHITE); //right border
+    disp_draw_line(x + disp_bat_length + 1, y + 2, x + disp_bat_length + 1, y + disp_bat_height - 2, DISP_PIXEL_WHITE); //right border
+    for (uint8_t q = 0; q < battery; q++) {
+        disp_draw_line(x + q, y, x + q, y + disp_bat_height, color);
     }
     return x-1;
 }

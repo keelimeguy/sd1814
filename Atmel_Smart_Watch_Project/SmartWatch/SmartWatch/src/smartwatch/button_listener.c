@@ -54,6 +54,10 @@ uint8_t is_button_interrupt(void) {
     return 0;
 }
 
+uint8_t get_buttons_soft(void) {
+    return button_pressed;
+}
+
 uint8_t get_buttons(void) {
     if (button_pressed) {
         uint8_t ret = button_pressed;
