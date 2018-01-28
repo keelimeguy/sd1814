@@ -11,7 +11,7 @@
 #define DISP_ILI9163    3 // 1.8" TFT LCD
 
 #ifdef CONSOLE_VERSION
-    #include "../Smartwatch.h"
+    #include <Smartwatch.h>
 #endif
 
 #ifndef DISP_SCREEN

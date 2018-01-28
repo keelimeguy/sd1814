@@ -1,3 +1,6 @@
+/* UConn Senior Design Team 1814, January 2018
+     Using code adapted from Atmel:
+
 /**
  * \file
  *
@@ -46,7 +49,7 @@
 #ifndef CONF_EXTINT_H_INCLUDED
 #define CONF_EXTINT_H_INCLUDED
 
-/** 
+/**
  * Define which clock type is used to clock EIC peripheral:
  *     - EXTINT_CLK_GCLK
  *     - EXTINT_CLK_ULP32K
@@ -54,12 +57,18 @@
  * EXTINT_CLK_ULP32K is available for SAM L21/C21.
  */
 #define EXTINT_CLOCK_SELECTION   EXTINT_CLK_GCLK
- 
+
 /**
  * Define which GCLK source is used when selecting EXTINT_CLK_GCLK type.
  */
 #if (EXTINT_CLOCK_SELECTION == EXTINT_CLK_GCLK)
 #  define EXTINT_CLOCK_SOURCE      GCLK_GENERATOR_0
 #endif
+
+
+#define SMARTWATCH_EIC_L_BUTTON 0
+#define SMARTWATCH_EIC_R_BUTTON 1
+#define SMARTWATCH_EIC_BLE 2
+
 
 #endif
