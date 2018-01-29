@@ -1,4 +1,4 @@
-/* UConn Senior Design Team 1814, November 2017
+/* UConn Senior Design Team 1814, January 2018
 */
 
 #include "bluetooth_driver.h"
@@ -40,6 +40,9 @@ void bt_task(void) {
     if (rx_buffer_len) {
         rx_buffer_len--;
 
+        // Commands copied over from 2016-17 project
+
+        // Set date and time
         if (rx_buffer[cur_rindx][0] == 'D') {
             // expect date/time string- example: DYYYY MM DD HH MM SS (D[Year] [Month] [Day] [Hr] [Min] [Sec])
             struct rtc_calendar_time time;
@@ -53,39 +56,55 @@ void bt_task(void) {
             time.second = strtol(ptr,&ptr,10);
             rtc_update_time(&time);
             request_screen_on();
-        } else if (rx_buffer[cur_rindx][0] == '1') {
+        }
+
+        // Set notification 1
+        else if (rx_buffer[cur_rindx][0] == '1') {
             bt_set_notification_1(&rx_buffer[cur_rindx][1]);
             request_screen_on();
-        } else if (rx_buffer[cur_rindx][0] == '2') {
+        }
+
+        // Set notification 2
+        else if (rx_buffer[cur_rindx][0] == '2') {
             bt_set_notification_2(&rx_buffer[cur_rindx][1]);
             request_screen_on();
         }
 
-        // Not sure what the following commands specifically do.. copied over from 2016-17 project
+        // Perform kalman calculation
         else if (rx_buffer[cur_rindx][0] == 'C') {
             memcpy(paramData, &rx_buffer[cur_rindx][1], BT_MAX_MSG_LENGTH - 1);
             char *ptr;
             do_kalman_bt_cmd(strtol(paramData, &ptr, 10));
             request_screen_on();
-        } else if (rx_buffer[cur_rindx][0] == 'P') {
+        }
+
+        // Set measurement pulse timeout in seconds
+        else if (rx_buffer[cur_rindx][0] == 'P') {
             memcpy(paramData, &rx_buffer[cur_rindx][1], BT_MAX_MSG_LENGTH - 1);
             char *ptr;
-            measure_set_pulse_one(1000*(uint32_t)strtol(paramData, &ptr, 10));
-            measure_set_pulse_two(1000*(uint32_t)strtol(ptr, &ptr, 10));
-            measure_set_pulse_three(1000*(uint32_t)strtol(ptr, &ptr, 10));
-            request_screen_on();
-        } else if (rx_buffer[cur_rindx][0] == 'R') {
-            memcpy(paramData, &rx_buffer[cur_rindx][1], BT_MAX_MSG_LENGTH - 1);
-            char *ptr;
-            long val = strtol(paramData, &ptr, 10);
-            kalman_setT(val/60);
-            set_pulse_timeout(val*60*1000);
+            measure_set_pulse_one((uint32_t)strtol(paramData, &ptr, 10));
+            measure_set_pulse_two((uint32_t)strtol(ptr, &ptr, 10));
+            measure_set_pulse_three((uint32_t)strtol(ptr, &ptr, 10));
             request_screen_on();
         }
 
-        if (cur_rindx == cur_rxindx) {
-            //start_read();
+        // Set measurement reading timeout in seconds
+        else if (rx_buffer[cur_rindx][0] == 'R') {
+            memcpy(paramData, &rx_buffer[cur_rindx][1], BT_MAX_MSG_LENGTH - 1);
+            char *ptr;
+            long val = strtol(paramData, &ptr, 10);
+
+            // TODO: Verify these changes with app interface
+            kalman_setT(val/360000);
+            measure_set_reading_timeout(val);
+            // kalman_setT(val/60);
+            // measure_set_reading_timeout(val*60*1000);
+            request_screen_on();
         }
+
+        // if (cur_rindx == cur_rxindx) {
+        //     start_read();
+        // }
         if (++cur_rindx >= BT_MAX_BUFFER_LENGTH) cur_rindx=0;
     }
 }

@@ -1,4 +1,4 @@
-/* UConn Senior Design Team 1814, November 2017
+/* UConn Senior Design Team 1814, January 2018
 */
 
 #include "measurement_controller.h"
@@ -6,87 +6,107 @@
 #define BG_CAL 160
 
 static float x_result[6] = {125,125,6,0,70,1000};
-static volatile uint8_t new_measurement;
-static volatile uint8_t measure_busy;
+static volatile uint8_t new_measurement, buttonFlag;
+static volatile uint8_t measure_busy, pulseState;
 static volatile float glucose;
-static uint32_t pulseOne, pulseTwo, pulseThree;
+static uint32_t readingTimeout, pulseOne, pulseTwo, pulseThree;
+static uint16_t freq;
 
 void measurement_controller_init(void) {
     new_measurement = 0;
-    glucose = 0;
-	pulseOne = 1000;
-	pulseTwo = 1000;
-	pulseThree = 6000;
+    buttonFlag = 0;
+    measure_busy = 0;
+    pulseState = 0;
+    glucose = 125;
+    pulseOne = 1;    // 1 s
+    pulseTwo = 1;    // 1 s
+    pulseThree = 6;  // 6 s
+    freq = 3000;
+
+    // Time until next reading
+    readingTimeout  = 10; // 10 s
 }
 
-void take_measurement(void) {
-    new_measurement = 1;
-    glucose++;
+void take_measurement(uint8_t button) {
+    buttonFlag = button;
     measure_busy = 1;
 }
 
+uint8_t is_measure_busy(void) {
+    return measure_busy;
+}
+
+void measure_set_reading_timeout(uint32_t timeout) {
+    readingTimeout = timeout;
+}
+
+uint32_t measure_get_reading_timeout(void) {
+    return readingTimeout;
+}
+
 void measure_set_pulse_one(uint32_t pulse) {
-	pulseOne = pulse;
+    pulseOne = pulse;
 }
 
 void measure_set_pulse_two(uint32_t pulse) {
-	pulseTwo = pulse;
+    pulseTwo = pulse;
 }
 
 void measure_set_pulse_three(uint32_t pulse) {
-	pulseThree = pulse;
+    pulseThree = pulse;
 }
 
 void measurement_task(void) {
     if (measure_busy) {
-        // Copied from 2016-17 code, not sure about it yet
+        // For testing
+        glucose++;
+        new_measurement = 1;
+        measure_busy = 0;
+        return;
 
-        // if (((millis() > pulseTimer + (unsigned long)pulseTimeout) && !pulseFlag) || (buttonFlag == 1 && !pulseFlag)) {
-        //     pulseFlag = 1;
-        //     pulseTimer = millis();
-        //     // turn LED array on
-        //     digitalWrite(6, HIGH);
-        // }
-
-        // if (((pulseFlag == 1)&& millis() > pulseTimer + (unsigned long)pulseOne)) {
-        //     // if first pulse is over
-        //     digitalWrite(6, LOW);
-        //     // turn LED array off
-        //     pulseFlag = 2;
-        //     pulseTimer = millis();
-        // }
-
-        // if (((pulseFlag == 2)&& millis() > pulseTimer + (unsigned long)pulseTwo)) {
-        //     // if off pulse is over
-        //     digitalWrite(6, HIGH);
-        //     // turn LED array on
-        //     pulseFlag = 3;
-        //     pulseTimer = millis();
-        // }
-
-        // if (pulseFlag == 3) {
-        //     // if during third pulse
-        //     freq = 0.8*(0.5/(pulseIn(5,HIGH)*pow(10,-6))) + 0.2*freq; // weigh new measurements more than previous
-
-        //     if (millis() > pulseTimer + (unsigned long)pulseThree) {
-        //         // if third pulse is over
-        //         digitalWrite(6, LOW);
-        //         // turn LED array off
-        //         pulseFlag = 0;
-        //         if(buttonFlag) {
-        //             SerialMonitorInterface.println("Measuring...");
-        //             // calculate bg without kalman algorithm
-        //             float Gs = x_result[4]*freq + x_result[5]; // rough estimate of Gs
-        //             float Gb = x_result[3]*(1/x_result[2]) + Gs;
-        //             updateGlucoseDisplay(Gb); // update display
+        // // TODO: Finish Implementation
+        // switch (pulseState) {
+        //     case 0:
+        //         digitalWrite(6, HIGH);
+        //         set_pulse_timeout(pulseOne);
+        //         pulseState = 1;
+        //         break;
+        //     case 1:
+        //         if (is_pulse_timeout()) {
+        //             digitalWrite(6, LOW);
+        //             set_pulse_timeout(pulseTwo);
+        //             pulseState = 2;
         //         }
-        //         else
-        //             doKalman(freq, 1);
+        //         break;
+        //     case 2:
+        //         if (is_pulse_timeout()) {
+        //             digitalWrite(6, HIGH);
+        //             set_pulse_timeout(pulseThree);
+        //             pulseState = 3;
+        //         }
+        //         break;
+        //     case 3:
+        //         freq = 0.8*(0.5/(pulseIn(5,HIGH)*pow(10,-6))) + 0.2*freq; // weigh new measurements more than previous
 
-        //         buttonFlag = 0;
-        //         sendFlag = 1;
-        //         pulseTimer = millis();
-        //     }
+        //         if (is_pulse_timeout()) {
+        //             digitalWrite(6, LOW);
+        //             pulseState = 0;
+
+        //             if (buttonFlag) {
+        //                 // Calculate bg without kalman algorithm
+        //                 float Gs = x_result[4]*freq + x_result[5]; // rough estimate of Gs
+        //                 glucose = x_result[3]*(1/x_result[2]) + Gs;
+        //             } else {
+        //                 do_kalman(freq, 1);
+        //                 glucose = x_result[1];
+        //             }
+
+        //             measure_busy = 0;
+        //             new_measurement = 1;
+        //         }
+        //         break;
+        //     default:
+        //         pulseState = 0;
         // }
     }
 }

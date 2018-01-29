@@ -34,27 +34,30 @@
     }
 
     void smartwatch_task(void) {
-        uint8_t buttons = get_buttons(); // Returns identifier to determine which buttons were pressed
-        display_ui_task(buttons);
+        measurement_task();
+        if (is_screen_active()) {
+            uint8_t buttons = get_buttons(); // Returns identifier to determine which buttons were pressed
+            display_ui_task(buttons);
 
-        // We need to set a timeout for screen if it was freshly activated
-        if (screen_request || buttons) { // i.e. by explicit request or button press
-            screen_request = 0;
+            // We need to set a timeout for screen if it was freshly activated
+            if (screen_request || buttons) { // i.e. by explicit request or button press
+                screen_request = 0;
 
-            // Wakeup screen if needed
-            if (screen_sleep) {
-                screen_sleep = 0;
-                disp_sleep_disable();
+                // Wakeup screen if needed
+                if (screen_sleep) {
+                    screen_sleep = 0;
+                    disp_sleep_disable();
+                }
+
+                set_screen_timeout(SCREEN_TIMEOUT);
             }
-
-            set_screen_timeout(READING_TIMEOUT);
         }
     }
 
     // If this is true, system will stay awake
     uint8_t is_active(void) {
         // We stay awake when bluetooth, screen, or measurement is active
-        return is_bt_active_soft() || is_screen_active_soft() || is_reading_timeout_soft();
+        return is_bt_active_soft() || is_screen_active_soft() || is_measure_busy();
     }
 
     // If this is true, screen will be rendered
@@ -102,7 +105,7 @@
     struct rtc_calendar_time rtc_instance = {
         58,
         59,
-        12,
+        11,
         1,
         31,
         12,

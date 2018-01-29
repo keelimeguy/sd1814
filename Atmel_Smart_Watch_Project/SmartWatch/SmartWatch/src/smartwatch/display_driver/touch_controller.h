@@ -1,3 +1,6 @@
+/* UConn Senior Design Team 1814, November 2017
+*/
+
 #ifndef TOUCH_CONTROLLER_H
 #define TOUCH_CONTROLLER_H
 

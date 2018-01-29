@@ -1,4 +1,4 @@
-/* UConn Senior Design Team 1814, November 2017
+/* UConn Senior Design Team 1814, January 2018
 */
 
 #include "clock_driver.h"
@@ -65,7 +65,7 @@ void clock_driver_init(void) {
     alarm.mask = RTC_ALARM_UNIT_MASK;
     next_alarm();
 
-    // config_rtc_calendar.clock_24h = true;
+    config_rtc_calendar.clock_24h = false;
     config_rtc_calendar.alarm[0].time = alarm.time;
 
     rtc_calendar_init(&rtc_instance, RTC, &config_rtc_calendar);
@@ -73,9 +73,9 @@ void clock_driver_init(void) {
     /* Set current time. */
     rtc_calendar_set_time(&rtc_instance, &time);
 
-    rtc_calendar_enable(&rtc_instance);
-
     rtc_calendar_register_callback(&rtc_instance, rtc_alarm_callback, RTC_CALENDAR_CALLBACK_ALARM_0);
+
+    rtc_calendar_enable(&rtc_instance);
     rtc_calendar_enable_callback(&rtc_instance, RTC_CALENDAR_CALLBACK_ALARM_0);
 
     rtc_alarm_flag = 0;
@@ -87,11 +87,11 @@ void clock_driver_init(void) {
     tc_get_config_defaults(&config_tc);
 
     // Assuming GCLK generator 0 source is 8MHz:
-    //  256 prescaler at 31250 compare match => 8e6/31250*256 = 1MHz
+    //  256 prescaler at 31250 compare match => 8e6/31250*256 = 1Hz
+    config_tc.counter_size = TC_COUNTER_SIZE_16BIT;
+    config_tc.wave_generation = TC_WAVE_GENERATION_MATCH_FREQ;
     config_tc.clock_prescaler = TC_CLOCK_PRESCALER_DIV256;
     config_tc.counter_16_bit.compare_capture_channel[TC_COMPARE_CAPTURE_CHANNEL_0] = 0x7a11; // 31250-1
-    config_tc.wave_generation = TC_WAVE_GENERATION_MATCH_FREQ;
-    config_tc.enable_capture_on_channel[TC_COMPARE_CAPTURE_CHANNEL_0] = true;
 
     tc_init(&screen_timer, TC0, &config_tc);
 
@@ -152,6 +152,7 @@ uint8_t is_screen_timeout(void) {
 }
 
 void set_screen_timeout(uint32_t val) {
+    tc_stop_counter(&screen_timer);
     screen_timeout = val;
     tc_set_count_value(&screen_timer, 0);
     tc_start_counter(&screen_timer);
@@ -166,29 +167,33 @@ static void screen_timer_callback(void) {
 }
 
 uint8_t is_pulse_timeout_soft(void) {
-	return pulse_timeout==0;
+    return pulse_timeout==0;
 }
 
 uint8_t is_pulse_timeout(void) {
-	return pulse_timeout==0;
+    return pulse_timeout==0;
 }
 
 void set_pulse_timeout(uint32_t val) {
-	pulse_timeout = val;
-	tc_set_count_value(&pulse_timer, 0);
-	tc_start_counter(&pulse_timer);
+    tc_stop_counter(&pulse_timer);
+    pulse_timeout = val;
+    tc_set_count_value(&pulse_timer, 0);
+    tc_start_counter(&pulse_timer);
 }
 
 static void pulse_timer_callback(void) {
-	if (pulse_timeout>0) {
-		pulse_timeout--;
-	} else {
-		tc_stop_counter(&pulse_timer);
-	}
+    if (pulse_timeout>0) {
+        pulse_timeout--;
+    } else {
+        tc_stop_counter(&pulse_timer);
+    }
 }
 
 static void rtc_alarm_callback(void) {
     rtc_alarm_flag = 1;
+
+    /* Trigger measurement */
+    take_measurement(0);
 
     /* Set new alarm */
     next_alarm();

@@ -1,4 +1,4 @@
-/* UConn Senior Design Team 1814, November 2017
+/* UConn Senior Design Team 1814, January 2018
 */
 
 #include "display_manager.h"
@@ -213,6 +213,9 @@ static void showGraphView(uint8_t button) {
     if (button == GRAPH_BUTTON) {
         updateMainDisplay(0);
     } else {
+        if (button == VIEW_BUTTON) {
+            take_measurement(1);
+        }
         disp_set_font(FONT_MEDIUM);
         disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_BLACK);
 
@@ -255,6 +258,14 @@ static void showGraphView(uint8_t button) {
         disp_set_font(FONT_SMALL);
         disp_set_pos(0, menuTextY[6]);
         disp_write_str("< Back");
+
+        uint8_t x1;
+        uint8_t w;
+        uint8_t y1;
+        uint8_t h;
+        disp_get_text_bounds("Measure >", 0, 0, &x1, &y1, &w, &h);
+        disp_set_pos(DISP_WIDTH-w-1, menuTextY[6]);
+        disp_write_str("Measure >");
     }
 }
 
@@ -347,7 +358,11 @@ static int updateTimeDisplay(int xoff) {
         uint8_t x0, y, w0, h;
         if (time.pm) disp_get_text_bounds("PM", 0, 0, &x0, &y ,&w0, &h);
         else disp_get_text_bounds("AM", 0, 0, &x0, &y ,&w0, &h);
-        last_ampm_x = xoff - x0 - w0 - 2;
+        uint8_t t = xoff - x0 - w0 - 2;
+        if (t != last_ampm_x) {
+            last_ampm_x = t;
+            rewriteTime = 1;
+        }
         disp_set_pos(last_ampm_x, headerTextY);
         if (time.pm) disp_write_str_group("PM", AMPM_ID);
         else disp_write_str_group("AM", AMPM_ID);
@@ -358,7 +373,11 @@ static int updateTimeDisplay(int xoff) {
         uint8_t x0=0, x1, y, w0=0, w1, h;
         if (time.minute < 10) disp_get_text_bounds("0", 0, 0, &x0, &y ,&w0, &h);
         disp_get_text_bounds(itoa(time.minute, buffer, 10), 0, 0, &x1, &y ,&w1, &h);
-        last_min_x = last_ampm_x-x0-w0-x1-w1-2;
+        uint8_t t = last_ampm_x-x0-w0-x1-w1-2;
+        if (t != last_min_x) {
+            last_min_x = t;
+            rewriteTime = 1;
+        }
         disp_set_pos(last_min_x, headerTextY);
         if (time.minute < 10) disp_write_str_group("0", MIN_ID);
         disp_write_str_group(buffer, MIN_ID);
@@ -368,7 +387,11 @@ static int updateTimeDisplay(int xoff) {
     if (rewriteTime || lastSecondDisplayed != time.second) {
         uint8_t x0, y, w0, h;
         disp_get_text_bounds(":", 0, 0, &x0, &y ,&w0, &h);
-        last_sec_x = last_min_x-x0-w0-2;
+        uint8_t t = last_min_x-x0-w0-2;
+        if (t != last_sec_x) {
+            last_sec_x = t;
+            rewriteTime = 1;
+        }
         disp_set_pos(last_sec_x, headerTextY);
         if (!(time.second%2)) {
             disp_write_str_group(":", SEC_ID);
@@ -421,29 +444,25 @@ static int updateBLEstatusDisplay(int xoff) {
 #define disp_bat_length  20
 #define disp_bat_y       3
 static int displayBattery(int xoff) {
-    uint8_t x = xoff - disp_bat_length - 9;
-    if (last_bat_x > 0) {
-        if (x < last_bat_x) {
-            disp_fill_rect(x+disp_bat_length+1, y - 1, last_bat_x-x+1, disp_bat_height+3, DISP_PIXEL_BLACK);
-        } else if (x > last_bat_x) {
-            disp_fill_rect(last_bat_x-1, y - 1, x-last_bat_x+1, disp_bat_height+3, DISP_PIXEL_BLACK);
-        }
+    uint8_t x = xoff - disp_bat_length - 8;
+    if (last_bat_x != x && last_bat_x > 0) {
+        disp_fill_rect(last_bat_x-1, disp_bat_y-1, disp_bat_length+3, disp_bat_height+3, DISP_PIXEL_BLACK);
     }
     last_bat_x = x;
     int battery = get_battery_level(disp_bat_length);
     uint16_t color;
-    if (battery > disp_bat_length) {
+    if (battery > disp_bat_length/3) {
         color = DISP_PIXEL_GREEN;
     } else {
         color = DISP_PIXEL_RED;
     }
-    disp_draw_line(x - 1, y, x - 1, y + disp_bat_height, DISP_PIXEL_WHITE); //left boarder
-    disp_draw_line(x - 1, y - 1, x + disp_bat_length, y - 1, DISP_PIXEL_WHITE); //top border
-    disp_draw_line(x - 1, y + disp_bat_height + 1, x + disp_bat_length, y + disp_bat_height + 1, DISP_PIXEL_WHITE); //bottom border
-    disp_draw_line(x + disp_bat_length, y - 1, x + disp_bat_length, y + disp_bat_height + 1, DISP_PIXEL_WHITE); //right border
-    disp_draw_line(x + disp_bat_length + 1, y + 2, x + disp_bat_length + 1, y + disp_bat_height - 2, DISP_PIXEL_WHITE); //right border
+    disp_draw_line(x - 1, disp_bat_y, x - 1, disp_bat_y + disp_bat_height, DISP_PIXEL_WHITE); //left boarder
+    disp_draw_line(x - 1, disp_bat_y - 1, x + disp_bat_length, disp_bat_y - 1, DISP_PIXEL_WHITE); //top border
+    disp_draw_line(x - 1, disp_bat_y + disp_bat_height + 1, x + disp_bat_length, disp_bat_y + disp_bat_height + 1, DISP_PIXEL_WHITE); //bottom border
+    disp_draw_line(x + disp_bat_length, disp_bat_y - 1, x + disp_bat_length, disp_bat_y + disp_bat_height + 1, DISP_PIXEL_WHITE); //right border
+    disp_draw_line(x + disp_bat_length + 1, disp_bat_y + 2, x + disp_bat_length + 1, disp_bat_y + disp_bat_height - 2, DISP_PIXEL_WHITE); //right border
     for (uint8_t q = 0; q < battery; q++) {
-        disp_draw_line(x + q, y, x + q, y + disp_bat_height, color);
+        disp_draw_line(x + q, disp_bat_y, x + q, disp_bat_y + disp_bat_height, color);
     }
     return x-1;
 }

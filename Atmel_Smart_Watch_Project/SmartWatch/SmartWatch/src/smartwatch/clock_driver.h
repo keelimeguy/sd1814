@@ -1,4 +1,4 @@
-/* UConn Senior Design Team 1814, November 2017
+/* UConn Senior Design Team 1814, January 2018
 */
 
 #ifndef CLOCK_DRIVER_H
@@ -8,8 +8,9 @@
 
 // If this changes, also change next_alarm() in clock_driver.c for appropriate unit
 #define RTC_ALARM_UNIT_MASK RTC_CALENDAR_ALARM_MASK_SEC
-#define READING_TIMEOUT 7 // s
-#define SCREEN_TIMEOUT 6000 // ms
+
+#define SCREEN_TIMEOUT 10 // 10 s
+#define READING_TIMEOUT measurement_get_reading_timeout()
 
 #define RTC_YEAR_INIT  2017
 #define RTC_MONTH_INIT 1

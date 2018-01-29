@@ -1,3 +1,6 @@
+/* UConn Senior Design Team 1814, January 2018
+*/
+
 #include "kalman.h"
 
 static float P_result[36] = {225, 1, 0, 0, 0, 0, 1, 225, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 2500, 0, 0, 0, 0, 0, 0, 0.01, 0, 0, 0, 0, 0, 0, 0.01};

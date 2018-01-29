@@ -18,7 +18,7 @@
 
 - :alien: **smartwatch/display_driver/**
 
-- :x: **smartwatch/lib_aci/**
+- :raised_hand: **smartwatch/lib_aci/**
 
 - **main.c**
     - **_SmartWatch.h_**
@@ -46,7 +46,7 @@
     - :raised_hand: bluetooth_driver_init()
     - :alien: is_bt_active_soft()
     - :alien: is_bt_active()
-    - :x: bt_task()
+    - :raised_hand: bt_task()
     - :alien: bt_write()
     - :alien: bt_amt_notifications()
     - :alien: bt_clear_amt_notifications()
@@ -95,9 +95,9 @@
     - :raised_hand: viewNotifications()
     - :raised_hand: showGraphView()
     - :alien: updateGraph()
-    - :raised_hand: updateDateDisplay()
-    - :raised_hand: updateGlucoseDisplay()
-    - :x: updateTimeDisplay()
+    - :alien: updateDateDisplay()
+    - :alien: updateGlucoseDisplay()
+    - :raised_hand: updateTimeDisplay()
     - :raised_hand: updateBLEstatusDisplay()
     - :x: displayBattery()
 
@@ -110,7 +110,10 @@
 - **smartwatch/measurement_controller.c**
     - **_measurement\_controller.h_**
     - :x: measurement_controller_init()
-    - :x: take_measurement()
+    - :alien: take_measurement()
+    - :alien: is_measure_busy()
+    - :alien: measure_set_reading_timeout()
+    - :alien: measure_get_reading_timeout()
     - :alien: measure_set_pulse_one()
     - :alien: measure_set_pulse_two()
     - :alien: measure_set_pulse_three()

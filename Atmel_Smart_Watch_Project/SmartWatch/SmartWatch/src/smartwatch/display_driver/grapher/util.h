@@ -1,3 +1,6 @@
+/* UConn Senior Design Team 1814, January 2018
+*/
+
 #ifndef UTIL_H
 #define UTIL_H
 

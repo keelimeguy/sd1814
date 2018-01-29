@@ -36,7 +36,5 @@ void battery_task(void) {
 }
 
 int get_battery_level(int max) {
-
+    return max/4;
 }
-
-#endif

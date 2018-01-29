@@ -422,7 +422,7 @@ void aci_loop()
             set_ble_rx_buffer(i, aci_evt->params.data_received.rx_data.aci_data[i]);
           }
           set_ble_rx_buffer(aci_evt->len - 2, '\0');
-		  bt_read_callback();
+          bt_read_callback();
 //           #if BLE_DEBUG
 //             SerialMonitorInterface.print(ble_rx_buffer_len);
 //             SerialMonitorInterface.print(F(" bytes: "));
@@ -462,7 +462,7 @@ void aci_loop()
 //         #if BLE_DEBUG
 //           SerialMonitorInterface.print(F("HW error: "));
 //           SerialMonitorInterface.println(aci_evt->params.hw_error.line_num, DEC);
-// 
+//
 //           for (uint8_t counter = 0; counter <= (aci_evt->len - 3); counter++)
 //           {
 //             SerialMonitorInterface.write(aci_evt->params.hw_error.file_name[counter]); //uint8_t file_name[20];

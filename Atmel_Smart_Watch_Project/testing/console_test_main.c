@@ -31,11 +31,12 @@ int main (int argc, char *argv[]) {
 
     // Negative repeat will loop forever
     while (repeat > 0) {
+        measurement_task();
         display_ui_task(button);
         disp_end_write();
         button = GRAPH_BUTTON;
         if (repeat > 0) repeat--;
-        take_measurement();
+        take_measurement(0);
         rtc_next_time();
     }
     return 0;

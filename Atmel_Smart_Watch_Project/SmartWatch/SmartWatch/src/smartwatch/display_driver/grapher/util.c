@@ -1,3 +1,6 @@
+/* UConn Senior Design Team 1814, January 2018
+*/
+
 #include "util.h"
 
 // http://www.geeksforgeeks.org/implement-itoa/

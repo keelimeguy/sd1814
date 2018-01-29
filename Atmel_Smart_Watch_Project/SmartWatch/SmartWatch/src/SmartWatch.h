@@ -1,4 +1,4 @@
-/* UConn Senior Design Team 1814, November 2017
+/* UConn Senior Design Team 1814, January 2018
 */
 
 #ifndef SMARTWATCH_H
@@ -15,6 +15,7 @@
 	#define LED_PIN  BOARD_DEBUG_LED
 
     #include "smartwatch/clock_driver.h"
+    #include "smartwatch/battery_reader.h"
     #include "smartwatch/display_manager.h"
     #include "smartwatch/button_listener.h"
     #include "smartwatch/bluetooth_driver.h"
@@ -36,6 +37,7 @@
 #else
     #include <stdio.h>
     #include <stdint.h>
+    #include "smartwatch/battery_reader.h"
     #include "smartwatch/bluetooth_driver.h"
     typedef uint8_t bool;
     struct rtc_calendar_time {

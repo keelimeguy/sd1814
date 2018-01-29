@@ -1,4 +1,4 @@
-/* UConn Senior Design Team 1814, November 2017
+/* UConn Senior Design Team 1814, January 2018
      Using code adapted from Atmel:
 
 /**
@@ -66,8 +66,8 @@
 #define BOARD_DISP_RES_PIN         PIN_PA19 // 28
 #define BOARD_DISP_BACKLIGHT_PIN   PIN_PA15 // 24
 
-#define BOARD_BUTTON_L_PIN         PIN_PB09 // 8
-#define BOARD_BUTTON_R_PIN         PIN_PA04 // 9
+#define BOARD_BUTTON_L_PIN         PIN_PB09 // 8 // PIN_PA10 // 15
+#define BOARD_BUTTON_R_PIN         PIN_PA04 // 9 // PIN_PA11 // 16
 
 #define BOARD_PHOTODIODE_PIN       PIN_PA07 // 12
 

@@ -1,3 +1,6 @@
+/* UConn Senior Design Team 1814, January 2018
+*/
+
 #include "grapher.h"
 #include "util.h"
 

@@ -1,3 +1,6 @@
+/* UConn Senior Design Team 1814, January 2018
+*/
+
 #ifndef KALMAN_H
 #define KALMAN_H
 
