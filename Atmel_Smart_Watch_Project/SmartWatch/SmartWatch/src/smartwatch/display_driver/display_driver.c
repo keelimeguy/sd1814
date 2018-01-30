@@ -59,7 +59,7 @@ void disp_init() {
     cursor_x = 0;
     cursor_y = 0;
     textcolor = DISP_PIXEL_WHITE;
-    textbgcolor = DISP_PIXEL_BLACK;
+    textbgcolor = DISP_BG_COLOR;
     textsize = 1;
     rotation = 0;
     keep_group = 0;
@@ -251,7 +251,7 @@ void disp_write_str_group(char *str, uint8_t replace_last) {
         disp_get_text_bounds(str, cursor_x, cursor_y, &x, &y, &w, &h);
 
         if (!keep_group && lastwidth[replace_last-1] > 0) {
-            disp_fill_rect(lastx[replace_last-1], lasty[replace_last-1], lastwidth[replace_last-1], lastheight[replace_last-1], DISP_BG_COLOR);
+            disp_fill_rect(lastx[replace_last-1], lasty[replace_last-1], lastwidth[replace_last-1], lastheight[replace_last-1], textbgcolor);
         }
 
         if (keep_group && lastwidth[replace_last-1] > 0) { // Assumes a single line
@@ -283,7 +283,7 @@ void disp_write_str_group(char *str, uint8_t replace_last) {
 
 void disp_remove_str_group(uint8_t replace_last) {
     if (replace_last>0 && replace_last<=MAX_WRITE_ID && lastwidth[replace_last-1] > 0) {
-        disp_fill_rect(lastx[replace_last-1], lasty[replace_last-1], lastwidth[replace_last-1], lastheight[replace_last-1], DISP_BG_COLOR);
+        disp_fill_rect(lastx[replace_last-1], lasty[replace_last-1], lastwidth[replace_last-1], lastheight[replace_last-1], textbgcolor);
         lastx[replace_last-1] = 0;
         lasty[replace_last-1] = 0;
         lastwidth[replace_last-1] = 0;

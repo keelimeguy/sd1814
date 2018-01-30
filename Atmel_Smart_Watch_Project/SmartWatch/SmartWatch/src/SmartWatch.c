@@ -9,6 +9,17 @@
 
     void init_all(void) {
         system_init();
+
+		// Configure debugging LED if in use
+		#ifdef LED_PIN
+		struct port_config pin;
+		port_get_config_defaults(&pin);
+		pin.direction = PORT_PIN_DIR_OUTPUT;
+
+		port_pin_set_config(LED_PIN, &pin);
+		port_pin_set_output_level(LED_PIN, true);
+		#endif
+		
         clock_driver_init();
         bluetooth_driver_init();
         button_listener_init();
@@ -18,16 +29,6 @@
         sleepmgr_init();
 
         system_interrupt_enable_global();
-
-        // Configure debugging LED if in use
-        #ifdef LED_PIN
-            struct port_config pin;
-            port_get_config_defaults(&pin);
-            pin.direction = PORT_PIN_DIR_OUTPUT;
-
-            port_pin_set_config(LED_PIN, &pin);
-            port_pin_set_output_level(LED_PIN, true);
-        #endif
 
         screen_request = 1;
         screen_sleep = 0;

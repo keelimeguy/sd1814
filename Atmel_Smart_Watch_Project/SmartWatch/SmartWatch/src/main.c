@@ -19,8 +19,8 @@ int main(void) {
     // TODO: future improvement may be running components as separate processes in an RTOS
     for(;;) {
         while (is_active()) {
-            aci_loop();
-            bt_task();
+            //aci_loop();
+            //bt_task();
             smartwatch_task();
         }
         sleep();

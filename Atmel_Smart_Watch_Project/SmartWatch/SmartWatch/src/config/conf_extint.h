@@ -65,10 +65,4 @@
 #  define EXTINT_CLOCK_SOURCE      GCLK_GENERATOR_0
 #endif
 
-
-#define SMARTWATCH_EIC_L_BUTTON 0
-#define SMARTWATCH_EIC_R_BUTTON 1
-#define SMARTWATCH_EIC_BLE 2
-
-
 #endif

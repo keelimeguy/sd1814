@@ -28,7 +28,7 @@ static uint8_t lastHourDisplayed;
 static uint8_t lastMinuteDisplayed;
 static uint8_t lastSecondDisplayed;
 static uint8_t ble_connection_displayed_state;
-static uint8_t first_data, graph_refresh;
+static uint8_t first_data, graph_refresh, newGlucose;
 static float lastGlucoseVal;
 static uint8_t last_bat_x, last_ble_x, last_date_x, last_hour_x, last_min_x, last_sec_x, last_ampm_x;
 
@@ -69,6 +69,7 @@ void display_manager_init(void) {
     first_data = 0;
     graph_refresh = 1;
     lastGlucoseVal = 0;
+	newGlucose = 0;
     last_ampm_x = 0;
     last_sec_x = 0;
     last_min_x = 0;
@@ -124,7 +125,10 @@ static void updateMainDisplay(uint8_t button) {
     } else if (button & GRAPH_BUTTON) {
         showGraphView(0);
     } else {
-        updateGlucoseDisplay(lastGlucoseVal);
+		if (rewriteMenu || newGlucose) {
+			updateGlucoseDisplay(lastGlucoseVal);
+			newGlucose = 0;
+		}
         if (rewriteMenu || lastAmtNotificationsShown != bt_amt_notifications()) {
             lastAmtNotificationsShown = bt_amt_notifications();
             disp_set_font(FONT_MEDIUM);
@@ -273,7 +277,10 @@ static void updateGraph(float glucose) {
     if (!graph_length()) {
         first_data = 1;
     }
-    lastGlucoseVal = glucose;
+	if (lastGlucoseVal != glucose) {
+	    lastGlucoseVal = glucose;
+		newGlucose = 1;
+	}
     add_to_graph(glucose);
 }
 
@@ -285,7 +292,7 @@ static int updateDateDisplay(int xoff) {
         return last_date_x;
     lastDisplayedDay = time.day;
     disp_set_font(FONT_SMALL);
-    disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_BLACK);
+    disp_set_color(DISP_PIXEL_WHITE, DISP_BG_COLOR);
     if (xoff>=0) {
         uint8_t x0, x1, x2, x3;
         uint8_t w0, w1, w2, w3;
@@ -351,7 +358,7 @@ static int updateTimeDisplay(int xoff) {
     struct rtc_calendar_time time;
     rtc_get_time(&time);
 
-    disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_BLACK);
+    disp_set_color(DISP_PIXEL_WHITE, DISP_BG_COLOR);
     disp_set_font(FONT_SMALL);
 
     if (rewriteTime || lastAMPMDisplayed != time.pm) {
@@ -425,12 +432,12 @@ static int updateBLEstatusDisplay(int xoff) {
     if (bt_connection_state() == ble_connection_displayed_state && last_ble_x == x)
         return x-disp_ble_s-4;
     if (last_ble_x >= disp_ble_s)
-        disp_fill_rect(last_ble_x-disp_ble_s, disp_ble_y-2*disp_ble_s, 2*disp_ble_s+1, 9, DISP_PIXEL_BLACK);
+        disp_fill_rect(last_ble_x-disp_ble_s, disp_ble_y-2*disp_ble_s, 2*disp_ble_s+1, 9, DISP_BG_COLOR);
     last_ble_x = x;
     ble_connection_displayed_state = bt_connection_state();
     uint16_t color = DISP_PIXEL_RED;
     if (ble_connection_displayed_state)
-        color = DISP_PIXEL_BLUE;
+        color = DISP_PIXEL_GREEN;
     disp_draw_line(x, disp_ble_y + 2*disp_ble_s, x, disp_ble_y - 2*disp_ble_s, color);
     disp_draw_line(x - disp_ble_s, disp_ble_y + disp_ble_s, x + disp_ble_s, disp_ble_y - disp_ble_s, color);
     disp_draw_line(x + disp_ble_s, disp_ble_y + disp_ble_s, x - disp_ble_s, disp_ble_y - disp_ble_s, color);
@@ -446,7 +453,7 @@ static int updateBLEstatusDisplay(int xoff) {
 static int displayBattery(int xoff) {
     uint8_t x = xoff - disp_bat_length - 8;
     if (last_bat_x != x && last_bat_x > 0) {
-        disp_fill_rect(last_bat_x-1, disp_bat_y-1, disp_bat_length+3, disp_bat_height+3, DISP_PIXEL_BLACK);
+        disp_fill_rect(last_bat_x-1, disp_bat_y-1, disp_bat_length+3, disp_bat_height+3, DISP_BG_COLOR);
     }
     last_bat_x = x;
     int battery = get_battery_level(disp_bat_length);

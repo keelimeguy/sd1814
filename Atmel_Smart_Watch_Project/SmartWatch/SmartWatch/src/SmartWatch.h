@@ -12,6 +12,10 @@
     #define PROGMEM
     #endif
 
+	#define SMARTWATCH_EIC_L_BUTTON 0
+	#define SMARTWATCH_EIC_R_BUTTON 1
+	#define SMARTWATCH_EIC_BLE 2
+
 	#define LED_PIN  BOARD_DEBUG_LED
 
     #include "smartwatch/clock_driver.h"

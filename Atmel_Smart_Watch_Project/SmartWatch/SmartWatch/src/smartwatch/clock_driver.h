@@ -9,8 +9,8 @@
 // If this changes, also change next_alarm() in clock_driver.c for appropriate unit
 #define RTC_ALARM_UNIT_MASK RTC_CALENDAR_ALARM_MASK_SEC
 
-#define SCREEN_TIMEOUT 10 // 10 s
-#define READING_TIMEOUT measurement_get_reading_timeout()
+#define SCREEN_TIMEOUT 30 // s
+#define READING_TIMEOUT measure_get_reading_timeout()
 
 #define RTC_YEAR_INIT  2017
 #define RTC_MONTH_INIT 1

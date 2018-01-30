@@ -131,7 +131,7 @@ static void m_aci_isr(void)
     if (aci_queue_is_full_from_isr(&aci_rx_q))
     {
       // detachInterrupt(a_pins_local_ptr->interrupt_number);
-      extint_chan_disable_callback(a_pins->interrupt_number);
+      extint_chan_disable_callback(a_pins_local_ptr->interrupt_number, EXTINT_CALLBACK_TYPE_DETECT);
     }
   }
 
@@ -332,7 +332,7 @@ bool hal_aci_tl_event_get(hal_aci_data_t *p_aci_data)
     {
       /* Enable RDY line interrupt again */
       // attachInterrupt(a_pins_local_ptr->interrupt_number, m_aci_isr, LOW);
-      extint_chan_enable_callback(a_pins->interrupt_number, EXTINT_CALLBACK_TYPE_DETECT);
+      extint_chan_enable_callback(a_pins_local_ptr->interrupt_number, EXTINT_CALLBACK_TYPE_DETECT);
     }
 
     /* Attempt to pull REQN LOW since we've made room for new messages */
