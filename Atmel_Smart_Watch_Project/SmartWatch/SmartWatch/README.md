@@ -71,7 +71,7 @@
 - **smartwatch/clock_driver.c**
     - **_clock\_driver.h_**
     - **_date\_calc.h_**
-    - :raised_hand: clock_driver_init()
+    - :alien: clock_driver_init()
     - :alien: rtc_get_time()
     - :alien: rtc_update_time()
     - :alien: calendar_day_str()
@@ -91,13 +91,13 @@
     - **_display\_manager.h_**
     - :alien: display_manager_init()
     - :alien: display_ui_task()
-    - :raised_hand: updateMainDisplay()
+    - :alien: updateMainDisplay()
     - :raised_hand: viewNotifications()
     - :raised_hand: showGraphView()
     - :alien: updateGraph()
     - :alien: updateDateDisplay()
     - :alien: updateGlucoseDisplay()
-    - :raised_hand: updateTimeDisplay()
+    - :alien: updateTimeDisplay()
     - :raised_hand: updateBLEstatusDisplay()
     - :x: displayBattery()
 

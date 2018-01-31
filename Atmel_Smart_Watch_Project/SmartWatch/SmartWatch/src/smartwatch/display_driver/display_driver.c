@@ -27,11 +27,17 @@ static GFXfont *gfxFont;
 static uint8_t wrap;   // If set, 'wrap' text at right edge of display
 static uint8_t _cp437; // If set, use correct CP437 charset (default is off)
 static uint8_t _width, _height, // Display w/h as modified by current rotation
-                cursor_x, cursor_y;
+                cursor_x, cursor_y,
+                leftx, rightx, topy, bottomy;
 static uint16_t textcolor, textbgcolor;
 static uint8_t textsize, rotation;
 static int16_t lastx[MAX_WRITE_ID], lasty[MAX_WRITE_ID], lastwidth[MAX_WRITE_ID], lastheight[MAX_WRITE_ID];
-static uint8_t keep_group;
+static uint8_t keep_group, new_write;
+static uint16_t buffer[DISP_WIDTH][DISP_HEIGHT];
+
+static void disp_set_pos_internal(uint8_t x, uint8_t y);
+static void disp_draw_char(uint8_t x, uint8_t y, unsigned char c, uint16_t color, uint16_t bg, uint8_t size);
+static void disp_char_bounds(char c, uint8_t *x, uint8_t *y, int16_t *minx, int16_t *miny, int16_t *maxx, int16_t *maxy);
 
 void disp_set_font(GFXfont *font) {
     gfxFont = font;
@@ -58,6 +64,7 @@ void disp_init() {
     _height = DISP_HEIGHT;
     cursor_x = 0;
     cursor_y = 0;
+    new_write = 1;
     textcolor = DISP_PIXEL_WHITE;
     textbgcolor = DISP_BG_COLOR;
     textsize = 1;
@@ -78,9 +85,39 @@ void disp_init() {
 	port_pin_set_config(BOARD_DISP_BACKLIGHT_PIN, &pin);
 
     disp_sub_init();
-    disp_fill_rect(0,0,_width,_height,DISP_BG_COLOR);
+
+
+    for (int y = 0; y < DISP_HEIGHT; y++)
+        for (int x = 0; x < DISP_WIDTH; x++)
+            buffer[x][y] = DISP_BG_COLOR;
+    leftx = 0;
+    rightx = DISP_WIDTH-1;
+    topy = 0;
+    bottomy = DISP_HEIGHT-1;
+    disp_commit();
+
     disp_sub_display_on();
+
 	port_pin_set_output_level(BOARD_DISP_BACKLIGHT_PIN, true);
+}
+
+void disp_commit() {
+    uint8_t range_test = (leftx + DISP_WIDTH - rightx < 6);
+    if (range_test) {
+        disp_set_pos_internal(leftx, topy);
+        rightx = DISP_WIDTH-1;
+    }
+    for (int x = leftx, y = topy; y <= bottomy; y++) {
+        if (!range_test) {
+            disp_set_pos_internal(leftx, y);
+            x = leftx;
+        }
+        for (;x <= rightx; x++) {
+            disp_write_pixel(buffer[x][y]);
+        }
+        x = 0;
+    }
+    new_write = 1;
 }
 
 void disp_sleep_enable() {
@@ -101,7 +138,6 @@ static void disp_set_pos_internal(uint8_t x, uint8_t y) {
 void disp_set_pos(uint8_t x, uint8_t y) {
     cursor_x = x;
     cursor_y = y;
-    disp_set_pos_internal(x, y);
 }
 
 void disp_write_pixel(uint16_t color) {
@@ -111,8 +147,23 @@ void disp_write_pixel(uint16_t color) {
 
 void disp_write_pixel_at(uint8_t x, uint8_t y, uint16_t color) {
     if (x<DISP_WIDTH && y<DISP_HEIGHT) {
-        disp_set_pos_internal(x, y);
-        disp_write_pixel(color);
+        buffer[x][y] = color;
+        if (new_write) {
+            new_write = 0;
+            leftx = x;
+            rightx = x;
+            topy = y;
+            bottomy = y;
+        } else {
+            if (x < leftx)
+                leftx = x;
+            else if (x > rightx)
+                rightx = x;
+            if (y < topy)
+                topy = y;
+            else if (y > bottomy)
+                bottomy = y;
+        }
     }
 }
 

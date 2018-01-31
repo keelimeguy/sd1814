@@ -159,6 +159,7 @@ void disp_set_font_scale(uint8_t scale);
 void disp_set_wrap(uint8_t val);
 void disp_set_cp437(uint8_t val);
 void disp_set_color(uint16_t text, uint16_t bg);
+void disp_commit();
 void disp_sleep_enable();
 void disp_sleep_disable();
 

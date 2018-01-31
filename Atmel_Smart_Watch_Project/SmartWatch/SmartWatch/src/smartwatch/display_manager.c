@@ -106,6 +106,8 @@ void display_ui_task(uint8_t button) {
         default:
             initHomeScreen();
     }
+
+    disp_commit();
 }
 
 static void initHomeScreen() {

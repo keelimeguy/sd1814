@@ -19,7 +19,7 @@
 		port_pin_set_config(LED_PIN, &pin);
 		port_pin_set_output_level(LED_PIN, true);
 		#endif
-		
+
         clock_driver_init();
         bluetooth_driver_init();
         button_listener_init();
