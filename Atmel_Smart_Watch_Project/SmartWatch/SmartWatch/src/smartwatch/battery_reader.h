@@ -6,6 +6,8 @@
 
 #include <SmartWatch.h>
 
+#define MAX_ADC     0xFF
+
 void battery_reader_init(void);
 void battery_task(void);
 int get_battery_level(int max);

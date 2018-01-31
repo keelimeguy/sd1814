@@ -21,6 +21,7 @@
 		#endif
 
         clock_driver_init();
+        battery_reader_init();
         bluetooth_driver_init();
         button_listener_init();
         measurement_controller_init();
@@ -34,6 +35,7 @@
         screen_sleep = 0;
     }
 
+    // TODO: Add battery_task() somehow, perhaps periodic battery reads? (i.e. need new timer also)
     void smartwatch_task(void) {
         measurement_task();
         if (is_screen_active()) {

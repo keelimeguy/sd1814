@@ -37,9 +37,9 @@
 
 - **smartwatch/battery_reader.c**
     - **_battery\_reader.h_**
-    - :x: battery_reader_init()
-    - :x: battery_reader_task()
-    - :x: get_battery_level()
+    - :raised_hand: battery_reader_init()
+    - :raised_hand: battery_reader_task()
+    - :raised_hand: get_battery_level()
 
 - **smartwatch/bluetooth_driver.c**
     - **_bluetooth\_driver.h_**

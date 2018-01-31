@@ -3,38 +3,45 @@
 
 #include "battery_reader.h"
 
-void battery_reader_init(void) {
+static struct adc_module adc_instance;
+static int last_max;
+static uint16_t adc_result, battery_level;
 
+void battery_reader_init(void) {
+    struct adc_config config_adc;
+    adc_get_config_defaults(&config_adc);
+
+    // If resolution changes, be sure to change MAX_ADC in battery_reader.h
+    config_adc->resolution = ADC_RESOLUTION_8BIT;
+    config_adc->positive_input = ADC_POSITIVE_INPUT_BANDGAP;
+
+    adc_init(&adc_instance, ADC, &config_adc);
+    adc_enable(&adc_instance);
+    adc_start_conversion(&adc_instance);
+
+    last_max = 0;
+    adc_result = 0;
+    battery_level = 0;
 }
 
 void battery_task(void) {
-/*    SYSCTRL->VREF.reg |= SYSCTRL_VREF_BGOUTEN;
-//    while (ADC->STATUS.bit.SYNCBUSY == 1);
-    ADC->SAMPCTRL.bit.SAMPLEN = 0x1;
-    while (ADC->STATUS.bit.SYNCBUSY == 1);
-    ADC->INPUTCTRL.bit.MUXPOS = 0x19;         // Internal bandgap input
-//    while (ADC->STATUS.bit.SYNCBUSY == 1);
-    ADC->CTRLA.bit.ENABLE = 0x01;             // Enable ADC
-    // Start conversion
-    while (ADC->STATUS.bit.SYNCBUSY == 1);
-    ADC->SWTRIG.bit.START = 1;
-    // Clear the Data Ready flag
-    ADC->INTFLAG.bit.RESRDY = 1;
-    // Start conversion again, since The first conversion after the reference is changed must not be used.
-    while (ADC->STATUS.bit.SYNCBUSY == 1);
-    ADC->SWTRIG.bit.START = 1;
-    // Store the value
-    while ( ADC->INTFLAG.bit.RESRDY == 0 );   // Waiting for conversion to complete
-    uint32_t valueRead = ADC->RESULT.reg;
-    while (ADC->STATUS.bit.SYNCBUSY == 1);
-    ADC->CTRLA.bit.ENABLE = 0x00;             // Disable ADC
-//    while (ADC->STATUS.bit.SYNCBUSY == 1);
-    SYSCTRL->VREF.reg &= ~SYSCTRL_VREF_BGOUTEN;
-    result = (((1100L * 1024L) / valueRead) + 5L) / 10L;
-*/
+    uint16_t result;
+    if (adc_read(&adc_instance, &result) != STATUS_OK) {
+        adc_result = result;
+        battery_level = adc_result*last_max/MAX_ADC;
+        // battery_level = (((1100L * 1024L) / valueRead) + 5L) / 10L;
+
+        // adc_start_conversion(&adc_instance);
+    }
 
 }
 
 int get_battery_level(int max) {
-    return max/4;
+    if (max == last_max) {
+        return battery_level;
+    }
+    last_max = max;
+    battery_level = adc_result*max/MAX_ADC;
+    // battery_level = (((1100L * 1024L) / valueRead) + 5L) / 10L;
+    return battery_level;
 }
