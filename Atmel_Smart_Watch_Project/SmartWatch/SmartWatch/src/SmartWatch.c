@@ -35,10 +35,19 @@
         screen_sleep = 0;
     }
 
-    // TODO: Add battery_task() somehow, perhaps periodic battery reads? (i.e. need new timer also)
     void smartwatch_task(void) {
+        // bt_task();
         measurement_task();
+        battery_task();
+
         if (is_screen_active()) {
+
+            // No need to deal with new battery reads if screen is not active
+            if (!is_battery_active() && is_battery_timeout()) {
+                start_battery_read();
+                set_battery_timeout(BATTERY_TIMEOUT);
+            }
+
             uint8_t buttons = get_buttons(); // Returns identifier to determine which buttons were pressed
             display_ui_task(buttons);
 
@@ -54,13 +63,16 @@
 
                 set_screen_timeout(SCREEN_TIMEOUT);
             }
+        } else {
+            // Trigger battery timer for next screen activation
+            set_battery_timeout(0);
         }
     }
 
     // If this is true, system will stay awake
     uint8_t is_active(void) {
         // We stay awake when bluetooth, screen, or measurement is active
-        return is_bt_active_soft() || is_screen_active_soft() || is_measure_busy();
+        return is_bt_active_soft() || is_screen_active_soft() || is_measure_busy() || is_battery_active();
     }
 
     // If this is true, screen will be rendered
@@ -98,6 +110,8 @@
 
         // Wakeup display if needed
         if (is_screen_active_soft()) {
+            // Trigger battery timer for next wakeup
+            set_battery_timeout(0);
             screen_sleep = 0;
             disp_sleep_disable();
         }

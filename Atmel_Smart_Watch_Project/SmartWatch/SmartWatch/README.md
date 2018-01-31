@@ -39,6 +39,8 @@
     - **_battery\_reader.h_**
     - :raised_hand: battery_reader_init()
     - :raised_hand: battery_reader_task()
+    - :raised_hand: start_battery_read()
+    - :alien: is_battery_active()
     - :raised_hand: get_battery_level()
 
 - **smartwatch/bluetooth_driver.c**
@@ -85,6 +87,10 @@
     - :alien: is_pulse_timeout()
     - :alien: set_pulse_timeout()
     - :alien: pulse_timer_callback()
+    - :alien: is_battery_timeout_soft()
+    - :alien: is_battery_timeout()
+    - :alien: set_battery_timeout()
+    - :alien: battery_timer_callback()
     - :alien: rtc_alarm_callback()
 
 - **smartwatch/display_manager.c**

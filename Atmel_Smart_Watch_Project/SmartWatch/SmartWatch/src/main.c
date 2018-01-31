@@ -11,6 +11,8 @@
             BT received (aci_loop must always run)
         is_screen_active() triggered by:
             user input (external interrupt)
+        is_battery_active() triggered by:
+            active ADC conversion
 */
 
 int main(void) {
@@ -19,8 +21,6 @@ int main(void) {
     // TODO: future improvement may be running components as separate processes in an RTOS
     for(;;) {
         while (is_active()) {
-            //aci_loop();
-            //bt_task();
             smartwatch_task();
         }
         sleep();

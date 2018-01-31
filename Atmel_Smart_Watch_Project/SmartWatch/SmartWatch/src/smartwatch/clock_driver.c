@@ -8,8 +8,8 @@ static struct rtc_module rtc_instance;
 static struct rtc_calendar_alarm_time alarm;
 static volatile uint8_t rtc_alarm_flag;
 
-static struct tc_module screen_timer, pulse_timer;
-static volatile uint32_t screen_timeout, pulse_timeout;
+static struct tc_module screen_timer, pulse_timer, battery_timer;
+static volatile uint32_t screen_timeout, pulse_timeout, battery_timeout;
 static const char* day_str[7] = {"Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Tue"};
 
 static void rtc_alarm_callback(void);
@@ -100,7 +100,8 @@ void clock_driver_init(void) {
 
     tc_enable(&screen_timer);
 
-    screen_timeout = 1;
+    // Set to -1 to disable trigger
+    screen_timeout = -1;
 
     tc_init(&pulse_timer, TC2, &config_tc);
 
@@ -109,7 +110,18 @@ void clock_driver_init(void) {
 
     tc_enable(&pulse_timer);
 
-    pulse_timeout = 1;
+    // Set to -1 to disable trigger
+    pulse_timeout = -1;
+
+    tc_init(&battery_timer, TC4, &config_tc);
+
+    tc_register_callback(&battery_timer, battery_timer_callback, TC_CALLBACK_CC_CHANNEL0);
+    tc_enable_callback(&battery_timer, TC_CALLBACK_CC_CHANNEL0);
+
+    tc_enable(&battery_timer);
+
+    // Start battery timeout at 0 to trigger next battery read
+    battery_timeout = 0;
 }
 
 void rtc_get_time(struct rtc_calendar_time *time) {
@@ -180,6 +192,29 @@ static void pulse_timer_callback(void) {
         pulse_timeout--;
     } else {
         tc_stop_counter(&pulse_timer);
+    }
+}
+
+uint8_t is_battery_timeout_soft(void) {
+    return battery_timeout==0;
+}
+
+uint8_t is_battery_timeout(void) {
+    return battery_timeout==0;
+}
+
+void set_battery_timeout(uint32_t val) {
+    tc_stop_counter(&battery_timer);
+    battery_timeout = val;
+    tc_set_count_value(&battery_timer, 0);
+    tc_start_counter(&battery_timer);
+}
+
+static void battery_timer_callback(void) {
+    if (battery_timeout>0) {
+        battery_timeout--;
+    } else {
+        tc_stop_counter(&battery_timer);
     }
 }
 

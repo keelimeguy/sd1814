@@ -10,6 +10,8 @@
 
 void battery_reader_init(void);
 void battery_task(void);
+void start_battery_read(void);
+uint8_t is_battery_active(void);
 int get_battery_level(int max);
 
 #endif

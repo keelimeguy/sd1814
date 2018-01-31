@@ -37,6 +37,8 @@ uint8_t is_bt_active(void) {
 }
 
 void bt_task(void) {
+    // aci_loop();
+
     if (rx_buffer_len) {
         rx_buffer_len--;
 

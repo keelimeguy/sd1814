@@ -6,6 +6,7 @@
 static struct adc_module adc_instance;
 static int last_max;
 static uint16_t adc_result, battery_level;
+static uint8_t adc_active;
 
 void battery_reader_init(void) {
     struct adc_config config_adc;
@@ -21,19 +22,29 @@ void battery_reader_init(void) {
 
     last_max = 0;
     adc_result = 0;
+    adc_active = 1;
     battery_level = 0;
 }
 
 void battery_task(void) {
     uint16_t result;
-    if (adc_read(&adc_instance, &result) != STATUS_OK) {
+    if (adc_active && adc_read(&adc_instance, &result) != STATUS_OK) {
         adc_result = result;
         battery_level = adc_result*last_max/MAX_ADC;
         // battery_level = (((1100L * 1024L) / valueRead) + 5L) / 10L;
-
-        // adc_start_conversion(&adc_instance);
+        adc_active = 0;
     }
+}
 
+void start_battery_read(void) {
+    if (!adc_active) {
+        adc_active = 1;
+        adc_start_conversion(&adc_instance);
+    }
+}
+
+uint8_t is_battery_active(void) {
+    return adc_active;
 }
 
 int get_battery_level(int max) {
