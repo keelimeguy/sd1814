@@ -24,7 +24,7 @@ void measurement_controller_init(void) {
     freq = 3000;
 
     // Time until next reading
-    readingTimeout  = 45; // s
+    readingTimeout  = 10; // s
 }
 
 void take_measurement(uint8_t button) {

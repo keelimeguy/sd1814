@@ -13,8 +13,8 @@ void battery_reader_init(void) {
     adc_get_config_defaults(&config_adc);
 
     // If resolution changes, be sure to change MAX_ADC in battery_reader.h
-    config_adc->resolution = ADC_RESOLUTION_8BIT;
-    config_adc->positive_input = ADC_POSITIVE_INPUT_BANDGAP;
+    config_adc.resolution = ADC_RESOLUTION_12BIT;
+    config_adc.positive_input = ADC_POSITIVE_INPUT_BANDGAP;
 
     adc_init(&adc_instance, ADC, &config_adc);
     adc_enable(&adc_instance);
@@ -24,14 +24,22 @@ void battery_reader_init(void) {
     adc_result = 0;
     adc_active = 1;
     battery_level = 0;
+	
+	// #ifdef DEBUG_LED	
+	//     port_pin_set_output_level(DEBUG_LED, false);
+	// #endif
 }
 
 void battery_task(void) {
     uint16_t result;
     if (adc_active && adc_read(&adc_instance, &result) != STATUS_OK) {
+		
+		// #ifdef DEBUG_LED
+		//     port_pin_set_output_level(DEBUG_LED, false);
+		// #endif
         adc_result = result;
         battery_level = adc_result*last_max/MAX_ADC;
-        // battery_level = (((1100L * 1024L) / valueRead) + 5L) / 10L;
+        // battery_level = (((1100L * 1024L) / result) + 5L) / 10L;
         adc_active = 0;
     }
 }
@@ -40,6 +48,9 @@ void start_battery_read(void) {
     if (!adc_active) {
         adc_active = 1;
         adc_start_conversion(&adc_instance);
+		// #ifdef DEBUG_LED
+		//     port_pin_set_output_level(DEBUG_LED, true);
+		// #endif
     }
 }
 
@@ -53,6 +64,6 @@ int get_battery_level(int max) {
     }
     last_max = max;
     battery_level = adc_result*max/MAX_ADC;
-    // battery_level = (((1100L * 1024L) / valueRead) + 5L) / 10L;
+    // battery_level = (((1100L * 1024L) / adc_result) + 5L) / 10L;
     return battery_level;
 }

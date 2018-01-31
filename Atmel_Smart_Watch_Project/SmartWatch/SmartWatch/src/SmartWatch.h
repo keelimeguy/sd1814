@@ -16,7 +16,7 @@
 	#define SMARTWATCH_EIC_R_BUTTON 1
 	#define SMARTWATCH_EIC_BLE 2
 
-	#define LED_PIN  BOARD_DEBUG_LED
+	#define DEBUG_LED  BOARD_DEBUG_LED
 
     #include "smartwatch/clock_driver.h"
     #include "smartwatch/battery_reader.h"

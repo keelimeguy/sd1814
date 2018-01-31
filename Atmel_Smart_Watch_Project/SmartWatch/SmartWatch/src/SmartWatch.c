@@ -11,13 +11,13 @@
         system_init();
 
 		// Configure debugging LED if in use
-		#ifdef LED_PIN
+		#ifdef DEBUG_LED
 		struct port_config pin;
 		port_get_config_defaults(&pin);
 		pin.direction = PORT_PIN_DIR_OUTPUT;
 
-		port_pin_set_config(LED_PIN, &pin);
-		port_pin_set_output_level(LED_PIN, true);
+		port_pin_set_config(DEBUG_LED, &pin);
+		port_pin_set_output_level(DEBUG_LED, true);
 		#endif
 
         clock_driver_init();
@@ -39,6 +39,10 @@
         // bt_task();
         measurement_task();
         battery_task();
+
+		// #ifdef DEBUG_LED
+		//     port_pin_set_output_level(DEBUG_LED, port_pin_get_input_level(BOARD_BUTTON_L_PIN));
+		// #endif
 
         if (is_screen_active()) {
 
@@ -96,17 +100,17 @@
         disp_sleep_enable();
         screen_sleep = 1;
 
-        #ifdef LED_PIN
-            port_pin_set_output_level(LED_PIN, false);
-        #endif
+        // #ifdef DEBUG_LED
+        //     port_pin_set_output_level(DEBUG_LED, false);
+        // #endif
 
         sleepmgr_enter_sleep();
     }
 
     void wakeup(void) {
-        #ifdef LED_PIN
-            port_pin_set_output_level(LED_PIN, true);
-        #endif
+        // #ifdef DEBUG_LED
+        //     port_pin_set_output_level(DEBUG_LED, true);
+        // #endif
 
         // Wakeup display if needed
         if (is_screen_active_soft()) {

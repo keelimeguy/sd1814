@@ -15,6 +15,7 @@ static const char* day_str[7] = {"Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Tue"
 static void rtc_alarm_callback(void);
 static void screen_timer_callback(void);
 static void pulse_timer_callback(void);
+static void battery_timer_callback(void);
 
 // Configured assuming RTC_CALENDAR_ALARM_MASK_SEC
 static inline void next_alarm(void) {

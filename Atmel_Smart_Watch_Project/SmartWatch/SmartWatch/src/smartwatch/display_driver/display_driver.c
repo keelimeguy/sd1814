@@ -33,10 +33,10 @@ static uint16_t textcolor, textbgcolor;
 static uint8_t textsize, rotation;
 static int16_t lastx[MAX_WRITE_ID], lasty[MAX_WRITE_ID], lastwidth[MAX_WRITE_ID], lastheight[MAX_WRITE_ID];
 static uint8_t keep_group, new_write;
-static uint16_t buffer[DISP_WIDTH][DISP_HEIGHT];
+static uint8_t buffer[DISP_WIDTH][DISP_HEIGHT];
 
 static void disp_set_pos_internal(uint8_t x, uint8_t y);
-static void disp_draw_char(uint8_t x, uint8_t y, unsigned char c, uint16_t color, uint16_t bg, uint8_t size);
+static void disp_draw_char(uint8_t x, uint8_t y, unsigned char c, uint8_t color, uint8_t bg, uint8_t size);
 static void disp_char_bounds(char c, uint8_t *x, uint8_t *y, int16_t *minx, int16_t *miny, int16_t *maxx, int16_t *maxy);
 
 void disp_set_font(GFXfont *font) {
@@ -51,7 +51,7 @@ void disp_set_wrap(uint8_t val) {
 void disp_set_cp437(uint8_t val) {
     _cp437 = val;
 }
-void disp_set_color(uint16_t text, uint16_t bg) {
+void disp_set_color(uint8_t text, uint8_t bg) {
     textcolor = text;
     textbgcolor = bg;
 }
@@ -113,7 +113,7 @@ void disp_commit() {
             x = leftx;
         }
         for (;x <= rightx; x++) {
-            disp_write_pixel(buffer[x][y]);
+            disp_write_pixel(COLOR_ARRAY[buffer[x][y]]);
         }
         x = 0;
     }
@@ -145,7 +145,7 @@ void disp_write_pixel(uint16_t color) {
     disp_write_data(color&0xff);
 }
 
-void disp_write_pixel_at(uint8_t x, uint8_t y, uint16_t color) {
+void disp_write_pixel_at(uint8_t x, uint8_t y, uint8_t color) {
     if (x<DISP_WIDTH && y<DISP_HEIGHT) {
         buffer[x][y] = color;
         if (new_write) {
@@ -168,7 +168,7 @@ void disp_write_pixel_at(uint8_t x, uint8_t y, uint16_t color) {
 }
 
 // Bresenham's algorithm
-void disp_draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_t color) {
+void disp_draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color) {
     uint8_t steep = Abs(y1 - y0) > Abs(x1 - x0);
     if (steep) {
         _swap_uint8_t(x0, y0);
@@ -207,24 +207,24 @@ void disp_draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_t col
     }
 }
 
-void disp_draw_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t color) {
+void disp_draw_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color) {
     disp_draw_line(x, y, x+w-1, y, color);
     disp_draw_line(x, y+h-1, x+w-1, y+h-1, color);
     disp_draw_line(x, y, x, y+h-1, color);
     disp_draw_line(x+w-1, y, x+w-1, y+h-1, color);
 }
 
-void disp_fill_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t color) {
+void disp_fill_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color) {
     for (uint8_t i=x; i<x+w; i++) {
         disp_draw_line(i, y, i, y+h-1, color);
     }
 }
 
-void disp_clear_screen(uint16_t color) {
+void disp_clear_screen(uint8_t color) {
     disp_fill_rect(0, 0, DISP_WIDTH-1, DISP_HEIGHT-1, color);
 }
 
-static void disp_draw_char(uint8_t x, uint8_t y, unsigned char c, uint16_t color, uint16_t bg, uint8_t size) {
+static void disp_draw_char(uint8_t x, uint8_t y, unsigned char c, uint8_t color, uint8_t bg, uint8_t size) {
     // Can only draw character if font is loaded
     if (gfxFont) {
         c -= (int8_t)pgm_read_byte(&gfxFont->first);

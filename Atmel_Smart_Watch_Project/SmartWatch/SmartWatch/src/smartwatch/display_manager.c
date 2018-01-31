@@ -473,5 +473,8 @@ static int displayBattery(int xoff) {
     for (uint8_t q = 0; q < battery; q++) {
         disp_draw_line(x + q, disp_bat_y, x + q, disp_bat_y + disp_bat_height, color);
     }
+	// disp_fill_rect(0,headerTextY,30,30,DISP_PIXEL_MAGENTA);
+	// disp_set_pos(5, menuTextY[0]);
+	// disp_write_str(ftoa(buffer, battery, 2));
     return x-1;
 }

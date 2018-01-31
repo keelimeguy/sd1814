@@ -6,7 +6,7 @@
 
 #include <SmartWatch.h>
 
-#define MAX_ADC     0xFF
+#define MAX_ADC     0xFFF
 
 void battery_reader_init(void);
 void battery_task(void);

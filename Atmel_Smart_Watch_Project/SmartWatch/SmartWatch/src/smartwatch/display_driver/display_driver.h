@@ -119,15 +119,16 @@
 #define DISP_WARNING_LOW  70.0
 #define DISP_DANGER_LOW   50.0
 
-#define DISP_PIXEL_BLACK          0x0000
-#define DISP_PIXEL_GREY           0x8410
-#define DISP_PIXEL_WHITE          0xffff
-#define DISP_PIXEL_RED            0xf800
-#define DISP_PIXEL_YELLOW         0xffe0
-#define DISP_PIXEL_GREEN          0x07e0
-#define DISP_PIXEL_CYAN           0x07ff
-#define DISP_PIXEL_BLUE           0x001f
-#define DISP_PIXEL_MAGENTA        0xf81f
+static const uint16_t COLOR_ARRAY[] = {0x0000, 0x8410, 0xffff, 0xf800, 0xffe0, 0x07e0, 0x07ff, 0x001f, 0xf81f};
+#define DISP_PIXEL_BLACK          0
+#define DISP_PIXEL_GREY           1
+#define DISP_PIXEL_WHITE          2
+#define DISP_PIXEL_RED            3
+#define DISP_PIXEL_YELLOW         4
+#define DISP_PIXEL_GREEN          5
+#define DISP_PIXEL_CYAN           6
+#define DISP_PIXEL_BLUE           7
+#define DISP_PIXEL_MAGENTA        8
 
 #define DISP_BG_COLOR             DISP_PIXEL_BLUE
 
@@ -143,11 +144,11 @@
 void disp_init(void);
 void disp_set_pos(uint8_t x, uint8_t y);
 void disp_write_pixel(uint16_t color);
-void disp_write_pixel_at(uint8_t x, uint8_t y, uint16_t color);
-void disp_draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_t color);
-void disp_draw_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t color);
-void disp_fill_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t color);
-void disp_clear_screen(uint16_t color);
+void disp_write_pixel_at(uint8_t x, uint8_t y, uint8_t color);
+void disp_draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color);
+void disp_draw_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color);
+void disp_fill_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color);
+void disp_clear_screen(uint8_t color);
 void disp_write(uint8_t c);
 void disp_write_str(char *str);
 void disp_write_str_group(char *str, uint8_t replace_last);
@@ -158,7 +159,7 @@ void disp_set_font(GFXfont *font);
 void disp_set_font_scale(uint8_t scale);
 void disp_set_wrap(uint8_t val);
 void disp_set_cp437(uint8_t val);
-void disp_set_color(uint16_t text, uint16_t bg);
+void disp_set_color(uint8_t text, uint8_t bg);
 void disp_commit();
 void disp_sleep_enable();
 void disp_sleep_disable();
