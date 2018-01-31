@@ -12,11 +12,17 @@
     #define PROGMEM
     #endif
 
-	#define SMARTWATCH_EIC_L_BUTTON 0
-	#define SMARTWATCH_EIC_R_BUTTON 1
-	#define SMARTWATCH_EIC_BLE 2
+    #define DEBUG_NONE           0
+    #define DEBUG_CLOCK          1
+    #define DEBUG_BATTERY        2
+    #define DEBUG_DISPLAY        3
+    #define DEBUG_BUTTON_L       4
+    #define DEBUG_BUTTON_R       5
+    #define DEBUG_BUTTON_EXTINT  6
+    #define DEBUG_BLE            7
+    #define DEBUG_MEASURE        8
 
-	#define DEBUG_LED  BOARD_DEBUG_LED
+    #define DEBUG_MODE DEBUG_NONE
 
     #include "smartwatch/clock_driver.h"
     #include "smartwatch/battery_reader.h"

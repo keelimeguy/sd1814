@@ -159,17 +159,18 @@ void BLEsetup(void)
     Tell the ACI library, the MCU to nRF8001 pin connections.
     The Active pin is optional and can be marked UNUSED
   */
-  aci_state.aci_pins.board_name = BOARD_DEFAULT; //See board.h for details REDBEARLAB_SHIELD_V1_1 or BOARD_DEFAULT
-  aci_state.aci_pins.spi = BT_SPI;
-  aci_state.aci_pins.reqn_pin   = BT_REQ_PIN; //SS for Nordic board, 9 for REDBEARLAB_SHIELD_V1_1
-  aci_state.aci_pins.rdyn_pin   = BT_RDY_PIN; //3 for Nordic board, 8 for REDBEARLAB_SHIELD_V1_1
-  aci_state.aci_pins.mux_setting = BT_SPI_PINMUX_SETTING;
-  aci_state.aci_pins.pinmux_pad0 = BT_SPI_PINMUX_PAD0;
-  aci_state.aci_pins.pinmux_pad1 = BT_SPI_PINMUX_PAD1;
-  aci_state.aci_pins.pinmux_pad2 = BT_SPI_PINMUX_PAD2;
-  aci_state.aci_pins.pinmux_pad3 = BT_SPI_PINMUX_PAD3;
-  aci_state.aci_pins.baudrate = BT_CLOCK_SPEED;
-  aci_state.aci_pins.dord = BT_DATA_ORDER;
+  aci_state.aci_pins.board_name   = BOARD_DEFAULT; //See board.h for details REDBEARLAB_SHIELD_V1_1 or BOARD_DEFAULT
+  aci_state.aci_pins.spi          = BT_SPI;
+  aci_state.aci_pins.reqn_pin     = BT_REQ_PIN;
+  aci_state.aci_pins.rdyn_pin     = BT_RDY_PIN;
+  aci_state.aci_pins.rdyn_pin_mux = BT_RDY_MUX;
+  aci_state.aci_pins.mux_setting  = BT_SPI_PINMUX_SETTING;
+  aci_state.aci_pins.pinmux_pad0  = BT_SPI_PINMUX_PAD0;
+  aci_state.aci_pins.pinmux_pad1  = BT_SPI_PINMUX_PAD1;
+  aci_state.aci_pins.pinmux_pad2  = BT_SPI_PINMUX_PAD2;
+  aci_state.aci_pins.pinmux_pad3  = BT_SPI_PINMUX_PAD3;
+  aci_state.aci_pins.baudrate     = BT_CLOCK_SPEED;
+  aci_state.aci_pins.dord         = BT_DATA_ORDER;
 
 //#if defined(ARDUINO_ARCH_SAMD)
 //  aci_state.aci_pins.spi_clock_divider      = 48;
@@ -182,7 +183,7 @@ void BLEsetup(void)
   aci_state.aci_pins.optional_chip_sel_pin  = HAL_UNUSED;
 
   aci_state.aci_pins.interface_is_interrupt = true;
-  aci_state.aci_pins.interrupt_number       = BLE_RDY_EIC;
+  aci_state.aci_pins.interrupt_number       = BT_RDY_EIC;
 
   //We reset the nRF8001 here by toggling the RESET line connected to the nRF8001
   //If the RESET line is not available we call the ACI Radio Reset to soft reset the nRF8001

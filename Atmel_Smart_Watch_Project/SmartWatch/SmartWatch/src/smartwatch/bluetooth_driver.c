@@ -24,7 +24,7 @@ void bluetooth_driver_init(void) {
         for (int j=0; j< BT_MAX_MSG_LENGTH; j++)
             rx_buffer[i][j] = 0;
 
-    //BLEsetup();
+    BLEsetup();
     //start_read();
 }
 
@@ -37,7 +37,7 @@ uint8_t is_bt_active(void) {
 }
 
 void bt_task(void) {
-    // aci_loop();
+    aci_loop();
 
     if (rx_buffer_len) {
         rx_buffer_len--;
@@ -103,6 +103,16 @@ void bt_task(void) {
             // measure_set_reading_timeout(val*60*1000);
             request_screen_on();
         }
+
+        #if DEBUG_MODE==DEBUG_BLE
+            // Debug command to change LED
+            else if (rx_buffer[cur_rindx][0] == 'L') {
+                memcpy(paramData, &rx_buffer[cur_rindx][1], BT_MAX_MSG_LENGTH - 1);
+                char *ptr;
+                long val = strtol(paramData, &ptr, 10);
+                port_pin_set_output_level(BOARD_DEBUG_LED, (val>0));
+            }
+        #endif
 
         // if (cur_rindx == cur_rxindx) {
         //     start_read();

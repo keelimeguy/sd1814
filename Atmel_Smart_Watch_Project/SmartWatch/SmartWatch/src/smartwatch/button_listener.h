@@ -6,8 +6,8 @@
 
 #include <SmartWatch.h>
 
-#define BUTTON_L_EIC     SMARTWATCH_EIC_L_BUTTON
-#define BUTTON_R_EIC     SMARTWATCH_EIC_R_BUTTON
+#define BUTTON_L_EIC     BOARD_EIC_L_BUTTON
+#define BUTTON_R_EIC     BOARD_EIC_R_BUTTON
 
 #define BUTTON_L_VAL     0x1
 #define BUTTON_R_VAL     0x2

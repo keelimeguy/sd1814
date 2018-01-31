@@ -24,19 +24,19 @@ void battery_reader_init(void) {
     adc_result = 0;
     adc_active = 1;
     battery_level = 0;
-	
-	// #ifdef DEBUG_LED	
-	//     port_pin_set_output_level(DEBUG_LED, false);
-	// #endif
+
+    #if DEBUG_MODE==DEBUG_BATTERY
+        port_pin_set_output_level(BOARD_DEBUG_LED, false);
+    #endif
 }
 
 void battery_task(void) {
     uint16_t result;
     if (adc_active && adc_read(&adc_instance, &result) != STATUS_OK) {
-		
-		// #ifdef DEBUG_LED
-		//     port_pin_set_output_level(DEBUG_LED, false);
-		// #endif
+
+        #if DEBUG_MODE==DEBUG_BATTERY
+            port_pin_set_output_level(BOARD_DEBUG_LED, false);
+        #endif
         adc_result = result;
         battery_level = adc_result*last_max/MAX_ADC;
         // battery_level = (((1100L * 1024L) / result) + 5L) / 10L;
@@ -48,9 +48,9 @@ void start_battery_read(void) {
     if (!adc_active) {
         adc_active = 1;
         adc_start_conversion(&adc_instance);
-		// #ifdef DEBUG_LED
-		//     port_pin_set_output_level(DEBUG_LED, true);
-		// #endif
+        #if DEBUG_MODE==DEBUG_BATTERY
+            port_pin_set_output_level(BOARD_DEBUG_LED, true);
+        #endif
     }
 }
 

@@ -71,7 +71,7 @@ struct spi_slave_inst bt_slave;
 aci_queue_t    aci_tx_q;
 aci_queue_t    aci_rx_q;
 
-static aci_pins_t	 *a_pins_local_ptr;
+static aci_pins_t  *a_pins_local_ptr;
 
 // void m_aci_data_print(hal_aci_data_t *p_data)
 // {
@@ -88,7 +88,7 @@ static aci_pins_t	 *a_pins_local_ptr;
 // }
 
 void* get_aci_rx_q_ptr() {
-	return (void*)&aci_rx_q;
+  return (void*)&aci_rx_q;
 }
 
 /*
@@ -269,7 +269,7 @@ bool m_aci_spi_transfer(hal_aci_data_t * data_to_send, hal_aci_data_t * received
 
 // void hal_aci_tl_debug_print(bool enable)
 // {
-// 	//aci_debug_print = enable;
+//  //aci_debug_print = enable;
 // }
 
 void hal_aci_tl_pin_reset(void)
@@ -392,6 +392,7 @@ void hal_aci_tl_init(aci_pins_t *a_pins, bool debug)
     extint_chan_get_config_defaults(&config_extint_chan);
 
     config_extint_chan.gpio_pin           = a_pins->rdyn_pin;
+    config_extint_chan.gpio_pin_mux       = a_pins->rdyn_pin_mux;
     config_extint_chan.gpio_pin_pull      = EXTINT_PULL_UP;
     config_extint_chan.detection_criteria = EXTINT_DETECT_FALLING;
     extint_chan_set_config(a_pins->interrupt_number, &config_extint_chan);
@@ -445,9 +446,9 @@ bool hal_aci_tl_send(hal_aci_data_t *p_aci_cmd)
 
 static uint8_t spi_readwrite(const uint8_t aci_byte)
 {
-	uint16_t ret;
-	spi_transceive_wait(&bt_master, &aci_byte, &ret);
-	return (uint8_t)ret;
+  uint16_t ret;
+  spi_transceive_wait(&bt_master, &aci_byte, &ret);
+  return (uint8_t)ret;
 }
 
 bool hal_aci_tl_rx_q_empty (void)

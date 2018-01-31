@@ -11,6 +11,8 @@
 #define BT_RES_PIN             BOARD_BT_RES_PIN
 #define BT_REQ_PIN             BOARD_BT_REQ_PIN
 #define BT_RDY_PIN             BOARD_BT_RDY_PIN
+#define BT_RDY_MUX             BOARD_BT_RDY_MUX
+#define BT_RDY_EIC             BOARD_EIC_BLE
 
 #define BT_SPI_PINMUX_SETTING  BOARD_BT_SERCOM_SETTING
 #define BT_SPI_PINMUX_PAD0     PINMUX_PA08C_SERCOM0_PAD0

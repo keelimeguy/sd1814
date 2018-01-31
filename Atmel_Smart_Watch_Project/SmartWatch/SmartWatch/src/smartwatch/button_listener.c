@@ -4,21 +4,14 @@
 #include "button_listener.h"
 
 static volatile uint8_t button_pressed, button_interrupt_flag;
-#ifdef DEBUG_LED
-	static uint8_t level;
+#if DEBUG_MODE==DEBUG_BUTTON_EXTINT
+    static uint8_t level;
 #endif
 
 static void button_listener_callback_L(void);
 static void button_listener_callback_R(void);
 
 void button_listener_init(void) {
-	struct port_config pin;
-	port_get_config_defaults(&pin);
-	pin.direction = PORT_PIN_DIR_INPUT;
-
-	port_pin_set_config(BOARD_BUTTON_L_PIN, &pin);
-	port_pin_set_config(BOARD_BUTTON_R_PIN, &pin);
-	
     struct extint_chan_conf config_extint_chan;
     extint_chan_get_config_defaults(&config_extint_chan);
 
@@ -38,10 +31,10 @@ void button_listener_init(void) {
     extint_register_callback(button_listener_callback_R, BUTTON_R_EIC, EXTINT_CALLBACK_TYPE_DETECT);
     extint_chan_enable_callback(BUTTON_R_EIC, EXTINT_CALLBACK_TYPE_DETECT);
 
-	#ifdef DEBUG_LED
-		level = false;
-		port_pin_set_output_level(DEBUG_LED, level);
-	#endif
+    #if DEBUG_MODE==DEBUG_BUTTON_EXTINT
+        level = false;
+        port_pin_set_output_level(BOARD_DEBUG_LED, level);
+    #endif
 
     button_pressed = 0;
     button_interrupt_flag = 1;
@@ -50,19 +43,19 @@ void button_listener_init(void) {
 static void button_listener_callback_L(void) {
     button_interrupt_flag = 1;
     button_pressed |= BUTTON_L_VAL;
-	#ifdef DEBUG_LED
-		level = !level;
-	    port_pin_set_output_level(DEBUG_LED, level);
-	#endif
+    #if DEBUG_MODE==DEBUG_BUTTON_EXTINT
+        level = !level;
+        port_pin_set_output_level(BOARD_DEBUG_LED, level);
+    #endif
 }
 
 static void button_listener_callback_R(void) {
     button_interrupt_flag = 1;
     button_pressed |= BUTTON_R_VAL;
-	#ifdef DEBUG_LED
-		level = !level;
-		port_pin_set_output_level(DEBUG_LED, level);
-	#endif
+    #if DEBUG_MODE==DEBUG_BUTTON_EXTINT
+        level = !level;
+        port_pin_set_output_level(BOARD_DEBUG_LED, level);
+    #endif
 }
 
 uint8_t is_button_interrupt_soft(void) {

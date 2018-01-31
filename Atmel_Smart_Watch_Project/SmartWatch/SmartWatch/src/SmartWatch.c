@@ -10,15 +10,17 @@
     void init_all(void) {
         system_init();
 
-		// Configure debugging LED if in use
-		#ifdef DEBUG_LED
-		struct port_config pin;
-		port_get_config_defaults(&pin);
-		pin.direction = PORT_PIN_DIR_OUTPUT;
+        // Configure debugging LED if in use
+        #if DEBUG_MODE!=DEBUG_NONE
+        struct port_config pin;
+        port_get_config_defaults(&pin);
+        pin.direction = PORT_PIN_DIR_OUTPUT;
 
-		port_pin_set_config(DEBUG_LED, &pin);
-		port_pin_set_output_level(DEBUG_LED, true);
-		#endif
+        port_pin_set_config(BOARD_DEBUG_LED, &pin);
+        #if DEBUG_MODE==DEBUG_DISPLAY
+        port_pin_set_output_level(BOARD_DEBUG_LED, true);
+        #endif
+        #endif
 
         clock_driver_init();
         battery_reader_init();
@@ -36,13 +38,16 @@
     }
 
     void smartwatch_task(void) {
-        // bt_task();
+        bt_task();
         measurement_task();
         battery_task();
 
-		// #ifdef DEBUG_LED
-		//     port_pin_set_output_level(DEBUG_LED, port_pin_get_input_level(BOARD_BUTTON_L_PIN));
-		// #endif
+        #if DEBUG_MODE==DEBUG_BUTTON_L
+            port_pin_set_output_level(BOARD_DEBUG_LED, port_pin_get_input_level(BOARD_BUTTON_L_PIN));
+        #endif
+        #if DEBUG_MODE==DEBUG_BUTTON_R
+            port_pin_set_output_level(BOARD_DEBUG_LED, port_pin_get_input_level(BOARD_BUTTON_R_PIN));
+        #endif
 
         if (is_screen_active()) {
 
@@ -100,17 +105,17 @@
         disp_sleep_enable();
         screen_sleep = 1;
 
-        // #ifdef DEBUG_LED
-        //     port_pin_set_output_level(DEBUG_LED, false);
-        // #endif
+        #if DEBUG_MODE==DEBUG_DISPLAY
+            port_pin_set_output_level(BOARD_DEBUG_LED, false);
+        #endif
 
         sleepmgr_enter_sleep();
     }
 
     void wakeup(void) {
-        // #ifdef DEBUG_LED
-        //     port_pin_set_output_level(DEBUG_LED, true);
-        // #endif
+        #if DEBUG_MODE==DEBUG_DISPLAY
+            port_pin_set_output_level(BOARD_DEBUG_LED, true);
+        #endif
 
         // Wakeup display if needed
         if (is_screen_active_soft()) {

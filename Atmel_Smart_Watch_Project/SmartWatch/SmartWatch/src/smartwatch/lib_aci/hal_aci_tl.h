@@ -1,5 +1,5 @@
 /* UConn Senior Design Team 1814, December 2017
-     Using code adapted from:
+   Using code adapted from:
 
 /* Copyright (c) 2014, Nordic Semiconductor ASA
  *
@@ -56,7 +56,7 @@ and the received ACI event is placed in the tail of the event queue.
 /************************************************************************/
 /* Unused nRF8001 pin                                                    */
 /************************************************************************/
-#define HAL_UNUSED		    255
+#define HAL_UNUSED          255
 
 /** Data type for ACI commands and events */
 typedef struct {
@@ -70,27 +70,28 @@ ACI_ASSERT_SIZE(hal_aci_data_t, HAL_ACI_MAX_LENGTH + 2);
 /** Datatype for ACI pins and interface (polling/interrupt)*/
 typedef struct aci_pins_t
 {
-	uint8_t board_name;             //Optional : Use BOARD_DEFAULT if you do not know. See boards.h
-	uint32_t spi;
-	uint8_t	reqn_pin;				//Required
-	uint8_t	rdyn_pin;				//Required
-	enum spi_signal_mux_setting mux_setting;
-	uint32_t pinmux_pad0;
-	uint32_t pinmux_pad1;
-	uint32_t pinmux_pad2;
-	uint32_t pinmux_pad3;
-	uint32_t baudrate;
-	uint32_t dord;
+  uint8_t board_name;             //Optional : Use BOARD_DEFAULT if you do not know. See boards.h
+  uint32_t spi;
+  uint8_t reqn_pin;               //Required
+  uint8_t rdyn_pin;               //Required
+  uint8_t rdyn_pin_mux;           //Required
+  enum spi_signal_mux_setting mux_setting;
+  uint32_t pinmux_pad0;
+  uint32_t pinmux_pad1;
+  uint32_t pinmux_pad2;
+  uint32_t pinmux_pad3;
+  uint32_t baudrate;
+  uint32_t dord;
 
-	uint8_t spi_clock_divider;      //Required : Clock divider on the SPI clock : nRF8001 supports a maximum clock of 3MHz
+  uint8_t spi_clock_divider;      //Required : Clock divider on the SPI clock : nRF8001 supports a maximum clock of 3MHz
 
-	uint8_t	reset_pin;				//Recommended but optional - Set it to UNUSED when not connected
-	uint8_t active_pin;				//Optional - Set it to UNUSED when not connected
-	uint8_t optional_chip_sel_pin;  //Optional - Used only when the reqn line is required to be separate from the SPI chip select. Eg. Arduino DUE
+  uint8_t reset_pin;              //Recommended but optional - Set it to UNUSED when not connected
+  uint8_t active_pin;             //Optional - Set it to UNUSED when not connected
+  uint8_t optional_chip_sel_pin;  //Optional - Used only when the reqn line is required to be separate from the SPI chip select. Eg. Arduino DUE
 
-	bool	interface_is_interrupt;	//Required - true = Uses interrupt on RDYN pin. false - Uses polling on RDYN pin
+  bool    interface_is_interrupt; //Required - true = Uses interrupt on RDYN pin. false - Uses polling on RDYN pin
 
-	uint8_t	interrupt_number;		//Required when using interrupts, otherwise ignored
+  uint8_t interrupt_number;       //Required when using interrupts, otherwise ignored
 } aci_pins_t;
 
 /** @brief ACI Transport Layer initialization.

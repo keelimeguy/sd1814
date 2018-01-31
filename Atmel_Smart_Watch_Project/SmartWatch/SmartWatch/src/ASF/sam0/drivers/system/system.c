@@ -104,7 +104,7 @@ void system_init(void)
 
 	/* Initialize External hardware */
 	_system_extint_init();
-	
+
 	/* Initialize DIVAS hardware */
 	_system_divas_init();
 }

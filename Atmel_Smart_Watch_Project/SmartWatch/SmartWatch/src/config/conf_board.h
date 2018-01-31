@@ -54,9 +54,12 @@
 #define BOARD_BT_SERCOM_SETTING    SPI_SIGNAL_MUX_SETTING_D //   MOSI ,   SCLK ,    -   ,   MISO
 
 #define BOARD_BT_RES_PIN           PIN_PA28 // 41
-#define BOARD_BT_RDY_PIN           PIN_PA21 // 30
 #define BOARD_BT_REQ_PIN           PIN_PA24 // 33
 #define BOARD_BT_ACT_PIN           PIN_PA27 // 39
+
+#define BOARD_BT_RDY_PIN           PIN_PA21 // 30
+#define BOARD_BT_RDY_MUX           MUX_PA21A_EIC_EXTINT5
+#define BOARD_EIC_BLE              5
 
 #define BOARD_DISP_SERCOM          SERCOM1                  // PA16:25, PA17:26, PA18:27, PA19:28
 #define BOARD_DISP_SERCOM_SETTING  SPI_SIGNAL_MUX_SETTING_A //   MOSI ,   SCLK ,    -   ,    -
@@ -68,9 +71,12 @@
 
 #define BOARD_BUTTON_L_PIN         PIN_PA10 // 15
 #define BOARD_BUTTON_L_MUX         MUX_PA10A_EIC_EXTINT10
+#define BOARD_EIC_L_BUTTON         10
 
 #define BOARD_BUTTON_R_PIN         PIN_PA11 // 16
 #define BOARD_BUTTON_R_MUX         MUX_PA11A_EIC_EXTINT11
+#define BOARD_EIC_R_BUTTON         11
+
 
 #define BOARD_PHOTODIODE_PIN       PIN_PA07 // 12
 
