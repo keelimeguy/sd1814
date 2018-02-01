@@ -8,6 +8,7 @@
 
 ### Notes:
 - Board configuration/pinout: "src/config/conf_board.h"
+- Configure startup time in: "src/config/conf_clocks.h"
 - Warning levels for glucose defined in "src/smartwatch/display\_driver/display_driver.h"
 - Application starts at "src/main.c"
 

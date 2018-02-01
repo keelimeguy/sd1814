@@ -790,13 +790,13 @@ struct rtc_calendar_config {
 static inline void rtc_calendar_get_time_defaults(
 		struct rtc_calendar_time *const time)
 {
-	time->second = 0;
-	time->minute = 0;
-	time->hour   = 0;
-	time->pm     = 0;
-	time->day    = 1;
-	time->month  = 1;
-	time->year   = 2000;
+	time->second = DEFAULT_TIME_SEC;
+	time->minute = DEFAULT_TIME_MIN;
+	time->hour   = DEFAULT_TIME_HOUR;
+	time->pm     = DEFAULT_TIME_PM;
+	time->day    = DEFAULT_TIME_DAY;
+	time->month  = DEFAULT_TIME_MONTH;
+	time->year   = DEFAULT_TIME_YEAR;
 }
 
 /**

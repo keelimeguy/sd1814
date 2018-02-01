@@ -31,6 +31,7 @@
 
         sleepmgr_init();
 
+        // Enable interrupts
         system_interrupt_enable_global();
 
         screen_request = 1;
@@ -38,6 +39,7 @@
     }
 
     void smartwatch_task(void) {
+        // Perform smartwatch subtasks
         bt_task();
         measurement_task();
         battery_task();
@@ -126,6 +128,8 @@
         }
     }
 
+// The following is specifically for console testing code,
+// e.g. compiled with flag: -D CONSOLE_VERSION=<anything>
 #else
 
     struct rtc_calendar_time rtc_instance = {

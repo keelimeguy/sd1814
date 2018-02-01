@@ -45,6 +45,14 @@
  */
 #include <clock.h>
 
+#define DEFAULT_TIME_SEC            12
+#define DEFAULT_TIME_MIN            56
+#define DEFAULT_TIME_HOUR           9
+#define DEFAULT_TIME_PM             1
+#define DEFAULT_TIME_DAY            1
+#define DEFAULT_TIME_MONTH          2
+#define DEFAULT_TIME_YEAR           2018
+
 #ifndef CONF_CLOCKS_H_INCLUDED
 #  define CONF_CLOCKS_H_INCLUDED
 
