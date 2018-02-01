@@ -106,7 +106,7 @@
     - :alien: updateGlucoseDisplay()
     - :alien: updateTimeDisplay()
     - :raised_hand: updateBLEstatusDisplay()
-    - :x: displayBattery()
+    - :raised_hand: displayBattery()
 
 - **smartwatch/kalman.c**
     - **_kalman.h_**
@@ -116,7 +116,7 @@
 
 - **smartwatch/measurement_controller.c**
     - **_measurement\_controller.h_**
-    - :x: measurement_controller_init()
+    - :raised_hand: measurement_controller_init()
     - :alien: take_measurement()
     - :alien: is_measure_busy()
     - :alien: measure_set_reading_timeout()
@@ -125,6 +125,7 @@
     - :alien: measure_set_pulse_two()
     - :alien: measure_set_pulse_three()
     - :x: measurement_task()
+    - :raised_hand: do_measurement()
     - :alien: get_measurement()
     - :alien: is_new_measurement_soft()
     - :alien: is_new_measurement()
