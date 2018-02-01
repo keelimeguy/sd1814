@@ -63,6 +63,8 @@ uint8_t is_bt_active(void);
 void bt_task(void);
 uint8_t bt_write(uint8_t *tx_data, uint16_t length);
 uint8_t bt_amt_notifications(void);
+uint8_t bt_new_notifications_soft(void);
+uint8_t bt_new_notifications(void);
 void bt_clear_amt_notifications(void);
 char* bt_get_notification_1(void);
 char* bt_get_notification_2(void);

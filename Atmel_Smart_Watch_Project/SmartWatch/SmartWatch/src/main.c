@@ -24,7 +24,6 @@ int main(void) {
             smartwatch_task();
         }
         sleep();
-        request_screen_on(); // TODO: should be removed later
         wakeup();
     }
     return 0;

@@ -35,5 +35,6 @@
 
 void display_manager_init(void);
 void display_ui_task(uint8_t button);
+void updateGraph(float glucose);
 
 #endif

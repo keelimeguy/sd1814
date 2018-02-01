@@ -9,7 +9,7 @@ static uint16_t adc_result, battery_level;
 static uint8_t adc_active;
 
 void battery_reader_init(void) {
-    struct adc_config config_adc;
+	struct adc_config config_adc;
     adc_get_config_defaults(&config_adc);
 
     // If resolution changes, be sure to change MAX_ADC in battery_reader.h
@@ -40,9 +40,12 @@ void battery_task(void) {
             port_pin_set_output_level(BOARD_DEBUG_LED, false);
         #endif
         adc_result = result;
-        battery_level = (result/MAX_ADC)*last_max;
-        // battery_level = (((1100L * 1024L) / result) + 5L) / 10L;
-        adc_active = 0;
+		if (result != 0) {
+			// battery_level = (result/MAX_ADC)*last_max;
+			battery_level = (((1100L * 1024L) / result) + 5L) / 10L;
+			battery_level *= last_max/7.0;
+        }
+		adc_active = 0;
     }
 }
 
@@ -66,7 +69,8 @@ int get_battery_level(int max) {
         return battery_level;
     }
     last_max = max;
-    battery_level = (adc_result/MAX_ADC)*max;
-    // battery_level = (((1100L * 1024L) / adc_result) + 5L) / 10L;
+    // battery_level = (adc_result/MAX_ADC)*max;
+    battery_level = (((1100L * 1024L) / adc_result) + 5L) / 10L;
+    battery_level *= max/7.0;
     return battery_level;
 }

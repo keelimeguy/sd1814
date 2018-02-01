@@ -18,8 +18,8 @@
 #define LONGEST_FREQ_PERIOD_us 		125 // us
 
 // Assuming 8MHz clock frequency => .125us
-#define microsecondsToClockCycles(usecs)    {  usecs / 0.125 }
-#define clockCyclesToMicroseconds(cycles)   { cycles * 0.125 }
+#define microsecondsToClockCycles(usecs)    (  usecs / 0.125 )
+#define clockCyclesToMicroseconds(cycles)   ( cycles * 0.125 )
 
 void measurement_controller_init(void);
 void take_measurement(uint8_t button);

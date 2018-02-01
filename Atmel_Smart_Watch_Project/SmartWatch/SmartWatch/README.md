@@ -52,6 +52,8 @@
     - :raised_hand: bt_task()
     - :alien: bt_write()
     - :alien: bt_amt_notifications()
+    - :alien: bt_new_notifications_soft()
+    - :alien: bt_new_notifications()
     - :alien: bt_clear_amt_notifications()
     - :alien: bt_get_notification_1()
     - :alien: bt_get_notification_2()
@@ -63,7 +65,7 @@
 
 - **smartwatch/button_listener.c**
     - **_button\_listener.h_**
-    - :raised_hand: button_listener_init()
+    - :alien: button_listener_init()
     - :alien: button_listener_callback_L()
     - :alien: button_listener_callback_R()
     - :alien: is_button_interrupt_soft()
@@ -99,8 +101,8 @@
     - :alien: display_manager_init()
     - :alien: display_ui_task()
     - :alien: updateMainDisplay()
-    - :raised_hand: viewNotifications()
-    - :raised_hand: showGraphView()
+    - :alien: viewNotifications()
+    - :alien: showGraphView()
     - :alien: updateGraph()
     - :alien: updateDateDisplay()
     - :alien: updateGlucoseDisplay()

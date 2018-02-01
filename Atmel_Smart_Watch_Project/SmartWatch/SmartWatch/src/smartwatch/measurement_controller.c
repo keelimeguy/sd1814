@@ -152,17 +152,17 @@ static unsigned long do_measurement(void) {
     unsigned long maxloops = microsecondsToClockCycles(LONGEST_FREQ_PERIOD_us) / 16;
 
     // wait for any previous pulse to end
-    while (port_pin_get_output_level(PHOTODIODE_PIN) == stateMask)
+    while (port_pin_get_output_level(PHOTODIODE_PIN) == true)
         if (numloops++ == maxloops)
             return 0;
 
     // wait for the pulse to start
-    while (port_pin_get_output_level(PHOTODIODE_PIN) != stateMask)
+    while (port_pin_get_output_level(PHOTODIODE_PIN) != true)
         if (numloops++ == maxloops)
             return 0;
 
     // wait for the pulse to stop
-    while (port_pin_get_output_level(PHOTODIODE_PIN) == stateMask) {
+    while (port_pin_get_output_level(PHOTODIODE_PIN) == true) {
         if (numloops++ == maxloops)
             return 0;
         width++;

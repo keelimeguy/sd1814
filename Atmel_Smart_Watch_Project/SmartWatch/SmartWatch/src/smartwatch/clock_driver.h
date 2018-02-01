@@ -10,16 +10,8 @@
 #define RTC_ALARM_UNIT_MASK RTC_CALENDAR_ALARM_MASK_SEC
 
 #define BATTERY_TIMEOUT 20 // s
-#define SCREEN_TIMEOUT  30 // s
+#define SCREEN_TIMEOUT  120 // s
 #define READING_TIMEOUT measure_get_reading_timeout()
-
-#define RTC_YEAR_INIT  2017
-#define RTC_MONTH_INIT 1
-#define RTC_DAY_INIT   1
-#define RTC_PM_INIT    0
-#define RTC_HOUR_INIT  0
-#define RTC_MIN_INIT   0
-#define RTC_SEC_INIT   4
 
 void clock_driver_init(void);
 uint8_t is_reading_timeout(void);

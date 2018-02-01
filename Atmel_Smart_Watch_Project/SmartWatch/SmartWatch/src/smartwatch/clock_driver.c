@@ -44,13 +44,6 @@ void clock_driver_init(void) {
 
     struct rtc_calendar_time time;
     rtc_calendar_get_time_defaults(&time);
-    time.year   = RTC_YEAR_INIT;
-    time.month  = RTC_MONTH_INIT;
-    time.day    = RTC_DAY_INIT;
-    time.hour   = RTC_HOUR_INIT;
-    time.pm     = RTC_PM_INIT;
-    time.minute = RTC_MIN_INIT;
-    time.second = RTC_SEC_INIT;
 
     struct rtc_calendar_config config_rtc_calendar;
     rtc_calendar_get_config_defaults(&config_rtc_calendar);
