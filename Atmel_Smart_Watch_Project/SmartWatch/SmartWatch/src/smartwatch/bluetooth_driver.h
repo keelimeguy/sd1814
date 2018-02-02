@@ -6,10 +6,10 @@
 
 #include "conf_bluetooth.h"
 #ifndef CONSOLE_VERSION
-	#include "UART.h"
+    #include "UART.h"
 #else
-	#include <string.h>
-	#define HAL_ACI_MAX_LENGTH 16
+    #include <string.h>
+    #define HAL_ACI_MAX_LENGTH 16
 #endif
 
 #define BT_CMD_TEST                                 0x01

@@ -70,7 +70,7 @@ void display_manager_init(void) {
     first_data = 0;
     graph_refresh = 1;
     lastGlucoseVal = 0;
-	newGlucose = 0;
+    newGlucose = 0;
     last_ampm_x = 0;
     last_sec_x = 0;
     last_min_x = 0;
@@ -78,8 +78,8 @@ void display_manager_init(void) {
     last_date_x = 0;
     last_ble_x = 0;
     last_bat_x = 0;
-	last_notifications = 0;
-	last_battery = -1;
+    last_notifications = 0;
+    last_battery = -1;
 }
 
 void display_ui_task(uint8_t button) {
@@ -126,10 +126,10 @@ static void updateMainDisplay(uint8_t button) {
     } else if (button & GRAPH_BUTTON) {
         showGraphView(0);
     } else {
-		if (rewriteMenu || newGlucose) {
-			updateGlucoseDisplay(lastGlucoseVal);
-			newGlucose = 0;
-		}
+        if (rewriteMenu || newGlucose) {
+            updateGlucoseDisplay(lastGlucoseVal);
+            newGlucose = 0;
+        }
         if (rewriteMenu || lastAmtNotificationsShown != bt_amt_notifications()) {
             lastAmtNotificationsShown = bt_amt_notifications();
             disp_set_font(FONT_MEDIUM);
@@ -172,42 +172,42 @@ static void viewNotifications(uint8_t button) {
         bt_clear_amt_notifications();
         updateMainDisplay(0);
     } else {
-		if (last_notifications != bt_amt_notifications() || bt_new_notifications()) {
-			disp_set_font(FONT_MEDIUM);
-			disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_BLACK);
-			if (bt_amt_notifications()) {
-				last_notifications = bt_amt_notifications();
-				disp_set_pos(0, menuTextY[0]);
-				disp_write_str_group(bt_get_notification_1(), NOTIFICATION_1_ID);
-				disp_end_group();
-				disp_set_pos(0, menuTextY[1]);
-				disp_write_str_group(bt_get_notification_2(), NOTIFICATION_2_ID);
-				disp_end_group();
-				disp_set_pos(0, menuTextY[6]);
-				disp_set_font(FONT_SMALL);
-				disp_write_str("< Clear");
-				uint8_t x1;
-				uint8_t w;
-				uint8_t y1;
-				uint8_t h;
-				disp_get_text_bounds("Back >", 0, 0, &x1, &y1, &w, &h);
-				disp_set_pos(DISP_WIDTH-w-1, menuTextY[6]);
-				disp_write_str("Back >");
-			} else {
-				disp_set_pos(0, menuTextY[0]);
-				disp_write_str_group("No notifications.", NOTIFICATION_1_ID);
-				disp_end_group();
-				disp_remove_str_group(NOTIFICATION_2_ID);
-				uint8_t x1;
-				uint8_t w;
-				uint8_t y1;
-				uint8_t h;
-				disp_set_font(FONT_SMALL);
-				disp_get_text_bounds("Back >", 0, 0, &x1, &y1, &w, &h);
-				disp_set_pos(DISP_WIDTH-w-1, menuTextY[6]);
-				disp_write_str("Back >");
-			}
-		}
+        if (last_notifications != bt_amt_notifications() || bt_new_notifications()) {
+            disp_set_font(FONT_MEDIUM);
+            disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_BLACK);
+            if (bt_amt_notifications()) {
+                last_notifications = bt_amt_notifications();
+                disp_set_pos(0, menuTextY[0]);
+                disp_write_str_group(bt_get_notification_1(), NOTIFICATION_1_ID);
+                disp_end_group();
+                disp_set_pos(0, menuTextY[1]);
+                disp_write_str_group(bt_get_notification_2(), NOTIFICATION_2_ID);
+                disp_end_group();
+                disp_set_pos(0, menuTextY[6]);
+                disp_set_font(FONT_SMALL);
+                disp_write_str("< Clear");
+                uint8_t x1;
+                uint8_t w;
+                uint8_t y1;
+                uint8_t h;
+                disp_get_text_bounds("Back >", 0, 0, &x1, &y1, &w, &h);
+                disp_set_pos(DISP_WIDTH-w-1, menuTextY[6]);
+                disp_write_str("Back >");
+            } else {
+                disp_set_pos(0, menuTextY[0]);
+                disp_write_str_group("No notifications.", NOTIFICATION_1_ID);
+                disp_end_group();
+                disp_remove_str_group(NOTIFICATION_2_ID);
+                uint8_t x1;
+                uint8_t w;
+                uint8_t y1;
+                uint8_t h;
+                disp_set_font(FONT_SMALL);
+                disp_get_text_bounds("Back >", 0, 0, &x1, &y1, &w, &h);
+                disp_set_pos(DISP_WIDTH-w-1, menuTextY[6]);
+                disp_write_str("Back >");
+            }
+        }
     }
 }
 
@@ -281,10 +281,10 @@ void updateGraph(float glucose) {
     if (!graph_length()) {
         first_data = 1;
     }
-	if (lastGlucoseVal != glucose) {
-	    lastGlucoseVal = glucose;
-		newGlucose = 1;
-	}
+    if (lastGlucoseVal != glucose) {
+        lastGlucoseVal = glucose;
+        newGlucose = 1;
+    }
     add_to_graph(glucose);
 }
 
@@ -461,30 +461,30 @@ static int displayBattery(int xoff) {
     }
     last_bat_x = x;
     int battery = get_battery_level(disp_bat_length);
-	if (battery!=last_battery) {
-		uint16_t color;
-		if (battery > disp_bat_length/3) {
-			color = DISP_PIXEL_GREEN;
-		} else {
-			color = DISP_PIXEL_RED;
-		}
-		disp_draw_line(x - 1, disp_bat_y, x - 1, disp_bat_y + disp_bat_height, DISP_PIXEL_WHITE); //left boarder
-		disp_draw_line(x - 1, disp_bat_y - 1, x + disp_bat_length, disp_bat_y - 1, DISP_PIXEL_WHITE); //top border
-		disp_draw_line(x - 1, disp_bat_y + disp_bat_height + 1, x + disp_bat_length, disp_bat_y + disp_bat_height + 1, DISP_PIXEL_WHITE); //bottom border
-		disp_draw_line(x + disp_bat_length, disp_bat_y - 1, x + disp_bat_length, disp_bat_y + disp_bat_height + 1, DISP_PIXEL_WHITE); //right border
-		disp_draw_line(x + disp_bat_length + 1, disp_bat_y + 2, x + disp_bat_length + 1, disp_bat_y + disp_bat_height - 2, DISP_PIXEL_WHITE); //right border
-		for (uint8_t q = 0; q < battery; q++) {
-			disp_draw_line(x + q, disp_bat_y, x + q, disp_bat_y + disp_bat_height, color);
-		}
-		for (uint8_t q = battery; q < last_battery; q++) {
-			disp_draw_line(x + q, disp_bat_y, x + q, disp_bat_y + disp_bat_height, DISP_BG_COLOR);
-		}
-		last_battery = battery;
-	}
-	#if DEBUG_MODE==DEBUG_BATTERY
-	disp_fill_rect(0,2*headerTextY,30,30-headerTextY,DISP_PIXEL_MAGENTA);
-	disp_set_pos(5, menuTextY[0]);
-	disp_write_str(ftoa(buffer, battery, 1));
-	#endif
+    if (battery!=last_battery) {
+        uint16_t color;
+        if (battery > disp_bat_length/3) {
+            color = DISP_PIXEL_GREEN;
+        } else {
+            color = DISP_PIXEL_RED;
+        }
+        disp_draw_line(x - 1, disp_bat_y, x - 1, disp_bat_y + disp_bat_height, DISP_PIXEL_WHITE); //left boarder
+        disp_draw_line(x - 1, disp_bat_y - 1, x + disp_bat_length, disp_bat_y - 1, DISP_PIXEL_WHITE); //top border
+        disp_draw_line(x - 1, disp_bat_y + disp_bat_height + 1, x + disp_bat_length, disp_bat_y + disp_bat_height + 1, DISP_PIXEL_WHITE); //bottom border
+        disp_draw_line(x + disp_bat_length, disp_bat_y - 1, x + disp_bat_length, disp_bat_y + disp_bat_height + 1, DISP_PIXEL_WHITE); //right border
+        disp_draw_line(x + disp_bat_length + 1, disp_bat_y + 2, x + disp_bat_length + 1, disp_bat_y + disp_bat_height - 2, DISP_PIXEL_WHITE); //right border
+        for (uint8_t q = 0; q < battery; q++) {
+            disp_draw_line(x + q, disp_bat_y, x + q, disp_bat_y + disp_bat_height, color);
+        }
+        for (uint8_t q = battery; q < last_battery; q++) {
+            disp_draw_line(x + q, disp_bat_y, x + q, disp_bat_y + disp_bat_height, DISP_BG_COLOR);
+        }
+        last_battery = battery;
+    }
+    #if DEBUG_MODE==DEBUG_BATTERY
+    disp_fill_rect(0,2*headerTextY,30,30-headerTextY,DISP_PIXEL_MAGENTA);
+    disp_set_pos(5, menuTextY[0]);
+    disp_write_str(ftoa(buffer, battery, 1));
+    #endif
     return x-1;
 }

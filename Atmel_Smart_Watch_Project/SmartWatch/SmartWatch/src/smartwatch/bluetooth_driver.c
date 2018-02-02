@@ -19,7 +19,7 @@ void bluetooth_driver_init(void) {
     cur_rxindx = 0;
     cur_rindx = 0;
     write_busy = 0;
-	new_notifications = 1;
+    new_notifications = 1;
     connection_state = BT_DISCONNECTED;
     for (int i=0; i< BT_MAX_BUFFER_LENGTH; i++)
         for (int j=0; j< BT_MAX_MSG_LENGTH; j++)
@@ -72,7 +72,7 @@ void bt_task(void) {
         else if (rx_buffer[cur_rindx][0] == '2') {
             bt_set_notification_2(&rx_buffer[cur_rindx][1]);
             request_screen_on();
-			new_notifications = 1;
+            new_notifications = 1;
         }
 
         // Perform kalman calculation
@@ -126,10 +126,10 @@ void bt_task(void) {
 
 uint8_t bt_write(uint8_t *tx_data, uint16_t length) {
     if (length > BT_MAX_MSG_LENGTH-1)
-		return 0;
-	write_busy = 1;
-	uart_tx(tx_data, length);
-	return 1;
+        return 0;
+    write_busy = 1;
+    uart_tx(tx_data, length);
+    return 1;
 }
 
 uint8_t bt_amt_notifications(void) {
@@ -137,15 +137,15 @@ uint8_t bt_amt_notifications(void) {
 }
 
 uint8_t bt_new_notifications(void) {
-	if (new_notifications) {
-		new_notifications = 0;
-		return 1;
-	}
-	return 0;
+    if (new_notifications) {
+        new_notifications = 0;
+        return 1;
+    }
+    return 0;
 }
 
 uint8_t bt_new_notifications_soft(void) {
-	return new_notifications;
+    return new_notifications;
 }
 
 void bt_clear_amt_notifications(void) {
@@ -177,12 +177,12 @@ uint8_t bt_connection_state(void) {
 }
 
 void bt_set_connection_state(uint8_t state) {
-	connection_state = state;
+    connection_state = state;
 }
 
 void set_ble_rx_buffer(int i, uint8_t val) {
-	if (i < BT_MAX_MSG_LENGTH)
-		rx_buffer[cur_rxindx][i] = val;
+    if (i < BT_MAX_MSG_LENGTH)
+        rx_buffer[cur_rxindx][i] = val;
 }
 
 void bt_read_callback() {

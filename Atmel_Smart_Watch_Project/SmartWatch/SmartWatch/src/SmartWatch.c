@@ -42,9 +42,9 @@
         // Perform smartwatch subtasks
         bt_task();
         measurement_task();
-		if (is_new_measurement()) {
-		    updateGraph(get_measurement());
-		}
+        if (is_new_measurement()) {
+            updateGraph(get_measurement());
+        }
         battery_task();
 
         #if DEBUG_MODE==DEBUG_BUTTON_L
@@ -124,9 +124,9 @@
 
         // Don't want to read wakeup button as input
         if (is_button_interrupt()) {
-			get_buttons();
-			request_screen_on();
-		}
+            get_buttons();
+            request_screen_on();
+        }
 
         // Wakeup display if needed
         if (is_screen_active_soft()) {

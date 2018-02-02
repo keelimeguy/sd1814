@@ -15,7 +15,7 @@
 #define LED_C2               BOARD_LED_PIN_C2
 #define LED_C3               BOARD_LED_PIN_C3
 
-#define LONGEST_FREQ_PERIOD_us 		125 // us
+#define LONGEST_FREQ_PERIOD_us      125 // us
 
 // Assuming 8MHz clock frequency => .125us
 #define microsecondsToClockCycles(usecs)    (  usecs / 0.125 )

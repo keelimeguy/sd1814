@@ -38,9 +38,9 @@
 
 - **smartwatch/battery_reader.c**
     - **_battery\_reader.h_**
-    - :raised_hand: battery_reader_init()
+    - :alien: battery_reader_init()
     - :raised_hand: battery_reader_task()
-    - :raised_hand: start_battery_read()
+    - :alien: start_battery_read()
     - :alien: is_battery_active()
     - :raised_hand: get_battery_level()
 
@@ -108,7 +108,7 @@
     - :alien: updateGlucoseDisplay()
     - :alien: updateTimeDisplay()
     - :raised_hand: updateBLEstatusDisplay()
-    - :raised_hand: displayBattery()
+    - :alien: displayBattery()
 
 - **smartwatch/kalman.c**
     - **_kalman.h_**
