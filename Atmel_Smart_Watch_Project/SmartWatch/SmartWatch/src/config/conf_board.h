@@ -80,13 +80,8 @@
 
 #define BOARD_PHOTODIODE_PIN       PIN_PA07 // 12
 
-#define BOARD_LED_PIN_R1           PIN_PA08 // 13
-#define BOARD_LED_PIN_R2           PIN_PA09 // 14
-#define BOARD_LED_PIN_R3           PIN_PB10 // 19
-#define BOARD_LED_PIN_C1           PIN_PB11 // 20
-#define BOARD_LED_PIN_C2           PIN_PA13 // 22
-#define BOARD_LED_PIN_C3           PIN_PA14 // 23
+#define BOARD_LED_PIN              PIN_PA08 // 13
 
-#define BOARD_DEBUG_LED            BOARD_LED_PIN_R1
+#define BOARD_DEBUG_LED            BOARD_LED_PIN
 
 #endif // CONF_BOARD_H

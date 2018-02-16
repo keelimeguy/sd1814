@@ -19,12 +19,7 @@ void measurement_controller_init(void) {
     port_get_config_defaults(&pin);
     pin.direction = PORT_PIN_DIR_OUTPUT;
 
-    port_pin_set_config(LED_R1, &pin);
-    port_pin_set_config(LED_R2, &pin);
-    port_pin_set_config(LED_R3, &pin);
-    port_pin_set_config(LED_C1, &pin);
-    port_pin_set_config(LED_C2, &pin);
-    port_pin_set_config(LED_C3, &pin);
+    port_pin_set_config(LED_PIN, &pin);
 
     pin.direction = PORT_PIN_DIR_INPUT;
     port_pin_set_config(PHOTODIODE_PIN, &pin);
@@ -83,20 +78,20 @@ void measurement_task(void) {
 
         switch (pulseState) {
             case 0:
-                port_pin_set_output_level(LED_R1, true);
+                port_pin_set_output_level(LED_PIN, true);
                 set_pulse_timeout(pulseOne);
                 pulseState = 1;
                 break;
             case 1:
                 if (is_pulse_timeout()) {
-                    port_pin_set_output_level(LED_R1, false);
+                    port_pin_set_output_level(LED_PIN, false);
                     set_pulse_timeout(pulseTwo);
                     pulseState = 2;
                 }
                 break;
             case 2:
                 if (is_pulse_timeout()) {
-                    port_pin_set_output_level(LED_R1, true);
+                    port_pin_set_output_level(LED_PIN, true);
                     set_pulse_timeout(pulseThree);
                     pulseState = 3;
                 }
@@ -105,7 +100,7 @@ void measurement_task(void) {
                 freq = 0.8*(0.5/(do_measurement()*pow(10,-6))) + 0.2*freq; // weigh new measurements more than previous
 
                 if (is_pulse_timeout()) {
-                    port_pin_set_output_level(LED_R1, false);
+                    port_pin_set_output_level(LED_PIN, false);
                     pulseState = 0;
 
                     if (buttonFlag) {

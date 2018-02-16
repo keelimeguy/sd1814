@@ -8,12 +8,7 @@
 
 #define PHOTODIODE_PIN       BOARD_PHOTODIODE_PIN
 
-#define LED_R1               BOARD_LED_PIN_R1
-#define LED_R2               BOARD_LED_PIN_R2
-#define LED_R3               BOARD_LED_PIN_R3
-#define LED_C1               BOARD_LED_PIN_C1
-#define LED_C2               BOARD_LED_PIN_C2
-#define LED_C3               BOARD_LED_PIN_C3
+#define LED_PIN              BOARD_LED_PIN
 
 #define LONGEST_FREQ_PERIOD_us      125 // us
 
