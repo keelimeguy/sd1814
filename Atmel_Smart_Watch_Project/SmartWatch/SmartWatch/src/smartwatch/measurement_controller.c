@@ -76,6 +76,7 @@ void measurement_task(void) {
         return;
         #else
 
+        // Mimicking blinking initialization from last year code
         switch (pulseState) {
             case 0:
                 port_pin_set_output_level(LED_PIN, true);
@@ -107,6 +108,7 @@ void measurement_task(void) {
                         // Calculate bg without kalman algorithm
                         float Gs = x_result[4]*freq + x_result[5]; // rough estimate of Gs
                         glucose = x_result[3]*(1/x_result[2]) + Gs;
+                        buttonFlag = 0;
                     } else {
                         do_kalman(freq, 1);
                         glucose = x_result[1];

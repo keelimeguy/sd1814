@@ -1,9 +1,9 @@
 ## Glucose Monitoring Smart Watch - UConn Senior Design Team 1814
 
 ### TODO:
-- Implement measurement_controller (communication with implant and data interpretation)
-- Implement interrupt-driven bluetooth
 - Make battery ADC read into interrupt and nonblocking
+- Test measurement_controller (communication with implant and data interpretation)
+- Test interrupt-driven bluetooth
 - Test and verify each component of code
 
 ### Notes:
@@ -126,7 +126,7 @@
     - :alien: measure_set_pulse_one()
     - :alien: measure_set_pulse_two()
     - :alien: measure_set_pulse_three()
-    - :x: measurement_task()
+    - :raised_hand: measurement_task()
     - :raised_hand: do_measurement()
     - :alien: get_measurement()
     - :alien: is_new_measurement_soft()
