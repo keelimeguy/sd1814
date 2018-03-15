@@ -8,7 +8,7 @@
 #ifndef CONF_ST7735S_H
 #define CONF_ST7735S_H
 
-#include <board.h>
+#include <asf.h>
 
 #define ST7735S_SPI                 BOARD_DISP_SERCOM
 #define CONFIG_ST7735S_FRAMEBUFFER

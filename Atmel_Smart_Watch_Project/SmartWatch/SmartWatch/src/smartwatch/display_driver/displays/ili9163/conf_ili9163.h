@@ -8,7 +8,7 @@
 #ifndef CONF_ILI9163_H
 #define CONF_ILI9163_H
 
-#include <board.h>
+#include <asf.h>
 
 #define ILI9163_SPI                 BOARD_DISP_SERCOM
 #define CONFIG_ILI9163_FRAMEBUFFER

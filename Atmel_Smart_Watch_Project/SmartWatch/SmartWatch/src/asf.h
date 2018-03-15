@@ -1,3 +1,6 @@
+/* UConn Senior Design Team 1814, March 2018
+*/
+
 /**
  * \file
  *
@@ -60,8 +63,8 @@
 #include <compiler.h>
 #include <status_codes.h>
 
-// From module: Common build items for user board support templates
-#include <user_board.h>
+// From Senior Design 1814: Custom board configuration
+#include <conf_board.h>
 
 // From module: Delay routines
 #include <delay.h>
@@ -69,9 +72,6 @@
 // From module: EXTINT - External Interrupt (Callback APIs)
 #include <extint.h>
 #include <extint_callback.h>
-
-// From module: Generic board support
-#include <board.h>
 
 // From module: Interrupt management - SAM implementation
 #include <interrupt.h>
@@ -95,7 +95,7 @@
 #include <spi.h>
 #include <spi_interrupt.h>
 
-// From module: SYSTEM - Clock Management for SAMD20
+// From module: SYSTEM - Clock Management for SAMD21/R21/DAx
 #include <clock.h>
 #include <gclk.h>
 

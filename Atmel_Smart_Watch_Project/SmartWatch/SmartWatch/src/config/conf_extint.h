@@ -1,6 +1,3 @@
-/* UConn Senior Design Team 1814, January 2018
-     Using code adapted from Atmel:
-
 /**
  * \file
  *

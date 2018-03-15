@@ -87,7 +87,7 @@ void clock_driver_init(void) {
     config_tc.clock_prescaler = TC_CLOCK_PRESCALER_DIV256;
     config_tc.counter_16_bit.compare_capture_channel[TC_COMPARE_CAPTURE_CHANNEL_0] = 0x7a11; // 31250-1
 
-    tc_init(&screen_timer, TC0, &config_tc);
+    tc_init(&screen_timer, TCC0, &config_tc);
 
     tc_register_callback(&screen_timer, screen_timer_callback, TC_CALLBACK_CC_CHANNEL0);
     tc_enable_callback(&screen_timer, TC_CALLBACK_CC_CHANNEL0);
@@ -97,7 +97,7 @@ void clock_driver_init(void) {
     // Set to -1 to disable trigger
     screen_timeout = -1;
 
-    tc_init(&pulse_timer, TC2, &config_tc);
+    tc_init(&pulse_timer, TCC2, &config_tc);
 
     tc_register_callback(&pulse_timer, pulse_timer_callback, TC_CALLBACK_CC_CHANNEL0);
     tc_enable_callback(&pulse_timer, TC_CALLBACK_CC_CHANNEL0);
