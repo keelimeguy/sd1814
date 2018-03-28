@@ -8,7 +8,7 @@ static struct rtc_module rtc_instance;
 static struct rtc_calendar_alarm_time alarm;
 static volatile uint8_t rtc_alarm_flag;
 
-static struct tc_module screen_timer, pulse_timer, battery_timer;
+static struct tcc_module screen_timer, pulse_timer, battery_timer;
 static volatile uint32_t screen_timeout, pulse_timeout, battery_timeout;
 static const char* day_str[7] = {"Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Tue"};
 
@@ -77,42 +77,57 @@ void clock_driver_init(void) {
 
     /* Initialize TC. */
 
-    struct tc_config config_tc;
-    tc_get_config_defaults(&config_tc);
+    struct tcc_config config_tcc;
+    tcc_get_config_defaults(&config_tcc, TCC0);
 
     // Assuming GCLK generator 0 source is 8MHz:
     //  256 prescaler at 31250 compare match => 8e6/31250*256 = 1Hz
-    config_tc.counter_size = TC_COUNTER_SIZE_16BIT;
-    config_tc.wave_generation = TC_WAVE_GENERATION_MATCH_FREQ;
-    config_tc.clock_prescaler = TC_CLOCK_PRESCALER_DIV256;
-    config_tc.counter_16_bit.compare_capture_channel[TC_COMPARE_CAPTURE_CHANNEL_0] = 0x7a11; // 31250-1
+    config_tcc.counter.clock_source = GCLK_GENERATOR_0;
+    config_tcc.counter.clock_prescaler = TCC_CLOCK_PRESCALER_DIV256;
+    config_tcc.counter.period =   0x7a11; // 31250-1
 
-    tc_init(&screen_timer, TCC0, &config_tc);
+    tcc_init(&screen_timer, TCC0, &config_tcc);
 
-    tc_register_callback(&screen_timer, screen_timer_callback, TC_CALLBACK_CC_CHANNEL0);
-    tc_enable_callback(&screen_timer, TC_CALLBACK_CC_CHANNEL0);
+    tcc_register_callback(&screen_timer, screen_timer_callback, TCC_CALLBACK_OVERFLOW);
+    tcc_enable_callback(&screen_timer, TCC_CALLBACK_OVERFLOW);
 
-    tc_enable(&screen_timer);
+    tcc_enable(&screen_timer);
 
     // Set to -1 to disable trigger
     screen_timeout = -1;
 
-    tc_init(&pulse_timer, TCC2, &config_tc);
+    tcc_get_config_defaults(&config_tcc, TCC1);
 
-    tc_register_callback(&pulse_timer, pulse_timer_callback, TC_CALLBACK_CC_CHANNEL0);
-    tc_enable_callback(&pulse_timer, TC_CALLBACK_CC_CHANNEL0);
+    // Assuming GCLK generator 0 source is 8MHz:
+    //  256 prescaler at 31250 compare match => 8e6/31250*256 = 1Hz
+    config_tcc.counter.clock_source = GCLK_GENERATOR_0;
+    config_tcc.counter.clock_prescaler = TCC_CLOCK_PRESCALER_DIV256;
+    config_tcc.counter.period =   0x7a11; // 31250-1
 
-    tc_enable(&pulse_timer);
+    tcc_init(&pulse_timer, TCC1, &config_tcc);
+
+    tcc_register_callback(&pulse_timer, pulse_timer_callback, TCC_CALLBACK_OVERFLOW);
+    tcc_enable_callback(&pulse_timer, TCC_CALLBACK_OVERFLOW);
+
+    tcc_enable(&pulse_timer);
 
     // Set to -1 to disable trigger
     pulse_timeout = -1;
 
-    tc_init(&battery_timer, TC4, &config_tc);
+    tcc_get_config_defaults(&config_tcc, TCC2);
 
-    tc_register_callback(&battery_timer, battery_timer_callback, TC_CALLBACK_CC_CHANNEL0);
-    tc_enable_callback(&battery_timer, TC_CALLBACK_CC_CHANNEL0);
+    // Assuming GCLK generator 0 source is 8MHz:
+    //  256 prescaler at 31250 compare match => 8e6/31250*256 = 1Hz
+    config_tcc.counter.clock_source = GCLK_GENERATOR_0;
+    config_tcc.counter.clock_prescaler = TCC_CLOCK_PRESCALER_DIV256;
+    config_tcc.counter.period =   0x7a11; // 31250-1
 
-    tc_enable(&battery_timer);
+    tcc_init(&battery_timer, TCC2, &config_tcc);
+
+    tcc_register_callback(&battery_timer, battery_timer_callback, TCC_CALLBACK_OVERFLOW);
+    tcc_enable_callback(&battery_timer, TCC_CALLBACK_OVERFLOW);
+
+    tcc_enable(&battery_timer);
 
     // Start battery timeout at 0 to trigger next battery read
     battery_timeout = 0;
@@ -152,17 +167,17 @@ uint8_t is_screen_timeout(void) {
 }
 
 void set_screen_timeout(uint32_t val) {
-    tc_stop_counter(&screen_timer);
+    tcc_stop_counter(&screen_timer);
     screen_timeout = val;
-    tc_set_count_value(&screen_timer, 0);
-    tc_start_counter(&screen_timer);
+    tcc_set_count_value(&screen_timer, 0);
+    tcc_restart_counter(&screen_timer);
 }
 
 static void screen_timer_callback(void) {
     if (screen_timeout>0) {
         screen_timeout--;
     } else {
-        tc_stop_counter(&screen_timer);
+        tcc_stop_counter(&screen_timer);
     }
 }
 
@@ -175,17 +190,17 @@ uint8_t is_pulse_timeout(void) {
 }
 
 void set_pulse_timeout(uint32_t val) {
-    tc_stop_counter(&pulse_timer);
+    tcc_stop_counter(&pulse_timer);
     pulse_timeout = val;
-    tc_set_count_value(&pulse_timer, 0);
-    tc_start_counter(&pulse_timer);
+    tcc_set_count_value(&pulse_timer, 0);
+    tcc_restart_counter(&pulse_timer);
 }
 
 static void pulse_timer_callback(void) {
     if (pulse_timeout>0) {
         pulse_timeout--;
     } else {
-        tc_stop_counter(&pulse_timer);
+        tcc_stop_counter(&pulse_timer);
     }
 }
 
@@ -198,17 +213,17 @@ uint8_t is_battery_timeout(void) {
 }
 
 void set_battery_timeout(uint32_t val) {
-    tc_stop_counter(&battery_timer);
+    tcc_stop_counter(&battery_timer);
     battery_timeout = val;
-    tc_set_count_value(&battery_timer, 0);
-    tc_start_counter(&battery_timer);
+    tcc_set_count_value(&battery_timer, 0);
+    tcc_restart_counter(&battery_timer);
 }
 
 static void battery_timer_callback(void) {
     if (battery_timeout>0) {
         battery_timeout--;
     } else {
-        tc_stop_counter(&battery_timer);
+        tcc_stop_counter(&battery_timer);
     }
 }
 

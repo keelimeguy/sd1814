@@ -122,4 +122,8 @@
 #include <tc.h>
 #include <tc_interrupt.h>
 
+// From module: TCC - Timer Counter for Control Applications (Callback APIs)
+#include <tcc.h>
+#include <tcc_callback.h>
+
 #endif // ASF_H

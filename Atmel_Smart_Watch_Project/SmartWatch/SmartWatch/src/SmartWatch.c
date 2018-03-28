@@ -23,10 +23,10 @@
         #endif
 
         clock_driver_init();
-        battery_reader_init();
-        bluetooth_driver_init();
-        button_listener_init();
-        measurement_controller_init();
+        // battery_reader_init();
+        // bluetooth_driver_init();
+        // button_listener_init();
+        // measurement_controller_init();
         display_manager_init();
 
         sleepmgr_init();
