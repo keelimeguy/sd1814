@@ -18,7 +18,8 @@
 int main(void) {
     init_all();
     for(;;) {
-        display_ui_task(0);
+        uint8_t buttons = get_buttons(); // Returns identifier to determine which buttons were pressed
+        display_ui_task(buttons);
     }
 
     // // TODO: future improvement may be running components as separate processes in an RTOS

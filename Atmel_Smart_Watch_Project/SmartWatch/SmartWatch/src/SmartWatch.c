@@ -25,7 +25,7 @@
         clock_driver_init();
         // battery_reader_init();
         // bluetooth_driver_init();
-        // button_listener_init();
+        button_listener_init();
         // measurement_controller_init();
         display_manager_init();
 
@@ -40,12 +40,12 @@
 
     void smartwatch_task(void) {
         // Perform smartwatch subtasks
-        bt_task();
+        // bt_task();
         measurement_task();
         if (is_new_measurement()) {
             updateGraph(get_measurement());
         }
-        battery_task();
+        // battery_task();
 
         #if DEBUG_MODE==DEBUG_BUTTON_L
             port_pin_set_output_level(BOARD_DEBUG_LED, port_pin_get_input_level(BOARD_BUTTON_L_PIN));
@@ -86,7 +86,7 @@
     // If this is true, system will stay awake
     uint8_t is_active(void) {
         // We stay awake when bluetooth, screen, or measurement is active
-        return is_bt_active_soft() || is_screen_active_soft() || is_measure_busy() || is_battery_active();
+        return is_screen_active_soft();
     }
 
     // If this is true, screen will be rendered
@@ -131,7 +131,7 @@
         // Wakeup display if needed
         if (is_screen_active_soft()) {
             // Trigger battery timer for next wakeup
-            set_battery_timeout(0);
+            // set_battery_timeout(0);
             screen_sleep = 0;
             disp_sleep_disable();
         }

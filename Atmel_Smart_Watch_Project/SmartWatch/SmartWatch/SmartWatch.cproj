@@ -37,7 +37,6 @@
     <option id="sam0.drivers.rtc" value="Add" config="calendar_callback" content-id="Atmel.ASF" />
     <option id="sam0.drivers.sercom.spi" value="Add" config="callback" content-id="Atmel.ASF" />
     <option id="sam0.drivers.system" value="Add" config="" content-id="Atmel.ASF" />
-    <option id="sam0.drivers.tc" value="Add" config="callback" content-id="Atmel.ASF" />
     <option id="sam0.drivers.tcc" value="Add" config="callback" content-id="Atmel.ASF" />
     <option id="sam0.utils.linker_scripts" value="Add" config="" content-id="Atmel.ASF" />
   </options>
@@ -202,10 +201,6 @@
     <file path="src/ASF/sam0/drivers/system/interrupt/system_interrupt_samd21/system_interrupt_features.h" framework="" version="3.31.0" source="sam0\drivers\system\interrupt\system_interrupt_samd21\system_interrupt_features.h" changed="False" content-id="Atmel.ASF" />
     <file path="src/ASF/sam0/drivers/system/power/power_sam_d_r/power.h" framework="" version="3.31.0" source="sam0\drivers\system\power\power_sam_d_r\power.h" changed="False" content-id="Atmel.ASF" />
     <file path="src/ASF/sam0/drivers/system/reset/reset_sam_d_r/reset.h" framework="" version="3.31.0" source="sam0\drivers\system\reset\reset_sam_d_r\reset.h" changed="False" content-id="Atmel.ASF" />
-    <file path="src/ASF/sam0/drivers/tc/tc_interrupt.c" framework="" version="3.31.0" source="sam0\drivers\tc\tc_interrupt.c" changed="False" content-id="Atmel.ASF" />
-    <file path="src/ASF/sam0/drivers/tc/tc_interrupt.h" framework="" version="3.31.0" source="sam0\drivers\tc\tc_interrupt.h" changed="False" content-id="Atmel.ASF" />
-    <file path="src/ASF/sam0/drivers/tc/tc.h" framework="" version="3.31.0" source="sam0\drivers\tc\tc.h" changed="False" content-id="Atmel.ASF" />
-    <file path="src/ASF/sam0/drivers/tc/tc_sam_d_r/tc.c" framework="" version="3.31.0" source="sam0\drivers\tc\tc_sam_d_r\tc.c" changed="False" content-id="Atmel.ASF" />
     <file path="src/ASF/sam0/utils/compiler.h" framework="" version="3.31.0" source="sam0\utils\compiler.h" changed="False" content-id="Atmel.ASF" />
     <file path="src/ASF/sam0/utils/header_files/io.h" framework="" version="3.31.0" source="sam0\utils\header_files\io.h" changed="False" content-id="Atmel.ASF" />
     <file path="src/ASF/sam0/utils/status_codes.h" framework="" version="3.31.0" source="sam0\utils\status_codes.h" changed="False" content-id="Atmel.ASF" />
@@ -396,7 +391,6 @@
       <Value>EXTINT_CALLBACK_MODE=true</Value>
       <Value>RTC_CALENDAR_ASYNC=true</Value>
       <Value>SPI_CALLBACK_MODE=true</Value>
-      <Value>TC_ASYNC=true</Value>
       <Value>ARM_MATH_CM0PLUS=true</Value>
       <Value>TCC_ASYNC=true</Value>
     </ListValues>
@@ -433,8 +427,6 @@
       <Value>../src/ASF/sam0/drivers/system/power/power_sam_d_r</Value>
       <Value>../src/ASF/sam0/drivers/system/reset</Value>
       <Value>../src/ASF/sam0/drivers/system/reset/reset_sam_d_r</Value>
-      <Value>../src/ASF/sam0/drivers/tc</Value>
-      <Value>../src/ASF/sam0/drivers/tc/tc_sam_d_r</Value>
       <Value>../src/ASF/sam0/utils</Value>
       <Value>../src/ASF/sam0/utils/header_files</Value>
       <Value>../src/ASF/sam0/utils/cmsis/samd21/include</Value>
@@ -496,8 +488,6 @@
       <Value>../src/ASF/sam0/drivers/system/power/power_sam_d_r</Value>
       <Value>../src/ASF/sam0/drivers/system/reset</Value>
       <Value>../src/ASF/sam0/drivers/system/reset/reset_sam_d_r</Value>
-      <Value>../src/ASF/sam0/drivers/tc</Value>
-      <Value>../src/ASF/sam0/drivers/tc/tc_sam_d_r</Value>
       <Value>../src/ASF/sam0/utils</Value>
       <Value>../src/ASF/sam0/utils/header_files</Value>
       <Value>../src/ASF/sam0/utils/cmsis/samd21/include</Value>
@@ -508,7 +498,7 @@
       <Value>../src/ASF/sam0/drivers/tcc</Value>
     </ListValues>
   </armgcc.assembler.general.IncludePaths>
-  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=USER_BOARD -DSYSTICK_MODE -DADC_CALLBACK_MODE=true -DEXTINT_CALLBACK_MODE=true -DRTC_CALENDAR_ASYNC=true -DSPI_CALLBACK_MODE=true -DTC_ASYNC=true -DTCC_ASYNC=true</armgcc.preprocessingassembler.general.AssemblerFlags>
+  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=USER_BOARD -DSYSTICK_MODE -DADC_CALLBACK_MODE=true -DEXTINT_CALLBACK_MODE=true -DRTC_CALENDAR_ASYNC=true -DSPI_CALLBACK_MODE=true -DTCC_ASYNC=true</armgcc.preprocessingassembler.general.AssemblerFlags>
   <armgcc.preprocessingassembler.general.IncludePaths>
     <ListValues>
       <Value>../src/config</Value>
@@ -541,8 +531,6 @@
       <Value>../src/ASF/sam0/drivers/system/power/power_sam_d_r</Value>
       <Value>../src/ASF/sam0/drivers/system/reset</Value>
       <Value>../src/ASF/sam0/drivers/system/reset/reset_sam_d_r</Value>
-      <Value>../src/ASF/sam0/drivers/tc</Value>
-      <Value>../src/ASF/sam0/drivers/tc/tc_sam_d_r</Value>
       <Value>../src/ASF/sam0/utils</Value>
       <Value>../src/ASF/sam0/utils/header_files</Value>
       <Value>../src/ASF/sam0/utils/cmsis/samd21/include</Value>
@@ -574,7 +562,6 @@
       <Value>EXTINT_CALLBACK_MODE=true</Value>
       <Value>RTC_CALENDAR_ASYNC=true</Value>
       <Value>SPI_CALLBACK_MODE=true</Value>
-      <Value>TC_ASYNC=true</Value>
       <Value>ARM_MATH_CM0PLUS=true</Value>
       <Value>TCC_ASYNC=true</Value>
     </ListValues>
@@ -611,8 +598,6 @@
       <Value>../src/ASF/sam0/drivers/system/power/power_sam_d_r</Value>
       <Value>../src/ASF/sam0/drivers/system/reset</Value>
       <Value>../src/ASF/sam0/drivers/system/reset/reset_sam_d_r</Value>
-      <Value>../src/ASF/sam0/drivers/tc</Value>
-      <Value>../src/ASF/sam0/drivers/tc/tc_sam_d_r</Value>
       <Value>../src/ASF/sam0/utils</Value>
       <Value>../src/ASF/sam0/utils/header_files</Value>
       <Value>../src/ASF/sam0/utils/cmsis/samd21/include</Value>
@@ -682,8 +667,6 @@
       <Value>../src/ASF/sam0/drivers/system/power/power_sam_d_r</Value>
       <Value>../src/ASF/sam0/drivers/system/reset</Value>
       <Value>../src/ASF/sam0/drivers/system/reset/reset_sam_d_r</Value>
-      <Value>../src/ASF/sam0/drivers/tc</Value>
-      <Value>../src/ASF/sam0/drivers/tc/tc_sam_d_r</Value>
       <Value>../src/ASF/sam0/utils</Value>
       <Value>../src/ASF/sam0/utils/header_files</Value>
       <Value>../src/ASF/sam0/utils/cmsis/samd21/include</Value>
@@ -695,7 +678,7 @@
     </ListValues>
   </armgcc.assembler.general.IncludePaths>
   <armgcc.assembler.debugging.DebugLevel>Default (-g)</armgcc.assembler.debugging.DebugLevel>
-  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=USER_BOARD -DSYSTICK_MODE -DADC_CALLBACK_MODE=true -DEXTINT_CALLBACK_MODE=true -DRTC_CALENDAR_ASYNC=true -DSPI_CALLBACK_MODE=true -DTC_ASYNC=true -DTCC_ASYNC=true</armgcc.preprocessingassembler.general.AssemblerFlags>
+  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=USER_BOARD -DSYSTICK_MODE -DADC_CALLBACK_MODE=true -DEXTINT_CALLBACK_MODE=true -DRTC_CALENDAR_ASYNC=true -DSPI_CALLBACK_MODE=true -DTCC_ASYNC=true</armgcc.preprocessingassembler.general.AssemblerFlags>
   <armgcc.preprocessingassembler.general.IncludePaths>
     <ListValues>
       <Value>../src/config</Value>
@@ -735,8 +718,6 @@
       <Value>../src/ASF/sam0/drivers/system/power/power_sam_d_r</Value>
       <Value>../src/ASF/sam0/drivers/system/reset</Value>
       <Value>../src/ASF/sam0/drivers/system/reset/reset_sam_d_r</Value>
-      <Value>../src/ASF/sam0/drivers/tc</Value>
-      <Value>../src/ASF/sam0/drivers/tc/tc_sam_d_r</Value>
       <Value>../src/ASF/sam0/utils</Value>
       <Value>../src/ASF/sam0/utils/header_files</Value>
       <Value>../src/ASF/sam0/utils/cmsis/samd21/include</Value>
@@ -1349,9 +1330,6 @@
     <None Include="src\config\conf_clocks.h">
       <SubType>compile</SubType>
     </None>
-    <None Include="src\ASF\sam0\drivers\tc\tc.h">
-      <SubType>compile</SubType>
-    </None>
     <None Include="src\ASF\sam0\drivers\tcc\quick_start_faultn\qs_tcc_faultn.h">
       <SubType>compile</SubType>
     </None>
@@ -1385,15 +1363,6 @@
     <None Include="src\ASF\sam0\drivers\tcc\tcc_callback.h">
       <SubType>compile</SubType>
     </None>
-    <Compile Include="src\ASF\sam0\drivers\tc\tc_interrupt.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <None Include="src\ASF\sam0\drivers\tc\tc_interrupt.h">
-      <SubType>compile</SubType>
-    </None>
-    <Compile Include="src\ASF\sam0\drivers\tc\tc_sam_d_r\tc.c">
-      <SubType>compile</SubType>
-    </Compile>
     <None Include="src\ASF\sam0\utils\compiler.h">
       <SubType>compile</SubType>
     </None>
