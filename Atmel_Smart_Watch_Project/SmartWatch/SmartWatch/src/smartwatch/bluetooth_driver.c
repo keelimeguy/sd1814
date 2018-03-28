@@ -25,8 +25,10 @@ void bluetooth_driver_init(void) {
         for (int j=0; j< BT_MAX_MSG_LENGTH; j++)
             rx_buffer[i][j] = 0;
 
-    BLEsetup();
-    //start_read();
+	#if BLE_ENABLED
+		BLEsetup();
+		//start_read();
+	#endif
 }
 
 uint8_t is_bt_active_soft(void) {

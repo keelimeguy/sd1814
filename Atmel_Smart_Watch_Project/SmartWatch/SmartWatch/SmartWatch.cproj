@@ -781,8 +781,6 @@
     <Folder Include="src\ASF\sam0\drivers\tcc\quick_start_faultn\" />
     <Folder Include="src\ASF\sam0\drivers\tcc\quick_start_faultx\" />
     <Folder Include="src\ASF\sam0\drivers\tcc\quick_start_timer\" />
-    <Folder Include="src\ASF\sam0\drivers\tc\" />
-    <Folder Include="src\ASF\sam0\drivers\tc\tc_sam_d_r\" />
     <Folder Include="src\ASF\sam0\utils\" />
     <Folder Include="src\ASF\sam0\utils\cmsis\" />
     <Folder Include="src\ASF\sam0\utils\cmsis\samd21\" />

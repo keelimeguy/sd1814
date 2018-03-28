@@ -17,18 +17,14 @@
 
 int main(void) {
     init_all();
-    for(;;) {
-        uint8_t buttons = get_buttons(); // Returns identifier to determine which buttons were pressed
-        display_ui_task(buttons);
-    }
 
-    // // TODO: future improvement may be running components as separate processes in an RTOS
-    // for(;;) {
-    //     while (is_active()) {
-    //         smartwatch_task();
-    //     }
-    //     sleep();
-    //     wakeup();
-    // }
+    // TODO: future improvement may be running components as separate processes in an RTOS
+    for(;;) {
+        while (is_active()) {
+            smartwatch_task();
+        }
+        sleep();
+        wakeup();
+    }
     return 0;
 }

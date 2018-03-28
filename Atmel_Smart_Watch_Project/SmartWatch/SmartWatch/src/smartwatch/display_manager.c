@@ -116,7 +116,6 @@ static void initHomeScreen() {
     rewriteMenu = 1;
 }
 
-static int my_bt_amt_notifications() {return 2;}
 static void updateMainDisplay(uint8_t button) {
     if (currentDisplayState != DISP_STATE_HOME || startup) {
         initHomeScreen();
@@ -131,17 +130,17 @@ static void updateMainDisplay(uint8_t button) {
             updateGlucoseDisplay(lastGlucoseVal);
             newGlucose = 0;
         }
-        if (rewriteMenu || lastAmtNotificationsShown != my_bt_amt_notifications()) {
-            lastAmtNotificationsShown = my_bt_amt_notifications();
+        if (rewriteMenu || lastAmtNotificationsShown != bt_amt_notifications()) {
+            lastAmtNotificationsShown = bt_amt_notifications();
             disp_set_font(FONT_MEDIUM);
             disp_set_pos(0, menuTextY[3]);
-            if (!my_bt_amt_notifications()) {
+            if (!bt_amt_notifications()) {
                 disp_write_str_group("No notifications.", NOTIFICATION_NUM_ID);
                 disp_end_group();
             } else {
-                disp_write_str_group(itoa(my_bt_amt_notifications(), buffer, 10), NOTIFICATION_NUM_ID);
+                disp_write_str_group(itoa(bt_amt_notifications(), buffer, 10), NOTIFICATION_NUM_ID);
                 disp_write_str_group(" notification", NOTIFICATION_NUM_ID);
-                if (my_bt_amt_notifications() > 1)
+                if (bt_amt_notifications() > 1)
                     disp_write_str_group("s", NOTIFICATION_NUM_ID);
                 disp_write_str_group(".", NOTIFICATION_NUM_ID);
                 disp_end_group();
@@ -169,20 +168,20 @@ static void viewNotifications(uint8_t button) {
     }
     if (button == VIEW_BUTTON) {
         updateMainDisplay(0);
-    } else if (my_bt_amt_notifications() && button == CLR_BUTTON) {
-        // bt_clear_amt_notifications();
+    } else if (bt_amt_notifications() && button == CLR_BUTTON) {
+        bt_clear_amt_notifications();
         updateMainDisplay(0);
     } else {
-        if (last_notifications != my_bt_amt_notifications()) {
+        if (last_notifications != bt_amt_notifications() || bt_new_notifications()) {
             disp_set_font(FONT_MEDIUM);
             disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_BLACK);
-            if (my_bt_amt_notifications()) {
-                last_notifications = my_bt_amt_notifications();
+            if (bt_amt_notifications()) {
+                last_notifications = bt_amt_notifications();
                 disp_set_pos(0, menuTextY[0]);
-                disp_write_str_group("test1", NOTIFICATION_1_ID);
+                disp_write_str_group(bt_get_notification_1(), NOTIFICATION_1_ID);
                 disp_end_group();
                 disp_set_pos(0, menuTextY[1]);
-                disp_write_str_group("test2", NOTIFICATION_2_ID);
+                disp_write_str_group(bt_get_notification_2(), NOTIFICATION_2_ID);
                 disp_end_group();
                 disp_set_pos(0, menuTextY[6]);
                 disp_set_font(FONT_SMALL);
@@ -222,9 +221,9 @@ static void showGraphView(uint8_t button) {
     if (button == GRAPH_BUTTON) {
         updateMainDisplay(0);
     } else {
-        // if (button == VIEW_BUTTON) {
-        //     take_measurement(1);
-        // }
+        if (button == VIEW_BUTTON) {
+            take_measurement(1);
+        }
         disp_set_font(FONT_MEDIUM);
         disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_BLACK);
 
@@ -432,15 +431,14 @@ static int updateTimeDisplay(int xoff) {
 
 #define disp_ble_s  2
 #define disp_ble_y  6
-static uint8_t my_bt_connection_state() {return 1;}
 static int updateBLEstatusDisplay(int xoff) {
     int x = xoff - 8;
-    if (my_bt_connection_state() == ble_connection_displayed_state && last_ble_x == x)
+    if (bt_connection_state() == ble_connection_displayed_state && last_ble_x == x)
         return x-disp_ble_s-4;
     if (last_ble_x >= disp_ble_s)
         disp_fill_rect(last_ble_x-disp_ble_s, disp_ble_y-2*disp_ble_s, 2*disp_ble_s+1, 9, DISP_BG_COLOR);
     last_ble_x = x;
-    ble_connection_displayed_state = my_bt_connection_state();
+    ble_connection_displayed_state = bt_connection_state();
     uint16_t color = DISP_PIXEL_RED;
     if (ble_connection_displayed_state)
         color = DISP_PIXEL_GREEN;
@@ -462,7 +460,7 @@ static int displayBattery(int xoff) {
         disp_fill_rect(last_bat_x-1, disp_bat_y-1, disp_bat_length+3, disp_bat_height+3, DISP_BG_COLOR);
     }
     last_bat_x = x;
-    int battery = 15;//get_battery_level(disp_bat_length);
+    int battery = get_battery_level(disp_bat_length);
     if (battery!=last_battery) {
         uint16_t color;
         if (battery > disp_bat_length/3) {

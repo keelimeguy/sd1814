@@ -12,6 +12,8 @@
     #define PROGMEM
     #endif
 
+	#define BLE_ENABLED          0 // 0 = Bluetooth is disabled
+
     #define DEBUG_NONE           0
     #define DEBUG_CLOCK          1
     #define DEBUG_BATTERY        2
