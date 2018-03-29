@@ -26,7 +26,7 @@
 #define ST7735S_SPI_PINMUX_PAD2     PINMUX_DEFAULT
 #define ST7735S_SPI_PINMUX_PAD3     PINMUX_DEFAULT
 
-/* Minimum clock period is 150ns@3.3V -> max frequency is 6.66MHz */
-#define ST7735S_CLOCK_SPEED           4000000UL
+/* Max frequency is clock/2 (assumed clock = 48MHz -> 24Mhz) */
+#define ST7735S_CLOCK_SPEED           24000000UL
 
 #endif /* CONF_ST7735S_H */

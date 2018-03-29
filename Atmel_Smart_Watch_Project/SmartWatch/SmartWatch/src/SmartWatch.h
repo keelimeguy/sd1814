@@ -24,7 +24,7 @@
     #define DEBUG_BLE            7
     #define DEBUG_MEASURE        8
 
-    #define DEBUG_MODE DEBUG_BUTTON_L
+    #define DEBUG_MODE DEBUG_NONE
 
     #include "smartwatch/clock_driver.h"
     #include "smartwatch/battery_reader.h"

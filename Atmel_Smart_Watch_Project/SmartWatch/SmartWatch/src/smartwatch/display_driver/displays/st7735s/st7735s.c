@@ -25,6 +25,7 @@ static void st7735s_interface_init(void) {
     config.pinmux_pad1 = ST7735S_SPI_PINMUX_PAD1;
     config.pinmux_pad2 = ST7735S_SPI_PINMUX_PAD2;
     config.pinmux_pad3 = ST7735S_SPI_PINMUX_PAD3;
+    config.generator_source = GCLK_GENERATOR_3;
     config.mode_specific.master.baudrate = ST7735S_CLOCK_SPEED;
 
     spi_init(&st7735s_master, ST7735S_SPI, &config);
