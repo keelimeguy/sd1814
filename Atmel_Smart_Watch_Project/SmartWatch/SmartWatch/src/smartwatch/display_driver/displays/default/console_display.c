@@ -27,16 +27,16 @@ static uint8_t last_data;
 void console_display_write_data(uint8_t data) {
     if (fix_2write_16_bit) {
         char char_out;
-        if ((data|DISP_BG_COLOR) == (DISP_BG_COLOR&0xff) && (last_data|(DISP_BG_COLOR>>8)) == ((DISP_BG_COLOR>>8)&0xff)) {
+        if ((data|COLOR_ARRAY[DISP_BG_COLOR]) == (COLOR_ARRAY[DISP_BG_COLOR]&0xff) && (last_data|(COLOR_ARRAY[DISP_BG_COLOR]>>8)) == ((COLOR_ARRAY[DISP_BG_COLOR]>>8)&0xff)) {
             char_out = '_';
         } else {
-            if ((data&DISP_PIXEL_GREEN) == (DISP_PIXEL_GREEN&0xff)) {
+            if ((data&COLOR_ARRAY[DISP_PIXEL_GREEN]) == (COLOR_ARRAY[DISP_PIXEL_GREEN]&0xff)) {
                 g = 1;
             } else {
                 g = 0;
             }
 
-            if ((data&DISP_PIXEL_BLUE) == (DISP_PIXEL_BLUE&0xff)) {
+            if ((data&COLOR_ARRAY[DISP_PIXEL_BLUE]) == (COLOR_ARRAY[DISP_PIXEL_BLUE]&0xff)) {
                 b = 1;
             } else {
                 b = 0;
@@ -49,7 +49,7 @@ void console_display_write_data(uint8_t data) {
                     char_out = 'G';
                     break;
                 case 1:
-                    char_out = 'B';
+                    char_out = 'U';
                     break;
                 case 6:
                     char_out = 'Y';
@@ -82,13 +82,13 @@ void console_display_write_data(uint8_t data) {
         b = 0;
     } else {
         fix_2write_16_bit = 1;
-        if ((data&(DISP_PIXEL_RED>>8)) == ((DISP_PIXEL_RED>>8)&0xff)) {
+        if ((data&(COLOR_ARRAY[DISP_PIXEL_RED]>>8)) == ((COLOR_ARRAY[DISP_PIXEL_RED]>>8)&0xff)) {
             r = 1;
         } else {
             r = 0;
         }
 
-        if ((data&(DISP_PIXEL_GREEN>>8)) == ((DISP_PIXEL_GREEN>>8)&0xff)) {
+        if ((data&(COLOR_ARRAY[DISP_PIXEL_GREEN]>>8)) == ((COLOR_ARRAY[DISP_PIXEL_GREEN]>>8)&0xff)) {
             g = 1;
         } else {
             g = 0;

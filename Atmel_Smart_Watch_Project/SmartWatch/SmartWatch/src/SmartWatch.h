@@ -49,8 +49,6 @@
 #else
     #include <stdio.h>
     #include <stdint.h>
-    #include "smartwatch/battery_reader.h"
-    #include "smartwatch/bluetooth_driver.h"
     typedef uint8_t bool;
     struct rtc_calendar_time {
         uint8_t  second;
@@ -76,23 +74,31 @@
         enum port_pin_pull input_pull;
         bool powersave;
     };
-    #include "smartwatch/measurement_controller.h"
-    #include "smartwatch/display_manager.h"
-    #include "smartwatch/date_calc.h"
+    #define DEBUG_NONE 0
+    #define DEBUG_MODE 1
     #define port_get_config_defaults(A)
     #define port_pin_set_config(A,B)
     #define port_pin_set_output_level(A,B)
+    #define port_pin_get_output_level(A) 1
     #define BOARD_DISP_BACKLIGHT_PIN 0
+    #define BOARD_PHOTODIODE_PIN 0
     #define PORT_PIN_DIR_OUTPUT 0
     #define BUTTON_L_VAL 1
     #define BUTTON_R_VAL 2
     #define true 1
     #define false 0
 
+    #include "smartwatch/bluetooth_driver.h"
+    #include "smartwatch/measurement_controller.h"
+    #include "smartwatch/display_manager.h"
+    #include "smartwatch/date_calc.h"
+
     void rtc_get_time(struct rtc_calendar_time *time);
     void rtc_update_time(struct rtc_calendar_time *time);
     void rtc_next_time();
 
+    static inline void aci_loop(void) {return;}
+    static inline int get_battery_level(int max) {return max;}
     static inline void request_screen_on(void) {}
     static inline void kalman_setT(float val) {}
     static inline void kalman_CGM(float z, float R, unsigned char sensorNum, float x_result[6]) {}

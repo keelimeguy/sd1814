@@ -25,6 +25,14 @@ int main (int argc, char *argv[]) {
     disp_end_write();
     rtc_next_time();
 
+    display_ui_task(VIEW_BUTTON);
+    disp_end_write();
+    rtc_next_time();
+
+    display_ui_task(VIEW_BUTTON);
+    disp_end_write();
+    rtc_next_time();
+
     display_ui_task(CLR_BUTTON);
     disp_end_write();
     rtc_next_time();
