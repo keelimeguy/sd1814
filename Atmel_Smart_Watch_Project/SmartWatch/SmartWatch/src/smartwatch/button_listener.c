@@ -19,6 +19,7 @@ void button_listener_init(void) {
     config_extint_chan.gpio_pin_mux       = BOARD_BUTTON_L_MUX;
     config_extint_chan.gpio_pin_pull      = EXTINT_PULL_UP;
     config_extint_chan.detection_criteria = EXTINT_DETECT_FALLING;
+    config_extint_chan.wake_if_sleeping   = 1;
     extint_chan_set_config(BUTTON_L_EIC, &config_extint_chan);
 
     extint_register_callback(button_listener_callback_L, BUTTON_L_EIC, EXTINT_CALLBACK_TYPE_DETECT);

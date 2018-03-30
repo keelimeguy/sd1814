@@ -6,7 +6,7 @@
 
 #include <SmartWatch.h>
 
-#define PHOTODIODE_PIN       BOARD_PHOTODIODE_PIN
+#define PHOTODIODE_EIC       BOARD_EIC_PHOTODIODE
 
 #define LED_PIN              BOARD_LED_PIN
 
@@ -29,7 +29,7 @@ void measure_set_pulse_two(uint32_t pulse);
 void measure_set_pulse_three(uint32_t pulse);
 void measurement_task(void);
 void do_kalman_bt_cmd(long calibration);
-void do_kalman(unsigned long freq, uint8_t sensorNum);
+void do_kalman(float freq, uint8_t sensorNum);
 void cal_kalman(void);
 
 #endif

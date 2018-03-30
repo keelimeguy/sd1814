@@ -69,6 +69,9 @@
 // From module: Delay routines
 #include <delay.h>
 
+// From module: EVSYS - Event System
+#include <events.h>
+
 // From module: EXTINT - External Interrupt (Callback APIs)
 #include <extint.h>
 #include <extint_callback.h>
@@ -117,6 +120,10 @@
 // From module: Sleep manager - SAMD implementation
 #include <samd/sleepmgr.h>
 #include <sleepmgr.h>
+
+// From module: TC - Timer Counter (Callback APIs)
+#include <tc.h>
+#include <tc_interrupt.h>
 
 // From module: TCC - Timer Counter for Control Applications (Callback APIs)
 #include <tcc.h>

@@ -23,7 +23,7 @@
 
 - **main.c**
     - **_SmartWatch.h_**
-    - :raised_hand: main()
+    - :alien: main()
 
 - **SmartWatch.c**
     - **_SmartWatch.h_**

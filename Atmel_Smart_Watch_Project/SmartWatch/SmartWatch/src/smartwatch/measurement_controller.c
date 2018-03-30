@@ -3,16 +3,24 @@
 
 #include "measurement_controller.h"
 
-#define BG_CAL 160
+#define BG_CAL 160.0f
+#define MAX_CAP 64
 
 static float x_result[6] = {125,125,6,0,70,1000};
 static volatile uint8_t new_measurement, buttonFlag;
 static volatile uint8_t measure_busy, pulseState;
 static volatile float glucose;
 static uint32_t readingTimeout, pulseOne, pulseTwo, pulseThree;
-static uint16_t freq;
+static struct tc_module capture_instance;
+static struct events_resource capture_event;
+static volatile uint16_t periods[MAX_CAP]; // Period with PPW capture
+// static volatile uint16_t pulse_widths[MAX_CAP]; // Pulse width with PPW capture
+static volatile size_t nCap;
 
-static unsigned long do_measurement(void);
+static void do_measurement(void);
+static void capture_event_callback(void);
+static void disable_capture(void);
+static void enable_capture(void);
 
 void measurement_controller_init(void) {
     struct port_config pin;
@@ -20,9 +28,6 @@ void measurement_controller_init(void) {
     pin.direction = PORT_PIN_DIR_OUTPUT;
 
     port_pin_set_config(LED_PIN, &pin);
-
-    pin.direction = PORT_PIN_DIR_INPUT;
-    port_pin_set_config(PHOTODIODE_PIN, &pin);
 
     new_measurement = 0;
     buttonFlag = 0;
@@ -32,10 +37,67 @@ void measurement_controller_init(void) {
     pulseOne = 1;    // 1 s
     pulseTwo = 1;    // 1 s
     pulseThree = 6;  // 6 s
-    freq = 0;//3000;
+    nCap = 0;
+
+    struct tc_config config_tc;
+    tc_get_config_defaults(&config_tc);
+    config_tc.counter_size = TC_COUNTER_SIZE_16BIT;
+    config_tc.enable_capture_on_channel[0] = 1;
+    config_tc.enable_capture_on_channel[1] = 1;
+
+    tc_init(&capture_instance, TC4, &config_tc);
+
+    struct tc_events events_tc;
+
+    // PPW: T captured in CC0, tp captured in CC1
+    // f = 1/T, dutyCycle = tp / T
+    events_tc.event_action = TC_EVENT_ACTION_PPW;
+
+    // Enable the event action
+    events_tc.on_event_perform_action = 1;
+
+    tc_enable_events(&capture_instance, &events_tc);
+
+    tc_register_callback(&capture_instance, capture_event_callback, TC_CALLBACK_CC_CHANNEL0);
+    tc_enable_callback(&capture_instance, TC_CALLBACK_CC_CHANNEL0);
+
+    struct extint_chan_conf config_extint_chan;
+    extint_chan_get_config_defaults(&config_extint_chan);
+
+    config_extint_chan.gpio_pin           = BOARD_PHOTODIODE_PIN;
+    config_extint_chan.gpio_pin_mux       = BOARD_PHOTODIODE_MUX;
+    config_extint_chan.gpio_pin_pull      = EXTINT_PULL_NONE;
+    config_extint_chan.detection_criteria = EXTINT_DETECT_HIGH;
+    config_extint_chan.wake_if_sleeping   = 0;
+    extint_chan_set_config(PHOTODIODE_EIC, &config_extint_chan);
+
+    tc_enable(&capture_instance);
+
+    disable_capture();
+
+    struct events_config config_evt;
+    events_get_config_defaults(&config_evt);
+    config_evt.generator      = BOARD_PHOTODIODE_GEN;
+    config_evt.edge_detect    = EVENTS_EDGE_DETECT_NONE;
+    config_evt.path           = EVENTS_PATH_ASYNCHRONOUS;
+    events_allocate(&capture_event, &config_evt);
+    events_attach_user(&capture_event, EVSYS_ID_USER_TC4_EVU);
 
     // Time until next reading
     readingTimeout  = 10; // s
+}
+
+static void disable_capture(void) {
+    Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
+    tc_stop_counter(&capture_instance);
+    tc_set_count_value(&capture_instance, 0);
+    eics[PHOTODIODE_EIC]->CTRL.reg &= ~EIC_CTRL_ENABLE;
+}
+
+static void enable_capture(void) {
+    Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
+    tc_start_counter(&capture_instance);
+    eics[PHOTODIODE_EIC]->CTRL.reg |= EIC_CTRL_ENABLE;
 }
 
 void take_measurement(uint8_t button) {
@@ -95,29 +157,19 @@ void measurement_task(void) {
                     port_pin_set_output_level(LED_PIN, true);
                     set_pulse_timeout(pulseThree);
                     pulseState = 3;
+                    enable_capture();
                 }
                 break;
             case 3:
-                freq = 0.8*(0.5/(do_measurement()*pow(10,-6))) + 0.2*freq; // weigh new measurements more than previous
-
                 if (is_pulse_timeout()) {
                     port_pin_set_output_level(LED_PIN, false);
+                    do_measurement();
                     pulseState = 0;
-
-                    if (buttonFlag) {
-                        // Calculate bg without kalman algorithm
-                        float Gs = x_result[4]*freq + x_result[5]; // rough estimate of Gs
-                        glucose = x_result[3]*(1/x_result[2]) + Gs;
-                        buttonFlag = 0;
-                    } else {
-                        do_kalman(freq, 1);
-                        glucose = x_result[1];
-                    }
-
                     measure_busy = 0;
                     new_measurement = 1;
                 }
                 break;
+
             default:
                 pulseState = 0;
         }
@@ -125,51 +177,34 @@ void measurement_task(void) {
     }
 }
 
-// The function do_measurement() is modified from:
-/*
-  wiring_pulse.c - pulseIn() function
-  Part of Arduino - http://www.arduino.cc/
+static void capture_event_callback(void) {
+    // The interrupt flag is cleared by reading CC
+    periods[nCap] = TC4->COUNT16.CC[0].bit.CC;
+    // pulse_widths[nCap] = TC4->COUNT16.CC[1].bit.CC;
+    if (++nCap == MAX_CAP) {
+        disable_capture();
+        set_pulse_timeout(0);
+        nCap = 0;
+    }
+}
 
-  Copyright (c) 2005-2006 David A. Mellis
-*/
-
-/* Measures the length (in microseconds) of a pulse on the pin; state is HIGH
-* or LOW, the type of pulse to measure.  Works on pulses from 2-3 microseconds
-* to 3 minutes in length, but must be called at least a few dozen microseconds
-* before the start of the pulse. */
-static unsigned long do_measurement(void) {
-    // cache the port and bit of the pin in order to speed up the
-    // pulse width measuring loop and achieve finer resolution.  calling
-    // digitalRead() instead yields much coarser resolution.
-    unsigned long width = 0; // keep initialization out of time critical area
-
-    // convert the timeout from microseconds to a number of times through
-    // the initial loop; it takes 16 clock cycles per iteration.
-    unsigned long numloops = 0;
-    unsigned long maxloops = microsecondsToClockCycles(LONGEST_FREQ_PERIOD_us) / 16;
-
-    // wait for any previous pulse to end
-    while (port_pin_get_output_level(PHOTODIODE_PIN) == true)
-        if (numloops++ == maxloops)
-            return 0;
-
-    // wait for the pulse to start
-    while (port_pin_get_output_level(PHOTODIODE_PIN) != true)
-        if (numloops++ == maxloops)
-            return 0;
-
-    // wait for the pulse to stop
-    while (port_pin_get_output_level(PHOTODIODE_PIN) == true) {
-        if (numloops++ == maxloops)
-            return 0;
-        width++;
+static void do_measurement(void) {
+    uint32_t sum = 0;
+    for (int i = 0; i < nCap; i ++) {
+        sum += (uint32_t)periods[i];
     }
 
-    // convert the reading to microseconds. The loop has been determined
-    // to be 20 clock cycles long and have about 16 clocks between the edge
-    // and the start of the loop. There will be some error introduced by
-    // the interrupt handlers.
-    return clockCyclesToMicroseconds(width * 21 + 16);
+    float freq = (float)nCap / (float)sum;
+
+    if (buttonFlag) {
+        // Calculate bg without kalman algorithm
+        float Gs = x_result[4]*freq + x_result[5]; // rough estimate of Gs
+        glucose = x_result[3]*(1.0f/x_result[2]) + Gs;
+        buttonFlag = 0;
+    } else {
+        do_kalman(freq, 1);
+        glucose = x_result[1];
+    }
 }
 
 float get_measurement(void) {
@@ -189,13 +224,13 @@ uint8_t is_new_measurement(void) {
 }
 
 void do_kalman_bt_cmd(long calibration) {
-    kalman_CGM((float)calibration, 0.0025*x_result[1]*x_result[1], 0, x_result);
+    kalman_CGM((float)calibration, 0.0025f*x_result[1]*x_result[1], 0, x_result);
 }
 
-void do_kalman(unsigned long freq, uint8_t sensorNum) {
-    kalman_CGM((float)freq, (float)400, sensorNum, x_result);
+void do_kalman(float freq, uint8_t sensorNum) {
+    kalman_CGM(freq, 400.0f, sensorNum, x_result);
 }
 
 void cal_kalman(void) {
-    kalman_CGM((float)BG_CAL, (float)(0.05*BG_CAL), 0, x_result);
+    kalman_CGM(BG_CAL, 0.05f*BG_CAL, 0, x_result);
 }

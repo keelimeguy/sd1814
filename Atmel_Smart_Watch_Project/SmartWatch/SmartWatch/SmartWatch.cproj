@@ -37,7 +37,9 @@
           <option id="sam0.drivers.rtc" value="Add" config="calendar_callback" content-id="Atmel.ASF" />
           <option id="sam0.drivers.sercom.spi" value="Add" config="callback" content-id="Atmel.ASF" />
           <option id="sam0.drivers.system" value="Add" config="" content-id="Atmel.ASF" />
+          <option id="sam0.drivers.tc" value="Add" config="callback" content-id="Atmel.ASF" />
           <option id="sam0.drivers.tcc" value="Add" config="callback" content-id="Atmel.ASF" />
+          <option id="sam0.drivers.events" value="Add" config="polled" content-id="Atmel.ASF" />
           <option id="sam0.utils.linker_scripts" value="Add" config="" content-id="Atmel.ASF" />
         </options>
         <configurations>
@@ -345,6 +347,12 @@
           <file path="src/ASF/sam0/drivers/tcc/quick_start_callback/qs_tcc_callback.h" framework="" version="3.31.0" source="sam0\drivers\tcc\quick_start_callback\qs_tcc_callback.h" changed="False" content-id="Atmel.ASF" />
           <file path="src/ASF/sam0/drivers/tcc/quick_start/qs_tcc_basic.h" framework="" version="3.31.0" source="sam0\drivers\tcc\quick_start\qs_tcc_basic.h" changed="False" content-id="Atmel.ASF" />
           <file path="src/ASF/sam0/drivers/tcc/tcc_callback.h" framework="" version="3.31.0" source="sam0\drivers\tcc\tcc_callback.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/tc/tc_interrupt.h" framework="" version="3.31.0" source="sam0\drivers\tc\tc_interrupt.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/tc/tc.h" framework="" version="3.31.0" source="sam0\drivers\tc\tc.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/tc/tc_sam_d_r/tc.c" framework="" version="3.31.0" source="sam0\drivers\tc\tc_sam_d_r\tc.c" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/tc/tc_interrupt.c" framework="" version="3.31.0" source="sam0\drivers\tc\tc_interrupt.c" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/events/events_sam_d_r/events.c" framework="" version="3.31.0" source="sam0\drivers\events\events_sam_d_r\events.c" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/events/events.h" framework="" version="3.31.0" source="sam0\drivers\events\events.h" changed="False" content-id="Atmel.ASF" />
         </files>
         <documentation help="http://asf.atmel.com/docs/3.31.0/common.applications.user_application.sam0_system.user_board.atsamd20g18/html/index.html" />
         <offline-documentation help="" />
@@ -393,6 +401,7 @@
       <Value>SPI_CALLBACK_MODE=true</Value>
       <Value>ARM_MATH_CM0PLUS=true</Value>
       <Value>TCC_ASYNC=true</Value>
+      <Value>TC_ASYNC=true</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.directories.IncludePaths>
@@ -435,6 +444,10 @@
       <Value>../src/ASF/thirdparty/CMSIS/Include</Value>
       <Value>../src/ASF/thirdparty/CMSIS/Lib/GCC</Value>
       <Value>../src/ASF/sam0/drivers/tcc</Value>
+      <Value>../src/ASF/sam0/drivers/tc</Value>
+      <Value>../src/ASF/sam0/drivers/tc/tc_sam_d_r</Value>
+      <Value>../src/ASF/sam0/drivers/events/events_sam_d_r</Value>
+      <Value>../src/ASF/sam0/drivers/events</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize for size (-Os)</armgcc.compiler.optimization.level>
@@ -496,9 +509,13 @@
       <Value>../src/ASF/thirdparty/CMSIS/Include</Value>
       <Value>../src/ASF/thirdparty/CMSIS/Lib/GCC</Value>
       <Value>../src/ASF/sam0/drivers/tcc</Value>
+      <Value>../src/ASF/sam0/drivers/tc</Value>
+      <Value>../src/ASF/sam0/drivers/tc/tc_sam_d_r</Value>
+      <Value>../src/ASF/sam0/drivers/events/events_sam_d_r</Value>
+      <Value>../src/ASF/sam0/drivers/events</Value>
     </ListValues>
   </armgcc.assembler.general.IncludePaths>
-  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=USER_BOARD -DSYSTICK_MODE -DADC_CALLBACK_MODE=true -DEXTINT_CALLBACK_MODE=true -DRTC_CALENDAR_ASYNC=true -DSPI_CALLBACK_MODE=true -DTCC_ASYNC=true</armgcc.preprocessingassembler.general.AssemblerFlags>
+  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=USER_BOARD -DSYSTICK_MODE -DADC_CALLBACK_MODE=true -DEXTINT_CALLBACK_MODE=true -DRTC_CALENDAR_ASYNC=true -DSPI_CALLBACK_MODE=true -DTCC_ASYNC=true -DTC_ASYNC=true</armgcc.preprocessingassembler.general.AssemblerFlags>
   <armgcc.preprocessingassembler.general.IncludePaths>
     <ListValues>
       <Value>../src/config</Value>
@@ -539,6 +556,10 @@
       <Value>../src/ASF/thirdparty/CMSIS/Include</Value>
       <Value>../src/ASF/thirdparty/CMSIS/Lib/GCC</Value>
       <Value>../src/ASF/sam0/drivers/tcc</Value>
+      <Value>../src/ASF/sam0/drivers/tc</Value>
+      <Value>../src/ASF/sam0/drivers/tc/tc_sam_d_r</Value>
+      <Value>../src/ASF/sam0/drivers/events/events_sam_d_r</Value>
+      <Value>../src/ASF/sam0/drivers/events</Value>
     </ListValues>
   </armgcc.preprocessingassembler.general.IncludePaths>
 </ArmGcc>
@@ -564,6 +585,7 @@
       <Value>SPI_CALLBACK_MODE=true</Value>
       <Value>ARM_MATH_CM0PLUS=true</Value>
       <Value>TCC_ASYNC=true</Value>
+      <Value>TC_ASYNC=true</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.directories.IncludePaths>
@@ -606,6 +628,10 @@
       <Value>../src/ASF/thirdparty/CMSIS/Include</Value>
       <Value>../src/ASF/thirdparty/CMSIS/Lib/GCC</Value>
       <Value>../src/ASF/sam0/drivers/tcc</Value>
+      <Value>../src/ASF/sam0/drivers/tc</Value>
+      <Value>../src/ASF/sam0/drivers/tc/tc_sam_d_r</Value>
+      <Value>../src/ASF/sam0/drivers/events/events_sam_d_r</Value>
+      <Value>../src/ASF/sam0/drivers/events</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.OtherFlags>-fdata-sections</armgcc.compiler.optimization.OtherFlags>
@@ -675,10 +701,14 @@
       <Value>../src/ASF/thirdparty/CMSIS/Include</Value>
       <Value>../src/ASF/thirdparty/CMSIS/Lib/GCC</Value>
       <Value>../src/ASF/sam0/drivers/tcc</Value>
+      <Value>../src/ASF/sam0/drivers/tc</Value>
+      <Value>../src/ASF/sam0/drivers/tc/tc_sam_d_r</Value>
+      <Value>../src/ASF/sam0/drivers/events/events_sam_d_r</Value>
+      <Value>../src/ASF/sam0/drivers/events</Value>
     </ListValues>
   </armgcc.assembler.general.IncludePaths>
   <armgcc.assembler.debugging.DebugLevel>Default (-g)</armgcc.assembler.debugging.DebugLevel>
-  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=USER_BOARD -DSYSTICK_MODE -DADC_CALLBACK_MODE=true -DEXTINT_CALLBACK_MODE=true -DRTC_CALENDAR_ASYNC=true -DSPI_CALLBACK_MODE=true -DTCC_ASYNC=true</armgcc.preprocessingassembler.general.AssemblerFlags>
+  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=USER_BOARD -DSYSTICK_MODE -DADC_CALLBACK_MODE=true -DEXTINT_CALLBACK_MODE=true -DRTC_CALENDAR_ASYNC=true -DSPI_CALLBACK_MODE=true -DTCC_ASYNC=true -DTC_ASYNC=true</armgcc.preprocessingassembler.general.AssemblerFlags>
   <armgcc.preprocessingassembler.general.IncludePaths>
     <ListValues>
       <Value>../src/config</Value>
@@ -726,6 +756,10 @@
       <Value>../src/ASF/thirdparty/CMSIS/Include</Value>
       <Value>../src/ASF/thirdparty/CMSIS/Lib/GCC</Value>
       <Value>../src/ASF/sam0/drivers/tcc</Value>
+      <Value>../src/ASF/sam0/drivers/tc</Value>
+      <Value>../src/ASF/sam0/drivers/tc/tc_sam_d_r</Value>
+      <Value>../src/ASF/sam0/drivers/events/events_sam_d_r</Value>
+      <Value>../src/ASF/sam0/drivers/events</Value>
     </ListValues>
   </armgcc.preprocessingassembler.general.IncludePaths>
   <armgcc.preprocessingassembler.debugging.DebugLevel>Default (-Wa,-g)</armgcc.preprocessingassembler.debugging.DebugLevel>
@@ -749,6 +783,8 @@
     <Folder Include="src\ASF\sam0\drivers\" />
     <Folder Include="src\ASF\sam0\drivers\adc\" />
     <Folder Include="src\ASF\sam0\drivers\adc\adc_sam_d_r\" />
+    <Folder Include="src\ASF\sam0\drivers\events\" />
+    <Folder Include="src\ASF\sam0\drivers\events\events_sam_d_r\" />
     <Folder Include="src\ASF\sam0\drivers\extint\" />
     <Folder Include="src\ASF\sam0\drivers\extint\extint_sam_d_r\" />
     <Folder Include="src\ASF\sam0\drivers\port\" />
@@ -781,6 +817,8 @@
     <Folder Include="src\ASF\sam0\drivers\tcc\quick_start_faultn\" />
     <Folder Include="src\ASF\sam0\drivers\tcc\quick_start_faultx\" />
     <Folder Include="src\ASF\sam0\drivers\tcc\quick_start_timer\" />
+    <Folder Include="src\ASF\sam0\drivers\tc\" />
+    <Folder Include="src\ASF\sam0\drivers\tc\tc_sam_d_r\" />
     <Folder Include="src\ASF\sam0\utils\" />
     <Folder Include="src\ASF\sam0\utils\cmsis\" />
     <Folder Include="src\ASF\sam0\utils\cmsis\samd21\" />
@@ -866,6 +904,12 @@
     <None Include="src\ASF\sam0\drivers\extint\extint.h">
       <SubType>compile</SubType>
     </None>
+    <None Include="src\ASF\sam0\drivers\events\events.h">
+      <SubType>compile</SubType>
+    </None>
+    <Compile Include="src\ASF\sam0\drivers\events\events_sam_d_r\events.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\ASF\sam0\drivers\extint\extint_callback.c">
       <SubType>compile</SubType>
     </Compile>
@@ -1706,6 +1750,18 @@
     <None Include="src\ASF\sam0\utils\cmsis\samd21\include\pio\samd21j18a.h">
       <SubType>compile</SubType>
     </None>
+    <None Include="src\ASF\sam0\drivers\tc\tc_interrupt.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\sam0\drivers\tc\tc.h">
+      <SubType>compile</SubType>
+    </None>
+    <Compile Include="src\ASF\sam0\drivers\tc\tc_interrupt.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\sam0\drivers\tc\tc_sam_d_r\tc.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\ASF\sam0\utils\cmsis\samd21\source\gcc\startup_samd21.c">
       <SubType>compile</SubType>
     </Compile>

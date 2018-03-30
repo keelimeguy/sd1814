@@ -169,8 +169,10 @@ uint8_t is_screen_timeout(void) {
 void set_screen_timeout(uint32_t val) {
     tcc_stop_counter(&screen_timer);
     screen_timeout = val;
-    tcc_set_count_value(&screen_timer, 0);
-    tcc_restart_counter(&screen_timer);
+    if (val != 0) {
+        tcc_set_count_value(&screen_timer, 0);
+        tcc_restart_counter(&screen_timer);
+    }
 }
 
 static void screen_timer_callback(void) {
@@ -192,8 +194,10 @@ uint8_t is_pulse_timeout(void) {
 void set_pulse_timeout(uint32_t val) {
     tcc_stop_counter(&pulse_timer);
     pulse_timeout = val;
-    tcc_set_count_value(&pulse_timer, 0);
-    tcc_restart_counter(&pulse_timer);
+    if (val != 0) {
+        tcc_set_count_value(&pulse_timer, 0);
+        tcc_restart_counter(&pulse_timer);
+    }
 }
 
 static void pulse_timer_callback(void) {
@@ -215,8 +219,10 @@ uint8_t is_battery_timeout(void) {
 void set_battery_timeout(uint32_t val) {
     tcc_stop_counter(&battery_timer);
     battery_timeout = val;
-    tcc_set_count_value(&battery_timer, 0);
-    tcc_restart_counter(&battery_timer);
+    if (val != 0) {
+        tcc_set_count_value(&battery_timer, 0);
+        tcc_restart_counter(&battery_timer);
+    }
 }
 
 static void battery_timer_callback(void) {
