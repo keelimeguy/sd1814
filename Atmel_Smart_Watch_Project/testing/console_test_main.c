@@ -38,13 +38,17 @@ int main (int argc, char *argv[]) {
     rtc_next_time();
 
     // Negative repeat will loop forever
-    while (repeat > 0) {
+    while (repeat != 0) {
         measurement_task();
         display_ui_task(button);
         disp_end_write();
         button = GRAPH_BUTTON;
         if (repeat > 0) repeat--;
         take_measurement(0);
+        measurement_task();
+        if (is_new_measurement()) {
+            updateGraph(get_measurement());
+        }
         rtc_next_time();
     }
     return 0;

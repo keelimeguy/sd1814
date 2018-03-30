@@ -78,7 +78,7 @@ void display_manager_init(void) {
     last_date_x = 0;
     last_ble_x = 0;
     last_bat_x = 0;
-    last_notifications = 0;
+    last_notifications = -1;
     last_battery = -1;
 }
 
@@ -164,6 +164,7 @@ static void viewNotifications(uint8_t button) {
     if (currentDisplayState != DISP_STATE_NOTIFICATION || startup) {
         currentDisplayState = DISP_STATE_NOTIFICATION;
         disp_fill_rect(0, DISP_HEADER_HEIGHT, DISP_WIDTH, DISP_HEIGHT, DISP_PIXEL_BLACK);
+        last_notifications = -1;
         startup = 0;
     }
     if (button == VIEW_BUTTON) {
@@ -246,7 +247,7 @@ static void showGraphView(uint8_t button) {
             disp_write_str_group(min_max_buffer, DATA_TOP_ID);
             disp_end_group();
             ftoa(min_max_buffer, graph_min(), 1);
-            disp_set_pos(0, menuTextY[3]+7);
+            disp_set_pos(0, menuTextY[3]+9);
             disp_write_str_group(min_max_buffer, DATA_BOTTOM_ID);
             disp_end_group();
 
