@@ -4,7 +4,7 @@
 #include "measurement_controller.h"
 
 #define BG_CAL 160.0f
-#define MAX_CAP 64
+#define MAX_CAP 256
 
 static float x_result[6] = {125,125,6,0,70,1000};
 static volatile uint8_t new_measurement, buttonFlag;
@@ -13,6 +13,7 @@ static volatile float glucose;
 static uint32_t readingTimeout, pulseOne, pulseTwo, pulseThree;
 static struct tc_module capture_instance;
 static struct events_resource capture_event;
+static struct extint_events eic_events;
 static volatile uint16_t periods[MAX_CAP]; // Period with PPW capture
 // static volatile uint16_t pulse_widths[MAX_CAP]; // Pulse width with PPW capture
 static volatile size_t nCap;
@@ -71,9 +72,8 @@ void measurement_controller_init(void) {
     config_extint_chan.wake_if_sleeping   = 0;
     extint_chan_set_config(PHOTODIODE_EIC, &config_extint_chan);
 
-    tc_enable(&capture_instance);
-
-    disable_capture();
+    eic_events.generate_event_on_detect[7] = 1;
+    extint_enable_events(&eic_events);
 
     struct events_config config_evt;
     events_get_config_defaults(&config_evt);
@@ -83,6 +83,10 @@ void measurement_controller_init(void) {
     events_allocate(&capture_event, &config_evt);
     events_attach_user(&capture_event, EVSYS_ID_USER_TC4_EVU);
 
+    tc_enable(&capture_instance);
+
+    disable_capture();
+
     // Time until next reading
     readingTimeout  = 10; // s
 }
@@ -91,13 +95,13 @@ static void disable_capture(void) {
     Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
     tc_stop_counter(&capture_instance);
     tc_set_count_value(&capture_instance, 0);
-    eics[PHOTODIODE_EIC]->CTRL.reg &= ~EIC_CTRL_ENABLE;
+    extint_disable_events(&eic_events);
 }
 
 static void enable_capture(void) {
     Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
     tc_start_counter(&capture_instance);
-    eics[PHOTODIODE_EIC]->CTRL.reg |= EIC_CTRL_ENABLE;
+    extint_enable_events(&eic_events);
 }
 
 void take_measurement(uint8_t button) {
@@ -166,7 +170,6 @@ void measurement_task(void) {
                     do_measurement();
                     pulseState = 0;
                     measure_busy = 0;
-                    new_measurement = 1;
                 }
                 break;
 
@@ -184,18 +187,25 @@ static void capture_event_callback(void) {
     if (++nCap == MAX_CAP) {
         disable_capture();
         set_pulse_timeout(0);
-        nCap = 0;
     }
 }
 
 static void do_measurement(void) {
+    disable_capture();
+
+    if (nCap < 1)
+        return; // Failure
+
+    new_measurement = 1;
     uint32_t sum = 0;
-    for (int i = 0; i < nCap; i ++) {
+    // Start at 1, to ignore first read value
+    for (int i = 1; i < nCap; i ++) {
         sum += (uint32_t)periods[i];
     }
 
-    float freq = (float)nCap / (float)sum;
-
+    // Assumes 8MHz clock
+    float freq = 8000000.0f * (float)(nCap-1) / (float)sum;
+    nCap = 0;
     if (buttonFlag) {
         // Calculate bg without kalman algorithm
         float Gs = x_result[4]*freq + x_result[5]; // rough estimate of Gs
