@@ -47,14 +47,15 @@
  * Support and FAQ: visit <a href="http://www.atmel.com/design-support/">Atmel Support</a>
  */
 #include <clock.h>
+#include "date_calc.h"
 
-#define DEFAULT_TIME_SEC            12
-#define DEFAULT_TIME_MIN            35
-#define DEFAULT_TIME_HOUR           2
-#define DEFAULT_TIME_PM             1
-#define DEFAULT_TIME_DAY            15
-#define DEFAULT_TIME_MONTH          3
-#define DEFAULT_TIME_YEAR           2018
+#define DEFAULT_TIME_SEC            get_default_time_second()
+#define DEFAULT_TIME_MIN            get_default_time_minute()
+#define DEFAULT_TIME_HOUR           get_default_time_hour()
+#define DEFAULT_TIME_PM             get_default_time_pm()
+#define DEFAULT_TIME_DAY            get_default_time_day()
+#define DEFAULT_TIME_MONTH          get_default_time_month()
+#define DEFAULT_TIME_YEAR           get_default_time_year()
 
 #ifndef CONF_CLOCKS_H_INCLUDED
 #  define CONF_CLOCKS_H_INCLUDED

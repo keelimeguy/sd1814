@@ -135,7 +135,11 @@ uint8_t bt_write(uint8_t *tx_data, uint16_t length) {
 }
 
 uint8_t bt_amt_notifications(void) {
+    #if DEBUG_MODE == DEBUG_CLOCK
+    return 2;
+    #else
     return num_notifications>1 ? (num_notifications==3) + 1 : num_notifications;
+    #endif
 }
 
 uint8_t bt_new_notifications(void) {
@@ -155,11 +159,19 @@ void bt_clear_amt_notifications(void) {
 }
 
 char* bt_get_notification_1(void) {
+    #if DEBUG_MODE == DEBUG_CLOCK
+    return __DATE__;
+    #else
     return notificationLine1;
+    #endif
 }
 
 char* bt_get_notification_2(void) {
+    #if DEBUG_MODE == DEBUG_CLOCK
+    return __TIME__;
+    #else
     return notificationLine2;
+    #endif
 }
 
 void bt_set_notification_1(char* str) {
