@@ -169,3 +169,20 @@ void ili9163_write_data(uint8_t data) {
     spi_write_buffer_wait(&ili9163_master, &data, 1);
     spi_select_slave(&ili9163_master, &ili9163_slave, false);
 }
+
+void ili9163_begin_write_data(void) {
+    spi_select_slave(&ili9163_master, &ili9163_slave, true);
+    port_pin_set_output_level(ILI9163_DC_PIN, true);
+}
+
+void ili9163_write_data_continue(uint8_t data) {
+    spi_write_buffer_wait(&ili9163_master, &data, 1);
+}
+
+void ili9163_write_multiple_data_continue(uint8_t* data, uint16_t length) {
+    spi_write_buffer_wait(&ili9163_master, data, length);
+}
+
+void ili9163_end_write_data(void) {
+    spi_select_slave(&ili9163_master, &ili9163_slave, false);
+}

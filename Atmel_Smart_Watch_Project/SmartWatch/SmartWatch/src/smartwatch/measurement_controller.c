@@ -11,6 +11,9 @@ static volatile uint8_t new_measurement, buttonFlag;
 static volatile uint8_t measure_busy, pulseState;
 static volatile float glucose;
 static uint32_t readingTimeout, pulseOne, pulseTwo, pulseThree;
+
+#if DEBUG_MODE == DEBUG_NONE
+
 static struct tc_module capture_instance;
 static struct events_resource capture_event;
 static volatile uint16_t periods[MAX_CAP]; // Period with PPW capture
@@ -21,6 +24,8 @@ static void do_measurement(void);
 static void capture_event_callback(void);
 static void disable_capture(void);
 static void enable_capture(void);
+
+#endif
 
 void measurement_controller_init(void) {
     struct port_config pin;
@@ -37,6 +42,8 @@ void measurement_controller_init(void) {
     pulseOne = 1;    // 1 s
     pulseTwo = 1;    // 1 s
     pulseThree = 6;  // 6 s
+
+#if DEBUG_MODE == DEBUG_NONE
     nCap = 0;
 
     struct tc_config config_tc;
@@ -83,9 +90,13 @@ void measurement_controller_init(void) {
     events_allocate(&capture_event, &config_evt);
     events_attach_user(&capture_event, EVSYS_ID_USER_TC4_EVU);
 
+#endif
+
     // Time until next reading
     readingTimeout  = 10; // s
 }
+
+#if DEBUG_MODE == DEBUG_NONE
 
 static void disable_capture(void) {
     Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
@@ -99,6 +110,8 @@ static void enable_capture(void) {
     tc_start_counter(&capture_instance);
     eics[PHOTODIODE_EIC]->CTRL.reg |= EIC_CTRL_ENABLE;
 }
+
+#endif
 
 void take_measurement(uint8_t button) {
     buttonFlag = button;
@@ -177,6 +190,8 @@ void measurement_task(void) {
     }
 }
 
+#if DEBUG_MODE == DEBUG_NONE
+
 static void capture_event_callback(void) {
     // The interrupt flag is cleared by reading CC
     periods[nCap] = TC4->COUNT16.CC[0].bit.CC;
@@ -206,6 +221,8 @@ static void do_measurement(void) {
         glucose = x_result[1];
     }
 }
+
+#endif
 
 float get_measurement(void) {
     return glucose;

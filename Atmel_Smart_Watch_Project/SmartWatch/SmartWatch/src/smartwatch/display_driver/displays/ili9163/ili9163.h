@@ -88,6 +88,10 @@ extern struct spi_slave_inst ili9163_slave;
 void ili9163_write_command(uint8_t command);
 
 void ili9163_write_data(uint8_t data);
+void ili9163_begin_write_data(void);
+void ili9163_write_data_continue(uint8_t data);
+void ili9163_write_multiple_data_continue(uint8_t* data, uint16_t length);
+void ili9163_end_write_data(void);
 
 static inline void ili9163_display_on(void) {
     ili9163_write_command(ILI9163_CMD_SET_DISPLAY_ON); // Display On

@@ -94,7 +94,11 @@ void st7735s_init(void) {
     st7735s_write_data(0x03);
 
     st7735s_write_command(ST7735S_CMD_MEM_DATA_ACCESS_CONTROL);
+    #if BOARD_DISPLAY_ROTATE
+    st7735s_write_data(0x28);
+    #else
     st7735s_write_data(0xC8);
+    #endif
 
     st7735s_write_command(ST7735S_CMD_GAMMA_P_CTRL); // Gamma Sequence
     st7735s_write_data(0x12);
@@ -131,8 +135,8 @@ void st7735s_init(void) {
     st7735s_write_data(0x03);
     st7735s_write_data(0x10);
 
-    st7735s_write_command(ST7735S_CMD_SET_PIXEL_FORMAT); // 65k mode
-    st7735s_write_data(0x05);
+    st7735s_write_command(ST7735S_CMD_SET_PIXEL_FORMAT); // 12-bit per pixel
+    st7735s_write_data(0x03);
 }
 
 void st7735s_write_command(uint8_t command) {
@@ -146,5 +150,22 @@ void st7735s_write_data(uint8_t data) {
     spi_select_slave(&st7735s_master, &st7735s_slave, true);
     port_pin_set_output_level(ST7735S_DC_PIN, true);
     spi_write_buffer_wait(&st7735s_master, &data, 1);
+    spi_select_slave(&st7735s_master, &st7735s_slave, false);
+}
+
+void st7735s_begin_write_data(void) {
+    spi_select_slave(&st7735s_master, &st7735s_slave, true);
+    port_pin_set_output_level(ST7735S_DC_PIN, true);
+}
+
+void st7735s_write_data_continue(uint8_t data) {
+    spi_write_buffer_wait(&st7735s_master, &data, 1);
+}
+
+void st7735s_write_multiple_data_continue(uint8_t* data, uint16_t length) {
+    spi_write_buffer_wait(&st7735s_master, data, length);
+}
+
+void st7735s_end_write_data(void) {
     spi_select_slave(&st7735s_master, &st7735s_slave, false);
 }

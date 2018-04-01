@@ -105,18 +105,22 @@ void disp_commit() {
     uint8_t range_test = (leftx + DISP_WIDTH - rightx < 6);
     if (range_test) {
         disp_set_pos_internal(leftx, topy);
+        disp_begin_write_data();
         rightx = DISP_WIDTH-1;
     }
+    if (leftx%2) leftx--;
     for (int x = leftx, y = topy; y <= bottomy; y++) {
         if (!range_test) {
             disp_set_pos_internal(leftx, y);
+            disp_begin_write_data();
             x = leftx;
         }
-        for (;x <= rightx; x++) {
-            disp_write_pixel(COLOR_ARRAY[buffer[x][y]]);
+        for (;x <= rightx; x+=2) {
+            disp_write_pixels(COLOR_ARRAY[buffer[x][y]], COLOR_ARRAY[buffer[x+1][y]]);
         }
         x = 0;
     }
+    disp_end_write();
     new_write = 1;
 }
 
@@ -140,9 +144,10 @@ void disp_set_pos(uint8_t x, uint8_t y) {
     cursor_y = y;
 }
 
-void disp_write_pixel(uint16_t color) {
-    disp_write_data(color>>8);
-    disp_write_data(color&0xff);
+// 12-bit color mode
+void disp_write_pixels(uint16_t color1, uint16_t color2) {
+    uint8_t pix[] = {color1>>4, ((color1&0xf)<<4)|color2>>8, color2&0xff};
+    disp_write_datap_continue(pix, 3);
 }
 
 void disp_write_pixel_at(uint8_t x, uint8_t y, uint8_t color) {
@@ -339,6 +344,15 @@ void disp_remove_str_group(uint8_t replace_last) {
         lasty[replace_last-1] = 0;
         lastwidth[replace_last-1] = 0;
         lastheight[replace_last-1] = 0;
+    }
+}
+
+void disp_set_str_group(int16_t x, int16_t y, int16_t width, int16_t height, uint8_t replace_last) {
+    if (replace_last>0 && replace_last<=MAX_WRITE_ID) {
+        lastx[replace_last-1] = x;
+        lasty[replace_last-1] = y;
+        lastwidth[replace_last-1] = width;
+        lastheight[replace_last-1] = height;
     }
 }
 

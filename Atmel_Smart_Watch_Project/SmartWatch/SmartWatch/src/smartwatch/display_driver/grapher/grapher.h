@@ -27,13 +27,13 @@ extern "C" {
 #define GRAPH_PIXEL_WARNING(i, j)   disp_write_pixel_at(DISP_GRAPH_X+i, DISP_GRAPH_Y+DISP_GRAPH_HEIGHT-j-1, DISP_PIXEL_GRAPH_WARNING)
 #define GRAPH_PIXEL_DANGER(i, j)    disp_write_pixel_at(DISP_GRAPH_X+i, DISP_GRAPH_Y+DISP_GRAPH_HEIGHT-j-1, DISP_PIXEL_GRAPH_DANGER)
 #define GRAPH_PIXEL_OFF(i, j)       disp_write_pixel_at(DISP_GRAPH_X+i, DISP_GRAPH_Y+DISP_GRAPH_HEIGHT-j-1, DISP_PIXEL_GRAPH_OFF)
-#define GRAPH_NEXT_ROW()            0
 
 #define GRAPH_RESET()               disp_fill_rect(DISP_GRAPH_X,DISP_GRAPH_Y,GRAPH_WIDTH-1,DISP_GRAPH_HEIGHT-1, DISP_PIXEL_GRAPH_OFF)
 
 void reset_graph();
 int add_to_graph(int val);
 void graph(int clear);
+void graph_smart_sizing(unsigned short* xret, unsigned short* yret, unsigned short* widthret, unsigned short* heightret);
 
 unsigned char graph_changed();
 int graph_length();

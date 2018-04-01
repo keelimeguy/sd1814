@@ -185,7 +185,49 @@ void graph(int clear) {
             else
                 GRAPH_PIXEL_OFF(x, y);
         }
-        GRAPH_NEXT_ROW();
     }
+    is_changed = 0;
+}
+
+void graph_smart_sizing(unsigned short* xret, unsigned short* yret, unsigned short* widthret, unsigned short* heightret) {
+    int i, x, y, index;
+    int bar[data_length];
+
+    *xret = 0;
+    *yret = 0;
+    *widthret = 0;
+    *heightret = 0;
+
+    if (data_start>data_length) return;
+    for (y=0, i=data_start; i<data_length; i++, y++)
+        bar[y] = bar_cache[i];
+    for (y=data_length-data_start, i=0; i<data_start; i++, y++)
+        bar[y] = bar_cache[i];
+
+    *xret = DISP_GRAPH_X + GRAPH_WIDTH-(GRAPH_WIDTH%BAR_WIDTH)-data_length*BAR_WIDTH;
+    *widthret = GRAPH_WIDTH-(GRAPH_WIDTH%BAR_WIDTH);
+    for (x=*xret-DISP_GRAPH_X, i=0; i<*widthret; i++, x++) {
+        if ((i/BAR_WIDTH)>=data_length) {
+            *widthret = i;
+            break;
+        }
+        for (y=0; y<bar[i/BAR_WIDTH]; y++) {
+            index = (data_start+i/BAR_WIDTH)%data_length;
+            if (data[index]>=DISP_DANGER_HIGH)
+                GRAPH_PIXEL_DANGER(x, y);
+            else if (data[index]>=DISP_WARNING_HIGH)
+                GRAPH_PIXEL_WARNING(x, y);
+            else if (data[index]<=DISP_DANGER_LOW)
+                GRAPH_PIXEL_DANGER(x, y);
+            else if (data[index]<=DISP_WARNING_LOW)
+                GRAPH_PIXEL_WARNING(x, y);
+            else
+                GRAPH_PIXEL_ON(x, y);
+        }
+        if (bar[i/BAR_WIDTH] > *heightret)
+            *heightret = bar[i/BAR_WIDTH];
+    }
+
+    *yret = DISP_GRAPH_Y+DISP_GRAPH_HEIGHT-1-*heightret;
     is_changed = 0;
 }

@@ -23,15 +23,20 @@
 #define NOTIFICATION_NUM_ID  1
 #define NOTIFICATION_1_ID    2
 #define NOTIFICATION_2_ID    3
-#define HOUR_ID              4
-#define MIN_ID               5
-#define SEC_ID               6
-#define DATE_ID              7
-#define GLUCOSE_VAL_ID       8
-#define GLUCOSE_VAL_GRAPH_ID 9
-#define DATA_TOP_ID          10
-#define DATA_BOTTOM_ID       11
-#define AMPM_ID              12
+#define AMPM_ID              4
+#define HOUR_ID              5
+#define MIN_ID               6
+#define SEC_ID               7
+#define DATE_ID              8
+#define GLUCOSE_VAL_ID       9
+#define GLUCOSE_UNIT_ID      10
+#define GLUCOSE_VAL_GRAPH_ID 11
+#define DATA_TOP_ID          12
+#define DATA_BOTTOM_ID       13
+#define GRAPH_ID             14
+// Button IDs are to be the only IDs greater than graph ID
+#define LEFT_BUTTON_ID       15
+#define RIGHT_BUTTON_ID      16
 
 void display_manager_init(void);
 void display_ui_task(uint8_t button);

@@ -12,7 +12,8 @@
     #define PROGMEM
     #endif
 
-	#define BLE_ENABLED          0 // 0 = Bluetooth is disabled
+    #define BLE_ENABLED          0 // 0 = Bluetooth is disabled
+    #define BOARD_DISPLAY_ROTATE 1 // 1 = Rotate the display 90o
 
     #define DEBUG_NONE           0
     #define DEBUG_CLOCK          1
@@ -76,6 +77,7 @@
     };
     #define DEBUG_NONE 0
     #define DEBUG_MODE 1
+    // #define BOARD_DISPLAY_ROTATE 1 // 1 = Rotate the display 90o
     #define port_get_config_defaults(A)
     #define port_pin_set_config(A,B)
     #define port_pin_set_output_level(A,B)

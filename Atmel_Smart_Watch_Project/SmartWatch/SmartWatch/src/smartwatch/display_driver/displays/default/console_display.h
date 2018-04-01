@@ -45,6 +45,7 @@ void console_display_set_row_address(uint8_t start_address, uint8_t end_address)
 void console_display_set_column_address(uint8_t start_address, uint8_t end_address);
 void console_display_write_command(uint8_t command);
 void console_display_write_data(uint8_t data);
+void console_display_write_multiple_data(uint8_t* data, uint16_t length);
 void console_display_init(void);
 void console_display_end_write(void);
 

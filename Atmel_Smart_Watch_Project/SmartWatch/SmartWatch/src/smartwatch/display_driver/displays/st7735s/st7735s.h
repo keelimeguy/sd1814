@@ -83,6 +83,10 @@ extern struct spi_slave_inst st7735s_slave;
 void st7735s_write_command(uint8_t command);
 
 void st7735s_write_data(uint8_t data);
+void st7735s_begin_write_data(void);
+void st7735s_write_data_continue(uint8_t data);
+void st7735s_write_multiple_data_continue(uint8_t* data, uint16_t length);
+void st7735s_end_write_data(void);
 
 static inline void st7735s_display_on(void) {
     st7735s_write_command(ST7735S_CMD_SET_DISPLAY_ON); // Display On

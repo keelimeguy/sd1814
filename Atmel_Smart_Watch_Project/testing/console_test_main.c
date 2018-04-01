@@ -18,31 +18,30 @@ int main (int argc, char *argv[]) {
     bt_set_notification_1("test");
 
     display_ui_task(0);
-    disp_end_write();
+    rtc_next_time();
+
+    display_ui_task(0);
     rtc_next_time();
 
     display_ui_task(VIEW_BUTTON);
-    disp_end_write();
     rtc_next_time();
 
     display_ui_task(VIEW_BUTTON);
-    disp_end_write();
     rtc_next_time();
 
     display_ui_task(VIEW_BUTTON);
-    disp_end_write();
     rtc_next_time();
 
     display_ui_task(CLR_BUTTON);
-    disp_end_write();
+    rtc_next_time();
+
+    display_ui_task(GRAPH_BUTTON);
     rtc_next_time();
 
     // Negative repeat will loop forever
     while (repeat != 0) {
         measurement_task();
-        display_ui_task(button);
-        disp_end_write();
-        button = GRAPH_BUTTON;
+        display_ui_task(0);
         if (repeat > 0) repeat--;
         take_measurement(0);
         measurement_task();
