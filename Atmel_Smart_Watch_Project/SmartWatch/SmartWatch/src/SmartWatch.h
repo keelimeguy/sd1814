@@ -22,9 +22,10 @@
     #define DEBUG_BUTTON_R       5
     #define DEBUG_BUTTON_EXTINT  6
     #define DEBUG_BLE            7
-    #define DEBUG_MEASURE        8
+    #define DEBUG_MEASURE_SIM    8
+    #define DEBUG_MEASURE_FREQ   9
 
-    #define DEBUG_MODE DEBUG_NONE
+    #define DEBUG_MODE DEBUG_CLOCK
 
     #include "smartwatch/clock_driver.h"
     #include "smartwatch/battery_reader.h"

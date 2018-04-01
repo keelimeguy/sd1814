@@ -73,4 +73,79 @@ static void add_to_date_uchar(unsigned int days, short unsigned int *y, unsigned
     day_number_to_date_uchar(g, y, m, d);
 }
 
+inline int get_default_time_second(void) {
+    char[] time = __TIME__; // Format: "hh:mm:ss"
+    int d1 = (int)(time[7]-'0');
+    int d10 = (int)(time[6]-'0');
+    return d1+10*d10;
+}
+
+inline int get_default_time_minute(void) {
+    char[] time = __TIME__; // Format: "hh:mm:ss"
+    int d1 = (int)(time[4]-'0');
+    int d10 = (int)(time[3]-'0');
+    return d1+10*d10;
+}
+
+inline int get_default_time_hour(void) {
+    char[] time = __TIME__; // Format: "hh:mm:ss"
+    int d1 = (int)(time[1]-'0');
+    int d10 = (int)(time[0]-'0');
+    int hr = d1+10*d10;
+	if (hr > 12) return hr-12;
+	if (hr == 12) return 0;
+	return 12;
+}
+
+inline int get_default_time_year(void) {
+    char[] date = __DATE__; // Format: "Mmm dd yyyy"
+    int d1 = (int)(date[10]-'0');
+    int d10 = (int)(date[9]-'0');
+    int d100 = (int)(date[8]-'0');
+    int d1000 = (int)(date[7]-'0');
+    return d1+10*d10+100*d100+1000*d1000;
+}
+
+inline int get_default_time_day(void) {
+    char[] date = __DATE__; // Format: "Mmm dd yyyy"
+    int d1 = (int)(date[5]-'0');
+    int d10 = (int)(date[4]-'0');
+    return d1+10*d10;
+}
+
+inline int get_default_time_month(void) {
+    char[] date = __DATE__; // Format: "Mmm dd yyyy"
+	// "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", and "Dec"
+    switch (date[0]) {
+        case 'J':
+            if (date[1] == 'a') return 1;
+            if (date[1] == 'n') return 6;
+            return 7;
+
+        case 'F':
+            return 2;
+
+        case 'M':
+            if (date[2] == 'r') return 3;
+            return 5;
+
+        case 'A':
+            if (date[1] == 'p') return 4;
+            return 8;
+
+        case 'S':
+            return 9;
+
+        case 'O':
+            return 10;
+
+        case 'N':
+            return 11;
+
+        case 'D':
+            return 12;   
+    }
+	return 0;
+}
+
 #endif

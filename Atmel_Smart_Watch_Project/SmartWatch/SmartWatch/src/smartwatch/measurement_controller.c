@@ -135,7 +135,7 @@ void measure_set_pulse_three(uint32_t pulse) {
 
 void measurement_task(void) {
     if (measure_busy) {
-        #if DEBUG_MODE != DEBUG_NONE
+        #if DEBUG_MODE == DEBUG_MEASURE_SIM
         glucose++;
         new_measurement = 1;
         measure_busy = 0;
@@ -206,6 +206,10 @@ static void do_measurement(void) {
     // Assumes 8MHz clock
     float freq = 8000000.0f * (float)(nCap-1) / (float)sum;
     nCap = 0;
+
+    #if DEBUG_MODE == DEBUG_MEASURE_FREQ
+    glucose = freq;
+    #else
     if (buttonFlag) {
         // Calculate bg without kalman algorithm
         float Gs = x_result[4]*freq + x_result[5]; // rough estimate of Gs
@@ -215,6 +219,7 @@ static void do_measurement(void) {
         do_kalman(freq, 1);
         glucose = x_result[1];
     }
+    #endif
 }
 
 float get_measurement(void) {
