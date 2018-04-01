@@ -164,7 +164,7 @@ static void updateMainDisplay(uint8_t button) {
             if (!startup)
                 disp_commit();
             disp_set_font(FONT_SMALL);
-            disp_set_pos(0, menuTextY[6]);
+            disp_set_pos(1, menuTextY[6]);
             disp_write_str_group("< Graph", LEFT_BUTTON_ID);
             disp_end_group();
             if (!startup)
@@ -219,7 +219,7 @@ static void viewNotifications(uint8_t button) {
                 if (!startup)
                     disp_commit();
                 last_drawn[NOTIFICATION_2_ID] = 1;
-                disp_set_pos(0, menuTextY[6]);
+                disp_set_pos(1, menuTextY[6]);
                 disp_set_font(FONT_SMALL);
                 disp_write_str_group("< Clear", LEFT_BUTTON_ID);
                 disp_end_group();
@@ -339,7 +339,7 @@ static void showGraphView(uint8_t button) {
 
         if (graph_refresh) {
             disp_set_font(FONT_SMALL);
-            disp_set_pos(0, menuTextY[6]);
+            disp_set_pos(1, menuTextY[6]);
             disp_write_str_group("< Back", LEFT_BUTTON_ID);
             disp_end_group();
             if (!startup)
