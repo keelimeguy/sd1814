@@ -765,6 +765,9 @@
   <armgcc.preprocessingassembler.debugging.DebugLevel>Default (-Wa,-g)</armgcc.preprocessingassembler.debugging.DebugLevel>
 </ArmGcc>
     </ToolchainSettings>
+    <PreBuildEvent>echo //Nothing &gt;&gt; $(MSBuildProjectDirectory)\src\smartwatch\date_calc.h</PreBuildEvent>
+    <PostBuildEvent>head -n -1 $(MSBuildProjectDirectory)\src\smartwatch\date_calc.h &gt;$(MSBuildProjectDirectory)\src\smartwatch\date_calc.__temp__
+mv $(MSBuildProjectDirectory)\src\smartwatch\date_calc.__temp__ $(MSBuildProjectDirectory)\src\smartwatch\date_calc.h</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\" />

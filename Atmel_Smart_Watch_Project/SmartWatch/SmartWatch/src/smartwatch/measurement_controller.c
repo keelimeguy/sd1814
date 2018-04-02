@@ -6,7 +6,7 @@
 #define BG_CAL 160.0f
 #define MAX_CAP 256
 
-static float x_result[6] = {125,125,6,0,70,1000};
+static float x_result[6] = {125,125,6,0,70,1000}, freq = 0.0f;
 static volatile uint8_t new_measurement, buttonFlag;
 static volatile uint8_t measure_busy, pulseState;
 static volatile float glucose;
@@ -218,28 +218,30 @@ static void do_measurement(void) {
     }
 
     // Assumes 8MHz clock
-    float freq = 8000000.0f * (float)(nCap-1) / (float)sum;
+    freq = 8000000.0f * (float)(nCap-1) / (float)sum;
     nCap = 0;
 
-    #if DEBUG_MODE == DEBUG_MEASURE_FREQ
-    glucose = freq;
-    #else
-    if (buttonFlag) {
-        // Calculate bg without kalman algorithm
-        float Gs = x_result[4]*freq + x_result[5]; // rough estimate of Gs
-        glucose = x_result[3]*(1.0f/x_result[2]) + Gs;
-        buttonFlag = 0;
-    } else {
-        do_kalman(freq, 1);
-        glucose = x_result[1];
-    }
-    #endif
+    // if (buttonFlag) {
+    //     // Calculate bg without kalman algorithm
+    //     float Gs = x_result[4]*freq + x_result[5]; // rough estimate of Gs
+    //     glucose = x_result[3]*(1.0f/x_result[2]) + Gs;
+    //     buttonFlag = 0;
+    // } else {
+    //     do_kalman(freq, 1);
+    //     glucose = x_result[1];
+    // }
+    do_kalman(freq, 1);
+    glucose = x_result[1];
 }
 
 #endif
 
 float get_measurement(void) {
     return glucose;
+}
+
+float get_freq(void) {
+	return freq;
 }
 
 uint8_t is_new_measurement_soft(void) {

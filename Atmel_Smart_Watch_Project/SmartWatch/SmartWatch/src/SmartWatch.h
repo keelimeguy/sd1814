@@ -26,7 +26,7 @@
     #define DEBUG_MEASURE_SIM    8
     #define DEBUG_MEASURE_FREQ   9
 
-    #define DEBUG_MODE DEBUG_CLOCK
+    #define DEBUG_MODE DEBUG_MEASURE_FREQ
 
     #include "smartwatch/clock_driver.h"
     #include "smartwatch/battery_reader.h"
