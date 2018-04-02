@@ -12,6 +12,7 @@
 #define BATTERY_TIMEOUT 20 // s
 #define SCREEN_TIMEOUT  120 // s
 #define READING_TIMEOUT measure_get_reading_timeout()
+#define BUTTON_TIMEOUT 500 // ms
 
 void clock_driver_init(void);
 uint8_t is_reading_timeout(void);
@@ -28,5 +29,8 @@ void set_pulse_timeout(uint32_t val);
 uint8_t is_battery_timeout(void);
 uint8_t is_battery_timeout_soft(void);
 void set_battery_timeout(uint32_t val);
+uint8_t is_button_timeout(void);
+uint8_t is_button_timeout_soft(void);
+void set_button_timeout(uint32_t val);
 
 #endif

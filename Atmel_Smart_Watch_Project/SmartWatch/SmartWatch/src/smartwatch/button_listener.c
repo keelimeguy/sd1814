@@ -42,21 +42,27 @@ void button_listener_init(void) {
 }
 
 static void button_listener_callback_L(void) {
-    button_interrupt_flag = 1;
-    button_pressed |= BUTTON_L_VAL;
-    #if DEBUG_MODE==DEBUG_BUTTON_EXTINT
-        level = !level;
-        port_pin_set_output_level(BOARD_DEBUG_LED, level);
-    #endif
+    if (is_button_timeout()) {
+        button_interrupt_flag = 1;
+        button_pressed |= BUTTON_L_VAL;
+        #if DEBUG_MODE==DEBUG_BUTTON_EXTINT
+            level = !level;
+            port_pin_set_output_level(BOARD_DEBUG_LED, level);
+        #endif
+       set_button_timeout(BUTTON_TIMEOUT);
+    }
 }
 
 static void button_listener_callback_R(void) {
-    button_interrupt_flag = 1;
-    button_pressed |= BUTTON_R_VAL;
-    #if DEBUG_MODE==DEBUG_BUTTON_EXTINT
-        level = !level;
-        port_pin_set_output_level(BOARD_DEBUG_LED, level);
-    #endif
+    if (is_button_timeout()) {
+        button_interrupt_flag = 1;
+        button_pressed |= BUTTON_R_VAL;
+        #if DEBUG_MODE==DEBUG_BUTTON_EXTINT
+            level = !level;
+            port_pin_set_output_level(BOARD_DEBUG_LED, level);
+        #endif
+        set_button_timeout(BUTTON_TIMEOUT);
+    }
 }
 
 uint8_t is_button_interrupt_soft(void) {

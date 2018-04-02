@@ -9,13 +9,15 @@ static struct rtc_calendar_alarm_time alarm;
 static volatile uint8_t rtc_alarm_flag;
 
 static struct tcc_module screen_timer, pulse_timer, battery_timer;
-static volatile uint32_t screen_timeout, pulse_timeout, battery_timeout;
+static struct tc_module button_timer;
+static volatile uint32_t screen_timeout, pulse_timeout, battery_timeout, button_timeout;
 static const char* day_str[7] = {"Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Tue"};
 
 static void rtc_alarm_callback(void);
 static void screen_timer_callback(void);
 static void pulse_timer_callback(void);
 static void battery_timer_callback(void);
+static void button_timer_callback(void);
 
 // Configured assuming RTC_CALENDAR_ALARM_MASK_SEC
 static inline void next_alarm(void) {
@@ -131,6 +133,27 @@ void clock_driver_init(void) {
 
     // Start battery timeout at 0 to trigger next battery read
     battery_timeout = 0;
+
+    struct tc_config config_tc;
+    tc_get_config_defaults(&config_tc);
+
+    // Assuming GCLK generator 0 source is 8MHz:
+    //  64 prescaler at 125 compare match => 8e6/125*64 = 1kHz
+    config_tc.counter_size =   TC_COUNTER_SIZE_16BIT;
+    config_tc.wave_generation = TC_WAVE_GENERATION_MATCH_FREQ;
+    config_tc.clock_source = GCLK_GENERATOR_0;
+    config_tc.clock_prescaler = TC_CLOCK_PRESCALER_DIV64;
+    config_tc.counter_16_bit.compare_capture_channel[TC_COMPARE_CAPTURE_CHANNEL_0] =   0x7c; // 125-1
+
+    tc_init(&button_timer, TC3, &config_tc);
+
+    tc_register_callback(&button_timer, button_timer_callback, TC_CALLBACK_CC_CHANNEL0);
+    tc_enable_callback(&button_timer, TC_CALLBACK_CC_CHANNEL0);
+
+    tc_enable(&button_timer);
+
+    // Start button timeout at 0 to enable next button press
+    button_timeout = 0;
 }
 
 void rtc_get_time(struct rtc_calendar_time *time) {
@@ -230,6 +253,31 @@ static void battery_timer_callback(void) {
         battery_timeout--;
     } else {
         tcc_stop_counter(&battery_timer);
+    }
+}
+
+uint8_t is_button_timeout_soft(void) {
+    return button_timeout==0;
+}
+
+uint8_t is_button_timeout(void) {
+    return button_timeout==0;
+}
+
+void set_button_timeout(uint32_t val) {
+    tc_stop_counter(&button_timer);
+    button_timeout = val;
+    if (val != 0) {
+        tc_set_count_value(&button_timer, 0);
+        tc_start_counter(&button_timer);
+    }
+}
+
+static void button_timer_callback(void) {
+    if (button_timeout>0) {
+        button_timeout--;
+    } else {
+        tc_stop_counter(&button_timer);
     }
 }
 

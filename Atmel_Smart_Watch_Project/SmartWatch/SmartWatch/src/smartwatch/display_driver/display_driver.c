@@ -103,12 +103,12 @@ void disp_init() {
 
 void disp_commit() {
     uint8_t range_test = (leftx + DISP_WIDTH - rightx < 6);
-    if (range_test) {
+    if (leftx%2) leftx--;
+	if (range_test) {
         disp_set_pos_internal(leftx, topy);
         disp_begin_write_data();
         rightx = DISP_WIDTH-1;
     }
-    if (leftx%2) leftx--;
     for (int x = leftx, y = topy; y <= bottomy; y++) {
         if (!range_test) {
             disp_set_pos_internal(leftx, y);

@@ -77,8 +77,9 @@
         bool powersave;
     };
     #define DEBUG_NONE 0
-    #define DEBUG_MODE 1
-    #define BOARD_DISPLAY_ROTATE 1 // 1 = Rotate the display 90o
+    #define DEBUG_MEASURE_SIM    8
+    #define DEBUG_MODE DEBUG_MEASURE_SIM
+    // #define BOARD_DISPLAY_ROTATE 1 // 1 = Rotate the display 90o
     #define port_get_config_defaults(A)
     #define port_pin_set_config(A,B)
     #define port_pin_set_output_level(A,B)

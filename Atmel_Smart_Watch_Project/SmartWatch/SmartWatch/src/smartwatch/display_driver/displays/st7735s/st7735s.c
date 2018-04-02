@@ -95,7 +95,7 @@ void st7735s_init(void) {
 
     st7735s_write_command(ST7735S_CMD_MEM_DATA_ACCESS_CONTROL);
     #if BOARD_DISPLAY_ROTATE
-    st7735s_write_data(0x28);
+    st7735s_write_data(0xA8);
     #else
     st7735s_write_data(0xC8);
     #endif

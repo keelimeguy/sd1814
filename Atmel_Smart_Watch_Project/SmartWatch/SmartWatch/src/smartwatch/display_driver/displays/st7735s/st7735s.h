@@ -8,9 +8,6 @@
 #ifndef ST7735S_H
 #define ST7735S_H
 
-#include <compiler.h>
-#include <port.h>
-#include <spi.h>
 #include <delay.h>
 
 #include "conf_st7735s.h"

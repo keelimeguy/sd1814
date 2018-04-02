@@ -38,7 +38,7 @@ static uint8_t last_drawn[MAX_WRITE_ID+1];
 
 static char buffer[12];
 #define headerTextY 8
-static const uint8_t menuTextY[7] = { 2*DISP_DIVISION_HEIGHT/3+DISP_HEADER_HEIGHT-1, 4*DISP_DIVISION_HEIGHT/3+DISP_HEADER_HEIGHT-1,
+static uint8_t menuTextY[7] = { 2*DISP_DIVISION_HEIGHT/3+DISP_HEADER_HEIGHT-1, 4*DISP_DIVISION_HEIGHT/3+DISP_HEADER_HEIGHT-1,
                                 2*DISP_DIVISION_HEIGHT+DISP_HEADER_HEIGHT-1, 8*DISP_DIVISION_HEIGHT/3+DISP_HEADER_HEIGHT-1,
                                 10*DISP_DIVISION_HEIGHT/3+DISP_HEADER_HEIGHT-1, 4*DISP_DIVISION_HEIGHT+DISP_HEADER_HEIGHT-1,
                                 14*DISP_DIVISION_HEIGHT/3+DISP_HEADER_HEIGHT-1 };
@@ -147,7 +147,7 @@ static void updateMainDisplay(uint8_t button) {
         if (rewriteMain || lastAmtNotificationsShown != bt_amt_notifications()) {
             lastAmtNotificationsShown = bt_amt_notifications();
             disp_set_font(FONT_MEDIUM);
-            disp_set_pos(0, menuTextY[3]);
+            disp_set_pos(1, menuTextY[3]);
             if (!bt_amt_notifications()) {
                 disp_write_str_group("No notifications.", NOTIFICATION_NUM_ID);
                 disp_end_group();
@@ -205,15 +205,15 @@ static void viewNotifications(uint8_t button) {
         bt_clear_amt_notifications();
         updateMainDisplay(0);
     } else {
-        if (last_notifications != bt_amt_notifications() || bt_new_notifications()) {
+        if (bt_new_notifications() || last_notifications != bt_amt_notifications()) {
             disp_set_font(FONT_MEDIUM);
             if (bt_amt_notifications()) {
                 last_notifications = bt_amt_notifications();
-                disp_set_pos(0, menuTextY[0]);
+                disp_set_pos(1, menuTextY[0]);
                 disp_write_str_group(bt_get_notification_1(), NOTIFICATION_1_ID);
                 disp_end_group();
                 last_drawn[NOTIFICATION_1_ID] = 1;
-                disp_set_pos(0, menuTextY[1]);
+                disp_set_pos(1, menuTextY[1]);
                 disp_write_str_group(bt_get_notification_2(), NOTIFICATION_2_ID);
                 disp_end_group();
                 if (!startup)
@@ -238,7 +238,7 @@ static void viewNotifications(uint8_t button) {
                     disp_commit();
                 last_drawn[RIGHT_BUTTON_ID] = 1;
             } else {
-                disp_set_pos(0, menuTextY[0]);
+                disp_set_pos(1, menuTextY[0]);
                 disp_write_str_group("No notifications.", NOTIFICATION_1_ID);
                 disp_end_group();
                 if (!startup)
@@ -280,9 +280,9 @@ static void showGraphView(uint8_t button) {
         updateMainDisplay(0);
     } else {
         if (graph_changed() || graph_refresh) {
-            disp_set_font(FONT_MEDIUM);
+            disp_set_font(FONT_SMALL);
             if (graph_length()==0) {
-                disp_set_pos(0, menuTextY[2]);
+                disp_set_pos(1, menuTextY[2]);
                 disp_write_str_group("No Data.", DATA_TOP_ID);
                 disp_end_group();
                 if (!startup)
@@ -306,14 +306,14 @@ static void showGraphView(uint8_t button) {
                 last_drawn[GRAPH_ID] = 1;
                 disp_set_font(FONT_SMALL);
                 ftoa(buffer, graph_max(), 1);
-                disp_set_pos(0, menuTextY[0]-7);
+                disp_set_pos(1, menuTextY[0]-7);
                 disp_write_str_group(buffer, DATA_TOP_ID);
                 disp_end_group();
                 if (!startup)
                     disp_commit();
                 last_drawn[DATA_TOP_ID] = 1;
                 ftoa(buffer, graph_min(), 1);
-                disp_set_pos(0, menuTextY[3]+9);
+                disp_set_pos(1, menuTextY[3]+9);
                 disp_write_str_group(buffer, DATA_BOTTOM_ID);
                 disp_end_group();
                 if (!startup)

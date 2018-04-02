@@ -47,7 +47,14 @@
  * Support and FAQ: visit <a href="http://www.atmel.com/design-support/">Atmel Support</a>
  */
 #include <clock.h>
-#include "date_calc.h"
+
+extern int get_default_time_second(void);
+extern int get_default_time_minute(void);
+extern int get_default_time_hour(void);
+extern int get_default_time_pm(void);
+extern int get_default_time_day(void);
+extern int get_default_time_month(void);
+extern int get_default_time_year(void);
 
 #define DEFAULT_TIME_SEC            get_default_time_second()
 #define DEFAULT_TIME_MIN            get_default_time_minute()
