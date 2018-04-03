@@ -10,7 +10,9 @@ extern "C" {
 
 #define MIN(a, b) (a<b?a:b)
 #define MAX(a, b) (a>b?a:b)
+#ifndef bool
 #define bool unsigned char
+#endif
 #define true 1
 #define false 0
 

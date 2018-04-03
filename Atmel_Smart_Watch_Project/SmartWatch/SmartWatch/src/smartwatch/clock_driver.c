@@ -10,7 +10,7 @@ static volatile uint8_t rtc_alarm_flag;
 
 static struct tcc_module screen_timer, pulse_timer, battery_timer;
 static struct tc_module button_timer;
-static volatile uint32_t screen_timeout, pulse_timeout, battery_timeout, button_timeout;
+static volatile uint16_t screen_timeout, pulse_timeout, battery_timeout, button_timeout;
 static const char* day_str[7] = {"Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Tue"};
 
 static void rtc_alarm_callback(void);
@@ -189,7 +189,7 @@ uint8_t is_screen_timeout(void) {
     return screen_timeout==0;
 }
 
-void set_screen_timeout(uint32_t val) {
+void set_screen_timeout(uint16_t val) {
     tcc_stop_counter(&screen_timer);
     screen_timeout = val;
     if (val != 0) {
@@ -214,7 +214,7 @@ uint8_t is_pulse_timeout(void) {
     return pulse_timeout==0;
 }
 
-void set_pulse_timeout(uint32_t val) {
+void set_pulse_timeout(uint16_t val) {
     tcc_stop_counter(&pulse_timer);
     pulse_timeout = val;
     if (val != 0) {
@@ -239,7 +239,7 @@ uint8_t is_battery_timeout(void) {
     return battery_timeout==0;
 }
 
-void set_battery_timeout(uint32_t val) {
+void set_battery_timeout(uint16_t val) {
     tcc_stop_counter(&battery_timer);
     battery_timeout = val;
     if (val != 0) {
@@ -264,7 +264,7 @@ uint8_t is_button_timeout(void) {
     return button_timeout==0;
 }
 
-void set_button_timeout(uint32_t val) {
+void set_button_timeout(uint16_t val) {
     tc_stop_counter(&button_timer);
     button_timeout = val;
     if (val != 0) {

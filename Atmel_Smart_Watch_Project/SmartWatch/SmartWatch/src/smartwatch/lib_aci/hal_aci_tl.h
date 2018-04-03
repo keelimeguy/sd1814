@@ -185,7 +185,7 @@ void hal_aci_tl_pin_reset(void);
  */
 void hal_aci_tl_q_flush(void);
 
-void* get_aci_rx_q_ptr();
+void* get_aci_rx_q_ptr(void);
 bool m_aci_spi_transfer(hal_aci_data_t * data_to_send, hal_aci_data_t * received_data);
 
 #endif // HAL_ACI_TL_H__

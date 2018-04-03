@@ -4,14 +4,13 @@
 #include "bluetooth_driver.h"
 
 static volatile uint8_t rx_buffer[BT_MAX_BUFFER_LENGTH][BT_MAX_MSG_LENGTH];
-static volatile uint8_t tx_buffer[BT_MAX_MSG_LENGTH];
+// static volatile uint8_t tx_buffer[BT_MAX_MSG_LENGTH];
 static volatile uint8_t rx_buffer_len, write_busy;
 static volatile uint8_t connection_state;
 static volatile uint8_t cur_rxindx;
 static uint8_t num_notifications, cur_rindx, new_notifications;
 static char notificationLine1[BT_MAX_MSG_LENGTH];
 static char notificationLine2[BT_MAX_MSG_LENGTH];
-static char paramData[BT_MAX_MSG_LENGTH];
 
 void bluetooth_driver_init(void) {
 
@@ -43,6 +42,7 @@ void bt_task(void) {
     aci_loop();
 
     if (rx_buffer_len) {
+        char paramData[BT_MAX_MSG_LENGTH] = {0};
         rx_buffer_len--;
 
         // Commands copied over from 2016-17 project
@@ -89,9 +89,9 @@ void bt_task(void) {
         else if (rx_buffer[cur_rindx][0] == 'P') {
             memcpy(paramData, &rx_buffer[cur_rindx][1], BT_MAX_MSG_LENGTH - 1);
             char *ptr;
-            measure_set_pulse_one((uint32_t)strtol(paramData, &ptr, 10));
-            measure_set_pulse_two((uint32_t)strtol(ptr, &ptr, 10));
-            measure_set_pulse_three((uint32_t)strtol(ptr, &ptr, 10));
+            measure_set_pulse_one((uint16_t)strtol(paramData, &ptr, 10));
+            measure_set_pulse_two((uint16_t)strtol(ptr, &ptr, 10));
+            measure_set_pulse_three((uint16_t)strtol(ptr, &ptr, 10));
             request_screen_on();
         }
 
@@ -102,7 +102,7 @@ void bt_task(void) {
             long val = strtol(paramData, &ptr, 10);
 
             // TODO: Verify these changes with app interface
-            kalman_setT(val/360000);
+            kalman_setT(val/360000.0f);
             measure_set_reading_timeout(val);
             // kalman_setT(val/60);
             // measure_set_reading_timeout(val*60*1000);

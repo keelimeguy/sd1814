@@ -557,6 +557,6 @@ void lib_aci_flush(void);
 
 /** @} */
 
-hal_aci_data_t* get_msg_to_send_ptr();
+hal_aci_data_t* get_msg_to_send_ptr(void);
 
 #endif /* LIB_ACI_H__ */

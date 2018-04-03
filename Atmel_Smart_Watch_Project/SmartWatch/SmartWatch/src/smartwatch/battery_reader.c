@@ -32,7 +32,7 @@ void battery_reader_init(void) {
 }
 
 void battery_task(void) {
-    uint16_t result;
+    uint16_t result = 0;
     if (adc_active && adc_read(&adc_instance, &result) != STATUS_OK) {
         adc_disable(&adc_instance);
 

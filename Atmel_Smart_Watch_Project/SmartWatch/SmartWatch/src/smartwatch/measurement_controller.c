@@ -9,13 +9,12 @@
 static float x_result[6] = {125,125,6,0,70,1000};
 static volatile uint8_t new_measurement, buttonFlag;
 static volatile uint8_t measure_busy, pulseState;
-static volatile float glucose;
-static uint32_t readingTimeout, pulseOne, pulseTwo, pulseThree;
+static volatile uint16_t glucose;
+static uint16_t readingTimeout, pulseOne, pulseTwo, pulseThree;
 
 #if DEBUG_MODE != DEBUG_MEASURE_SIM
 
 static struct tc_module capture_instance;
-static struct events_resource capture_event;
 static struct extint_events eic_events;
 static volatile uint16_t periods[MAX_CAP]; // Period with PPW capture
 // static volatile uint16_t pulse_widths[MAX_CAP]; // Pulse width with PPW capture
@@ -82,6 +81,7 @@ void measurement_controller_init(void) {
     eic_events.generate_event_on_detect[7] = 1;
     extint_enable_events(&eic_events);
 
+    struct events_resource capture_event;
     struct events_config config_evt;
     events_get_config_defaults(&config_evt);
     config_evt.generator      = BOARD_PHOTODIODE_GEN;
@@ -102,14 +102,12 @@ void measurement_controller_init(void) {
 #if DEBUG_MODE != DEBUG_MEASURE_SIM
 
 static void disable_capture(void) {
-    Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
     tc_stop_counter(&capture_instance);
     tc_set_count_value(&capture_instance, 0);
     extint_disable_events(&eic_events);
 }
 
 static void enable_capture(void) {
-    Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
     tc_start_counter(&capture_instance);
     extint_enable_events(&eic_events);
 }
@@ -125,23 +123,23 @@ uint8_t is_measure_busy(void) {
     return measure_busy;
 }
 
-void measure_set_reading_timeout(uint32_t timeout) {
+void measure_set_reading_timeout(uint16_t timeout) {
     readingTimeout = timeout;
 }
 
-uint32_t measure_get_reading_timeout(void) {
+uint16_t measure_get_reading_timeout(void) {
     return readingTimeout;
 }
 
-void measure_set_pulse_one(uint32_t pulse) {
+void measure_set_pulse_one(uint16_t pulse) {
     pulseOne = pulse;
 }
 
-void measure_set_pulse_two(uint32_t pulse) {
+void measure_set_pulse_two(uint16_t pulse) {
     pulseTwo = pulse;
 }
 
-void measure_set_pulse_three(uint32_t pulse) {
+void measure_set_pulse_three(uint16_t pulse) {
     pulseThree = pulse;
 }
 
@@ -213,7 +211,7 @@ static void do_measurement(void) {
     new_measurement = 1;
     uint32_t sum = 0;
     // Start at 1, to ignore first read value
-    for (int i = 1; i < nCap; i ++) {
+    for (uint16_t i = 1; i < nCap; i ++) {
         sum += (uint32_t)periods[i];
     }
 
@@ -238,7 +236,7 @@ static void do_measurement(void) {
 
 #endif
 
-float get_measurement(void) {
+uint16_t get_measurement(void) {
     return glucose;
 }
 

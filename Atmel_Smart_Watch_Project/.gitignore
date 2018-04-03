@@ -34,6 +34,7 @@
 Debug
 DebugClient
 DebugServer
+Release
 ReleaseClient
 ReleaseServer
 

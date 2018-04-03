@@ -22,15 +22,15 @@ void rtc_update_time(struct rtc_calendar_time *time);
 char* calendar_day_str(char* str, struct rtc_calendar_time *time);
 uint8_t is_screen_timeout(void);
 uint8_t is_screen_timeout_soft(void);
-void set_screen_timeout(uint32_t val);
+void set_screen_timeout(uint16_t val);
 uint8_t is_pulse_timeout(void);
 uint8_t is_pulse_timeout_soft(void);
-void set_pulse_timeout(uint32_t val);
+void set_pulse_timeout(uint16_t val);
 uint8_t is_battery_timeout(void);
 uint8_t is_battery_timeout_soft(void);
-void set_battery_timeout(uint32_t val);
+void set_battery_timeout(uint16_t val);
 uint8_t is_button_timeout(void);
 uint8_t is_button_timeout_soft(void);
-void set_button_timeout(uint32_t val);
+void set_button_timeout(uint16_t val);
 
 #endif

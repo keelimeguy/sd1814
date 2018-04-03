@@ -4,7 +4,7 @@
 #include "kalman.h"
 
 static float P_result[36] = {225, 1, 0, 0, 0, 0, 1, 225, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 2500, 0, 0, 0, 0, 0, 0, 0.01, 0, 0, 0, 0, 0, 0, 0.01};
-static float T = 0.08333;
+static float T = 0.08333f;
 
 static void setPointer(float* pointer, char sel, uint8_t sensorNum, float x_result[6]) {
     float F2 [36] = {exp(-1*x_result[2]*T), (1-exp(-1*x_result[2]*T)), ((x_result[1]-x_result[0])/x_result[2])*(1-exp(-1*x_result[2]*T)), (-1+x_result[2]*T+exp(-1*x_result[2]*T))/x_result[2], 0, 0, 0, 1, 0, T, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1};

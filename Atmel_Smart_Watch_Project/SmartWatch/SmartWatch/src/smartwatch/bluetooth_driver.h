@@ -73,7 +73,7 @@ void bt_set_notification_2(char* str);
 uint8_t bt_connection_state(void);
 void bt_set_connection_state(uint8_t state);
 void set_ble_rx_buffer(int i, uint8_t val);
-void bt_read_callback();
-void bt_write_callback();
+void bt_read_callback(void);
+void bt_write_callback(void);
 
 #endif

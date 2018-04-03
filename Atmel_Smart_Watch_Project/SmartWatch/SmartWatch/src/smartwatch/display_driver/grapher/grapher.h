@@ -30,15 +30,15 @@ extern "C" {
 
 #define GRAPH_RESET()               disp_fill_rect(DISP_GRAPH_X,DISP_GRAPH_Y,GRAPH_WIDTH-1,DISP_GRAPH_HEIGHT-1, DISP_PIXEL_GRAPH_OFF)
 
-void reset_graph();
+void reset_graph(void);
 int add_to_graph(int val);
 void graph(int clear);
 void graph_smart_sizing(unsigned short* xret, unsigned short* yret, unsigned short* widthret, unsigned short* heightret);
 
-unsigned char graph_changed();
-int graph_length();
-double graph_min();
-double graph_max();
+unsigned char graph_changed(void);
+int graph_length(void);
+int graph_min(void);
+int graph_max(void);
 
 #ifdef __cplusplus
 }

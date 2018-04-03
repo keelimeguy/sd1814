@@ -4,54 +4,54 @@
 #include "grapher.h"
 #include "util.h"
 
-static double get_min(int size);
-static double get_max(int size);
+static int get_min(int size);
+static int get_max(int size);
 
 #ifdef DEFAULT_MIN
-    static double data_min = DEFAULT_MIN;
+    static int data_min = DEFAULT_MIN;
 #else
-    static double data_min = 0;
+    static int data_min = 0;
 #endif
 static int min_index = 0;
 
 #ifdef DEFAULT_MAX
-    static double data_max = DEFAULT_MAX;
+    static int data_max = DEFAULT_MAX;
 #else
-    static double data_max = 0;
+    static int data_max = 0;
 #endif
 static int max_index = 0;
 
 const int data_size = GRAPH_WIDTH/BAR_WIDTH;
 static int data_index = 0, data_length = 0, data_start = 0;
-static double data[GRAPH_WIDTH/BAR_WIDTH];
-static int bar_cache[GRAPH_WIDTH/BAR_WIDTH];
+static int data[GRAPH_WIDTH/BAR_WIDTH];
+static short bar_cache[GRAPH_WIDTH/BAR_WIDTH];
 static char is_changed = 0;
 
-unsigned char graph_changed() {
+unsigned char graph_changed(void) {
     return is_changed;
 }
 
-int graph_length(){
+int graph_length(void){
     return data_length;
 }
 
-double graph_min() {
+int graph_min(void) {
     return data_min;
 }
 
-double graph_max() {
+int graph_max(void) {
     return data_max;
 }
 
-static double get_min(int size) {
+static int get_min(int size) {
     if (size<=0) return 0;
 
     #ifdef DEFAULT_MIN
-        double min = DEFAULT_MIN;
+        int min = DEFAULT_MIN;
         min_index = -1;
         int i=0;
     #else
-        double min = data[0];
+        int min = data[0];
         min_index = 0;
         int i=1;
     #endif
@@ -64,15 +64,15 @@ static double get_min(int size) {
     return min;
 }
 
-static double get_max(int size) {
+static int get_max(int size) {
     if (size<=0) return 0;
 
     #ifdef DEFAULT_MAX
-        double max = DEFAULT_MAX;
+        int max = DEFAULT_MAX;
         max_index = -1;
         int i=0;
     #else
-        double max = data[0];
+        int max = data[0];
         max_index = 0;
         int i=1;
     #endif
@@ -85,7 +85,7 @@ static double get_max(int size) {
     return max;
 }
 
-void reset_graph() {
+void reset_graph(void) {
     is_changed = 1;
     data_index = 0;
     data_length = 0;
@@ -129,10 +129,10 @@ int add_to_graph(int val) {
         refresh_axis = 1;
     }
 
-    double min = data_min - BAR_PADDING_LOW;
-    double max = data_max + BAR_PADDING_HIGH;
+    int min = data_min - BAR_PADDING_LOW;
+    int max = data_max + BAR_PADDING_HIGH;
 
-    #define CONVERT(xx) ((int)(((xx-min)/(max-min))*(double)(MAX_BAR_HEIGHT-MIN_BAR_HEIGHT)) + MIN_BAR_HEIGHT)
+    #define CONVERT(xx) ((short)(((xx-min)/(max-min))*(int)(MAX_BAR_HEIGHT-MIN_BAR_HEIGHT)) + MIN_BAR_HEIGHT)
     if (refresh_axis) {
         for (int i = 0; i <= data_length; i++)
             bar_cache[i] = CONVERT(data[i]);
@@ -154,7 +154,7 @@ int add_to_graph(int val) {
 
 void graph(int clear) {
     int i, x, y, index;
-    int bar[data_length];
+    short bar[data_length];
 
     if (data_start>data_length) return;
     for (y=0, i=data_start; i<data_length; i++, y++)
@@ -190,8 +190,9 @@ void graph(int clear) {
 }
 
 void graph_smart_sizing(unsigned short* xret, unsigned short* yret, unsigned short* widthret, unsigned short* heightret) {
-    int i, x, y, index;
-    int bar[data_length];
+    int i, index;
+    short x, y;
+    short bar[data_length];
 
     *xret = 0;
     *yret = 0;

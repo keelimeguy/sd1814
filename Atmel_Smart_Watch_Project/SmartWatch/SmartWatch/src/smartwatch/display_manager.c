@@ -30,7 +30,7 @@ static uint8_t lastMinuteDisplayed;
 static uint8_t lastSecondDisplayed;
 static uint8_t ble_connection_displayed_state;
 static uint8_t first_data, graph_refresh, newGlucose;
-static float lastGlucoseVal;
+static uint16_t lastGlucoseVal;
 static int last_battery;
 static uint8_t last_bat_x, last_ble_x, last_date_x, last_hour_x, last_min_x, last_sec_x, last_ampm_x;
 
@@ -38,7 +38,7 @@ static uint8_t last_drawn[MAX_WRITE_ID+1];
 
 static char buffer[12];
 #define headerTextY 8
-static uint8_t menuTextY[7] = { 2*DISP_DIVISION_HEIGHT/3+DISP_HEADER_HEIGHT-1, 4*DISP_DIVISION_HEIGHT/3+DISP_HEADER_HEIGHT-1,
+const static uint8_t menuTextY[7] = { 2*DISP_DIVISION_HEIGHT/3+DISP_HEADER_HEIGHT-1, 4*DISP_DIVISION_HEIGHT/3+DISP_HEADER_HEIGHT-1,
                                 2*DISP_DIVISION_HEIGHT+DISP_HEADER_HEIGHT-1, 8*DISP_DIVISION_HEIGHT/3+DISP_HEADER_HEIGHT-1,
                                 10*DISP_DIVISION_HEIGHT/3+DISP_HEADER_HEIGHT-1, 4*DISP_DIVISION_HEIGHT+DISP_HEADER_HEIGHT-1,
                                 14*DISP_DIVISION_HEIGHT/3+DISP_HEADER_HEIGHT-1 };
@@ -46,7 +46,7 @@ static void initScreen(void);
 static void updateMainDisplay(uint8_t button);
 static void showGraphView(uint8_t button);
 static void viewNotifications(uint8_t button);
-static void updateGlucoseDisplay(float glucose);
+static void updateGlucoseDisplay(uint16_t glucose);
 static int updateDateDisplay(int xoff);
 static int updateTimeDisplay(int xoff);
 static int updateBLEstatusDisplay(int xoff);
@@ -367,7 +367,7 @@ static void showGraphView(uint8_t button) {
     }
 }
 
-void updateGraph(float glucose) {
+void updateGraph(uint16_t glucose) {
     if (!graph_length()) {
         first_data = 1;
     }
@@ -409,7 +409,7 @@ static int updateDateDisplay(int xoff) {
     return last_date_x;
 }
 
-static void updateGlucoseDisplay(float glucose) {
+static void updateGlucoseDisplay(uint16_t glucose) {
     if (currentDisplayState != DISP_STATE_HOME)
         return;
     disp_set_font(FONT_LARGE);
@@ -425,7 +425,7 @@ static void updateGlucoseDisplay(float glucose) {
     uint8_t w;
     uint8_t y1;
     uint8_t h;
-    disp_get_text_bounds(itoa(round(glucose), buffer, 10), 0, menuTextY[0], &x1, &y1, &w, &h);
+    disp_get_text_bounds(itoa(glucose, buffer, 10), 0, menuTextY[0], &x1, &y1, &w, &h);
     disp_set_pos(0.80*DISP_WIDTH - w - x1, (menuTextY[0]+menuTextY[1])/2 + 4);
     disp_write_str_group(buffer, GLUCOSE_VAL_ID);
     disp_end_group();

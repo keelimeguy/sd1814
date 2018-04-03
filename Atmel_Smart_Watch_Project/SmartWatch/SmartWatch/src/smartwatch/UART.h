@@ -62,6 +62,9 @@
 
   sendLength */
 
+#ifndef UART_H
+#define UART_H
+
 #include "conf_bluetooth.h"
 #include "bluetooth_driver.h"
 
@@ -77,4 +80,6 @@ void BLEsetup(void);
 void uart_over_ble_init(void);
 bool uart_tx(uint8_t *buffer, uint8_t buffer_len);
 bool uart_process_control_point_rx(uint8_t *byte, uint8_t length);
-void aci_loop();
+void aci_loop(void);
+
+#endif
