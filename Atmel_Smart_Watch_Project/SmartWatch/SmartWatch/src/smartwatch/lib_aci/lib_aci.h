@@ -555,6 +555,8 @@ void lib_aci_flush(void);
 
 //@}
 
+void lib_aci_board_init(aci_state_t *aci_stat);
+
 /** @} */
 
 hal_aci_data_t* get_msg_to_send_ptr(void);

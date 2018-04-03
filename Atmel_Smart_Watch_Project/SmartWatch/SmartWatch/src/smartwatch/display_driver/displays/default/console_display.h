@@ -22,6 +22,10 @@ typedef unsigned int uint32_t;
 #ifndef CONSOLE_DISPLAY_HEIGHT
     #define CONSOLE_DISPLAY_HEIGHT 100
 #endif
+#ifndef CONSOLE_BUFFER_SIZE
+    // DISP_WIDTH should be an even number
+    #define CONSOLE_BUFFER_SIZE (int)(CONSOLE_DISPLAY_WIDTH*CONSOLE_DISPLAY_HEIGHT*1.5)
+#endif
 
 #define Abs(a) (((a) <  0 ) ? -(a) : (a))
 #define PROGMEM

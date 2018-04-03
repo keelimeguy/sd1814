@@ -36,18 +36,18 @@ static void day_number_to_date_uchar(double g, short unsigned int *y, unsigned c
     *d = (unsigned char)(ddd - (mi*306 + 5)/10 + 1);
 }
 
-static void day_number_to_date(double g, unsigned int *y, unsigned int *m, unsigned int *d) {
-    *y = (10000*g + 14780)/3652425;
-    int ddd = g - (365*(*y) + (*y)/4 - (*y)/100 + (*y)/400);
-    if (ddd < 0) {
-        *y = *y - 1;
-        ddd = g - (365*(*y) + (*y)/4 - (*y)/100 + (*y)/400);
-    }
-    int mi = (100*ddd + 52)/3060;
-    *m = (mi + 2)%12 + 1;
-    *y = *y + (mi + 2)/12;
-    *d = ddd - (mi*306 + 5)/10 + 1;
-}
+// static void day_number_to_date(double g, unsigned int *y, unsigned int *m, unsigned int *d) {
+//     *y = (10000*g + 14780)/3652425;
+//     int ddd = g - (365*(*y) + (*y)/4 - (*y)/100 + (*y)/400);
+//     if (ddd < 0) {
+//         *y = *y - 1;
+//         ddd = g - (365*(*y) + (*y)/4 - (*y)/100 + (*y)/400);
+//     }
+//     int mi = (100*ddd + 52)/3060;
+//     *m = (mi + 2)%12 + 1;
+//     *y = *y + (mi + 2)/12;
+//     *d = ddd - (mi*306 + 5)/10 + 1;
+// }
 
 // static unsigned int day_number_to_date_hex(double g) {
 //     int y = (10000*g + 14780)/3652425;

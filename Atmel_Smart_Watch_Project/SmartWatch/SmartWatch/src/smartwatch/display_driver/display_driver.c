@@ -23,7 +23,7 @@
 #endif
 
 // Static variables
-static GFXfont *gfxFont;
+static const GFXfont *gfxFont;
 static uint8_t wrap;   // If set, 'wrap' text at right edge of display
 static uint8_t _cp437; // If set, use correct CP437 charset (default is off)
 static uint8_t _width, _height, // Display w/h as modified by current rotation
@@ -33,13 +33,29 @@ static uint16_t textcolor, textbgcolor;
 static uint8_t textsize, rotation;
 static int16_t lastx[MAX_WRITE_ID], lasty[MAX_WRITE_ID], lastwidth[MAX_WRITE_ID], lastheight[MAX_WRITE_ID];
 static uint8_t keep_group, new_write;
-static uint8_t buffer[DISP_WIDTH][DISP_HEIGHT];
+static uint8_t buffer[DISP_BUFFER_SIZE]; // For 12-bit mode
+
+// W = 8-> 8*1.5 = 12
+// 00 01 11 22 23 33 44 45 55 66 67 77
+// 0  1  2  3  4  5  6  7  8  9  10 11
+
+static inline void DISPLAY_DRIVER_WRITE(uint16_t x, uint16_t y, uint16_t color) {
+        if (x%2) {
+            x = (int)((x-1)*1.5f)+1;
+            buffer[x+y*DISP_WIDTH] = (buffer[x+y*DISP_WIDTH]&0xf0) | ((color>>8)&0xf);
+            buffer[(x+1)+y*DISP_WIDTH] = color&0xff;
+        } else {
+            x = (int)(x*1.5f);
+            buffer[x+y*DISP_WIDTH] = color>>4;
+            buffer[(x+1)+y*DISP_WIDTH] = ((color&0xf)<<4) | (buffer[(x+1)+y*DISP_WIDTH]&0xf);
+        }
+}
 
 static void disp_set_pos_internal(uint8_t x, uint8_t y);
-static void disp_draw_char(uint8_t x, uint8_t y, unsigned char c, uint8_t color, uint8_t bg, uint8_t size);
+static void disp_draw_char(uint8_t x, uint8_t y, unsigned char c, uint16_t color, uint8_t bg, uint8_t size);
 static void disp_char_bounds(char c, uint8_t *x, uint8_t *y, int16_t *minx, int16_t *miny, int16_t *maxx, int16_t *maxy);
 
-void disp_set_font(GFXfont *font) {
+void disp_set_font(const GFXfont *font) {
     gfxFont = font;
 }
 void disp_set_font_scale(uint8_t scale) {
@@ -51,7 +67,7 @@ void disp_set_wrap(uint8_t val) {
 void disp_set_cp437(uint8_t val) {
     _cp437 = val;
 }
-void disp_set_color(uint8_t text, uint8_t bg) {
+void disp_set_color(uint16_t text, uint16_t bg) {
     textcolor = text;
     textbgcolor = bg;
 }
@@ -88,8 +104,8 @@ void disp_init() {
 
 
     for (int y = 0; y < DISP_HEIGHT; y++)
-        for (int x = 0; x < DISP_WIDTH; x++)
-            buffer[x][y] = DISP_BG_COLOR;
+        for (int x = 0; x < DISP_WIDTH; x+=2)
+            DISPLAY_DRIVER_WRITE(x, y, DISP_BG_COLOR);
     leftx = 0;
     rightx = DISP_WIDTH-1;
     topy = 0;
@@ -102,23 +118,24 @@ void disp_init() {
 }
 
 void disp_commit() {
-    uint8_t range_test = (leftx + DISP_WIDTH - rightx < 6);
+    // left must be even, right must be odd
     if (leftx%2) leftx--;
+    if (rightx%2==0) rightx++;
+
+    uint8_t range_test = (leftx + DISP_WIDTH - rightx < 6);
+
 	if (range_test) {
         disp_set_pos_internal(leftx, topy);
         disp_begin_write_data();
         rightx = DISP_WIDTH-1;
-    }
-    for (int x = leftx, y = topy; y <= bottomy; y++) {
-        if (!range_test) {
+        uint16_t length = (uint16_t)((DISP_WIDTH*(bottomy-topy-1)+(rightx-leftx+1))*1.5f);
+        disp_write_datap_continue(&buffer[(int)(leftx*1.5f)+topy*DISP_WIDTH], length);
+    } else {
+        for (int y = topy; y <= bottomy; y++) {
             disp_set_pos_internal(leftx, y);
             disp_begin_write_data();
-            x = leftx;
+            disp_write_datap_continue(&buffer[(int)(leftx*1.5f)+y*DISP_WIDTH], (uint16_t)((rightx-leftx+1)*1.5f));
         }
-        for (;x <= rightx; x+=2) {
-            disp_write_pixels(COLOR_ARRAY[buffer[x][y]], COLOR_ARRAY[buffer[x+1][y]]);
-        }
-        x = 0;
     }
     disp_end_write();
     new_write = 1;
@@ -144,15 +161,9 @@ void disp_set_pos(uint8_t x, uint8_t y) {
     cursor_y = y;
 }
 
-// 12-bit color mode
-void disp_write_pixels(uint16_t color1, uint16_t color2) {
-    uint8_t pix[] = {color1>>4, ((color1&0xf)<<4)|color2>>8, color2&0xff};
-    disp_write_datap_continue(pix, 3);
-}
-
-void disp_write_pixel_at(uint8_t x, uint8_t y, uint8_t color) {
+void disp_write_pixel_at(uint8_t x, uint8_t y, uint16_t color) {
     if (x<DISP_WIDTH && y<DISP_HEIGHT) {
-        buffer[x][y] = color;
+        DISPLAY_DRIVER_WRITE(x, y, color);
         if (new_write) {
             new_write = 0;
             leftx = x;
@@ -173,7 +184,7 @@ void disp_write_pixel_at(uint8_t x, uint8_t y, uint8_t color) {
 }
 
 // Bresenham's algorithm
-void disp_draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color) {
+void disp_draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_t color) {
     uint8_t steep = Abs(y1 - y0) > Abs(x1 - x0);
     if (steep) {
         _swap_uint8_t(x0, y0);
@@ -212,24 +223,24 @@ void disp_draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t colo
     }
 }
 
-void disp_draw_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color) {
+void disp_draw_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t color) {
     disp_draw_line(x, y, x+w-1, y, color);
     disp_draw_line(x, y+h-1, x+w-1, y+h-1, color);
     disp_draw_line(x, y, x, y+h-1, color);
     disp_draw_line(x+w-1, y, x+w-1, y+h-1, color);
 }
 
-void disp_fill_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color) {
+void disp_fill_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t color) {
     for (uint8_t i=x; i<x+w; i++) {
         disp_draw_line(i, y, i, y+h-1, color);
     }
 }
 
-void disp_clear_screen(uint8_t color) {
+void disp_clear_screen(uint16_t color) {
     disp_fill_rect(0, 0, DISP_WIDTH-1, DISP_HEIGHT-1, color);
 }
 
-static void disp_draw_char(uint8_t x, uint8_t y, unsigned char c, uint8_t color, uint8_t bg, uint8_t size) {
+static void disp_draw_char(uint8_t x, uint8_t y, unsigned char c, uint16_t color, uint8_t bg, uint8_t size) {
     // Can only draw character if font is loaded
     if (gfxFont) {
         c -= (int8_t)pgm_read_byte(&gfxFont->first);
@@ -237,7 +248,7 @@ static void disp_draw_char(uint8_t x, uint8_t y, unsigned char c, uint8_t color,
         int8_t  *bitmap = (int8_t *)pgm_read_pointer(&gfxFont->bitmap);
 
         int16_t bo = pgm_read_word(&glyph->bitmapOffset);
-        int8_t  xa  = pgm_read_byte(&glyph->xAdvance);
+        // int8_t  xa  = pgm_read_byte(&glyph->xAdvance);
         int8_t  w  = pgm_read_byte(&glyph->width),
                  h  = pgm_read_byte(&glyph->height);
         int8_t  xo = pgm_read_byte(&glyph->xOffset),
@@ -295,13 +306,13 @@ void disp_write(uint8_t c) {
     }
 }
 
-void disp_write_str(char *str) {
+void disp_write_str(const char *str) {
     char c;
     while((c = *str++))
         disp_write((uint8_t)c);
 }
 
-void disp_write_str_group(char *str, uint8_t replace_last) {
+void disp_write_str_group(const char *str, uint8_t replace_last) {
     if (replace_last>0 && replace_last<=MAX_WRITE_ID) {
         uint8_t x, y, w, h;
         disp_get_text_bounds(str, cursor_x, cursor_y, &x, &y, &w, &h);
@@ -395,7 +406,7 @@ static void disp_char_bounds(char c, uint8_t *x, uint8_t *y, int16_t *minx, int1
 }
 
 // Pass string and a cursor position, returns UL corner and W,H.
-void disp_get_text_bounds(char *str, uint8_t x, uint8_t y, uint8_t *x1, uint8_t *y1, uint8_t *w, uint8_t *h) {
+void disp_get_text_bounds(const char *str, uint8_t x, uint8_t y, uint8_t *x1, uint8_t *y1, uint8_t *w, uint8_t *h) {
     uint8_t c; // Current character
 
     *x1 = x;

@@ -403,6 +403,7 @@
       <Value>TCC_ASYNC=true</Value>
       <Value>TC_ASYNC=true</Value>
       <Value>DISP_SCREEN=DISP_ST7735S</Value>
+      <Value>EVENTS_INTERRUPT_HOOKS_MODE=false</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.directories.IncludePaths>
@@ -455,7 +456,7 @@
   <armgcc.compiler.optimization.OtherFlags>-fdata-sections</armgcc.compiler.optimization.OtherFlags>
   <armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>
   <armgcc.compiler.warnings.AllWarnings>True</armgcc.compiler.warnings.AllWarnings>
-  <armgcc.compiler.miscellaneous.OtherFlags>-pipe -fno-strict-aliasing -Wall -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -std=gnu99 -ffunction-sections -fdata-sections -Wchar-subscripts -Wcomment -Wformat=2 -Wimplicit-int -Wmain -Wparentheses -Wsequence-point -Wreturn-type -Wswitch -Wtrigraphs -Wunused -Wuninitialized -Wunknown-pragmas -Wfloat-equal -Wundef -Wshadow -Wbad-function-cast -Wwrite-strings -Wsign-compare -Waggregate-return  -Wmissing-declarations -Wformat -Wmissing-format-attribute -Wno-deprecated-declarations -Wpacked -Wredundant-decls -Wnested-externs -Wlong-long -Wunreachable-code -Wcast-align --param max-inline-insns-single=500</armgcc.compiler.miscellaneous.OtherFlags>
+  <armgcc.compiler.miscellaneous.OtherFlags>-pipe -fno-strict-aliasing -Wall -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -std=gnu99 -ffunction-sections -fdata-sections -Wchar-subscripts -Wno-comment -Wformat=2 -Wimplicit-int -Wmain -Wparentheses -Wsequence-point -Wreturn-type -Wswitch -Wtrigraphs -Wunused -Wuninitialized -Wunknown-pragmas -Wfloat-equal -Wundef -Wshadow -Wbad-function-cast -Wwrite-strings -Wsign-compare -Waggregate-return  -Wmissing-declarations -Wformat -Wmissing-format-attribute -Wno-deprecated-declarations -Wpacked -Wredundant-decls -Wnested-externs -Wlong-long -Wunreachable-code -Wcast-align --param max-inline-insns-single=500</armgcc.compiler.miscellaneous.OtherFlags>
   <armgcc.linker.general.UseNewlibNano>True</armgcc.linker.general.UseNewlibNano>
   <armgcc.linker.libraries.Libraries>
     <ListValues>
@@ -588,6 +589,7 @@
       <Value>ARM_MATH_CM0PLUS=true</Value>
       <Value>TCC_ASYNC=true</Value>
       <Value>TC_ASYNC=true</Value>
+      <Value>EVENTS_INTERRUPT_HOOKS_MODE=false</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.directories.IncludePaths>
@@ -637,11 +639,11 @@
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize for size (-Os)</armgcc.compiler.optimization.level>
-  <armgcc.compiler.optimization.OtherFlags>-fdata-sections</armgcc.compiler.optimization.OtherFlags>
   <armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>
+  <armgcc.compiler.optimization.PrepareDataForGarbageCollection>True</armgcc.compiler.optimization.PrepareDataForGarbageCollection>
   <armgcc.compiler.optimization.DebugLevel>Maximum (-g3)</armgcc.compiler.optimization.DebugLevel>
   <armgcc.compiler.warnings.AllWarnings>True</armgcc.compiler.warnings.AllWarnings>
-  <armgcc.compiler.miscellaneous.OtherFlags>-pipe -fno-strict-aliasing -Wall -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -std=gnu99 -ffunction-sections -fdata-sections -Wchar-subscripts -Wcomment -Wformat=2 -Wimplicit-int -Wmain -Wparentheses -Wsequence-point -Wreturn-type -Wswitch -Wtrigraphs -Wunused -Wuninitialized -Wunknown-pragmas -Wfloat-equal -Wundef -Wshadow -Wbad-function-cast -Wwrite-strings -Wsign-compare -Waggregate-return  -Wmissing-declarations -Wformat -Wmissing-format-attribute -Wno-deprecated-declarations -Wpacked -Wredundant-decls -Wnested-externs -Wlong-long -Wunreachable-code -Wcast-align --param max-inline-insns-single=500</armgcc.compiler.miscellaneous.OtherFlags>
+  <armgcc.compiler.miscellaneous.OtherFlags>-pipe -fno-strict-aliasing -Wall -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -std=gnu99 -ffunction-sections -fdata-sections -Wchar-subscripts -Wno-comment -Wformat=2 -Wimplicit-int -Wmain -Wparentheses -Wsequence-point -Wreturn-type -Wswitch -Wtrigraphs -Wunused -Wuninitialized -Wunknown-pragmas -Wfloat-equal -Wundef -Wshadow -Wbad-function-cast -Wwrite-strings -Wsign-compare -Waggregate-return  -Wmissing-declarations -Wformat -Wmissing-format-attribute -Wno-deprecated-declarations -Wpacked -Wredundant-decls -Wnested-externs -Wlong-long -Wunreachable-code -Wcast-align --param max-inline-insns-single=500</armgcc.compiler.miscellaneous.OtherFlags>
   <armgcc.linker.general.UseNewlibNano>True</armgcc.linker.general.UseNewlibNano>
   <armgcc.linker.libraries.Libraries>
     <ListValues>
@@ -851,7 +853,6 @@
     <Folder Include="src\smartwatch\display_driver\displays\" />
     <Folder Include="src\smartwatch\display_driver\displays\" />
     <Folder Include="src\smartwatch\display_driver\displays\ili9163\" />
-    <Folder Include="src\smartwatch\display_driver\displays\ili9163\" />
     <Folder Include="src\smartwatch\display_driver\displays\st7735s\" />
     <Folder Include="src\smartwatch\display_driver\GFXfont\" />
     <Folder Include="src\smartwatch\display_driver\GFXfont\Fonts\" />
@@ -910,6 +911,9 @@
     <None Include="src\ASF\sam0\drivers\events\events.h">
       <SubType>compile</SubType>
     </None>
+    <Compile Include="src\ASF\sam0\drivers\events\events_common.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\ASF\sam0\drivers\events\events_sam_d_r\events.c">
       <SubType>compile</SubType>
     </Compile>
@@ -961,21 +965,21 @@
     <None Include="src\ASF\sam0\drivers\sercom\sercom_pinout.h">
       <SubType>compile</SubType>
     </None>
-    <None Include="src\ASF\sam0\drivers\sercom\spi\quick_start_dma\qs_spi_dma_use.h">
+    <Compile Include="src\ASF\sam0\drivers\sercom\spi\quick_start_dma\qs_spi_dma_use.h">
       <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\sam0\drivers\sercom\spi\quick_start_master_callback\qs_spi_master_callback.h">
+    </Compile>
+    <Compile Include="src\ASF\sam0\drivers\sercom\spi\quick_start_master\qs_spi_master_basic.h">
       <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\sam0\drivers\sercom\spi\quick_start_slave\qs_spi_slave_basic.h">
+    </Compile>
+    <Compile Include="src\ASF\sam0\drivers\sercom\spi\quick_start_master_callback\qs_spi_master_callback.h">
       <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\sam0\drivers\sercom\spi\quick_start_slave_callback\qs_spi_slave_callback.h">
+    </Compile>
+    <Compile Include="src\ASF\sam0\drivers\sercom\spi\quick_start_slave\qs_spi_slave_basic.h">
       <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\sam0\drivers\sercom\spi\quick_start_master\qs_spi_master_basic.h">
+    </Compile>
+    <Compile Include="src\ASF\sam0\drivers\sercom\spi\quick_start_slave_callback\qs_spi_slave_callback.h">
       <SubType>compile</SubType>
-    </None>
+    </Compile>
     <Compile Include="src\ASF\sam0\drivers\sercom\spi\spi.c">
       <SubType>compile</SubType>
     </Compile>
@@ -1813,142 +1817,10 @@
     <Compile Include="src\smartwatch\date_calc.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\smartwatch\lib_aci\aci.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\acilib.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\acilib.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\acilib_defs.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\acilib_if.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\acilib_types.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\aci_cmds.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\aci_evts.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\aci_protocol_defines.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\aci_queue.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\aci_queue.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\aci_setup.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\aci_setup.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\ble_assert.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\boards.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\dtm.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\hal_aci_tl.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\hal_aci_tl.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\hal_platform.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\lib_aci.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\lib_aci.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\services.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\lib_aci\uart_over_ble.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\UART.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\UART.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\SmartWatch.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\SmartWatch.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\bluetooth_driver.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\bluetooth_driver.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\button_listener.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\button_listener.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\clock_driver.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\clock_driver.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\conf_bluetooth.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\display_driver\displays\ili9163\conf_ili9163.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\display_driver\displays\ili9163\ili9163.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\display_driver\displays\ili9163\ili9163.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\display_driver\displays\st7735s\conf_st7735s.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\display_driver\displays\st7735s\st7735s.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\display_driver\displays\st7735s\st7735s.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\display_driver\display_driver.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\display_driver\display_driver.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\display_driver\GFXfont\Fonts\FreeMono12pt7b.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\smartwatch\display_driver\GFXfont\Fonts\FreeMono18pt7b.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\smartwatch\display_driver\GFXfont\Fonts\FreeMono24pt7b.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\display_driver\GFXfont\Fonts\FreeMono9pt7b.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\smartwatch\display_driver\GFXfont\Fonts\FreeMonoBold12pt7b.h">
@@ -2083,13 +1955,136 @@
     <Compile Include="src\smartwatch\display_driver\GFXfont\Fonts\FreeSerifItalic9pt7b.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\smartwatch\display_driver\GFXfont\Fonts\Org_01.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\smartwatch\display_driver\GFXfont\Fonts\Picopixel.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\smartwatch\display_driver\GFXfont\Fonts\Tiny3x3a2pt7b.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\smartwatch\display_driver\GFXfont\Fonts\TomThumb.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\aci.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\acilib.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\acilib.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\acilib_defs.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\acilib_if.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\acilib_types.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\aci_cmds.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\aci_evts.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\aci_protocol_defines.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\aci_queue.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\aci_queue.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\aci_setup.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\aci_setup.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\ble_assert.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\boards.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\dtm.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\hal_aci_tl.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\hal_aci_tl.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\hal_platform.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\lib_aci.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\lib_aci.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\services.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\lib_aci\uart_over_ble.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\UART.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\UART.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\SmartWatch.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\SmartWatch.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\bluetooth_driver.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\bluetooth_driver.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\button_listener.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\button_listener.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\clock_driver.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\clock_driver.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\conf_bluetooth.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\display_driver\displays\st7735s\st7735s.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\display_driver\displays\st7735s\st7735s.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\display_driver\display_driver.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\display_driver\display_driver.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\display_driver\GFXfont\Fonts\FreeMono12pt7b.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\display_driver\GFXfont\Fonts\FreeMono9pt7b.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\smartwatch\display_driver\GFXfont\Fonts\Org_01.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\smartwatch\display_driver\GFXfont\gfxfont.h">
@@ -2140,9 +2135,6 @@
     <Compile Include="src\main.c">
       <SubType>compile</SubType>
     </Compile>
-    <None Include="src\smartwatch\display_driver\GFXfont\Fonts\Tiny3x3a2pt7b">
-      <SubType>compile</SubType>
-    </None>
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

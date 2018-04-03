@@ -14,10 +14,10 @@ static volatile uint16_t screen_timeout, pulse_timeout, battery_timeout, button_
 static const char* day_str[7] = {"Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Tue"};
 
 static void rtc_alarm_callback(void);
-static void screen_timer_callback(void);
-static void pulse_timer_callback(void);
-static void battery_timer_callback(void);
-static void button_timer_callback(void);
+static void screen_timer_callback(struct tcc_module *const module);
+static void pulse_timer_callback(struct tcc_module *const module);
+static void battery_timer_callback(struct tcc_module *const module);
+static void button_timer_callback(struct tc_module *const module);
 
 // Configured assuming RTC_CALENDAR_ALARM_MASK_SEC
 static inline void next_alarm(void) {
@@ -165,7 +165,7 @@ void rtc_update_time(struct rtc_calendar_time *time) {
 }
 
 char* calendar_day_str(char* str, struct rtc_calendar_time *time) {
-    str = day_str[(int)date_to_day_number(time->year, time->month, time->day)%7];
+    str = day_str[(long)date_to_day_number(time->year, time->month, time->day)%7];
     return str;
 }
 
@@ -198,7 +198,7 @@ void set_screen_timeout(uint16_t val) {
     }
 }
 
-static void screen_timer_callback(void) {
+static void screen_timer_callback(struct tcc_module *const module) {
     if (screen_timeout>0) {
         screen_timeout--;
     } else {
@@ -223,7 +223,7 @@ void set_pulse_timeout(uint16_t val) {
     }
 }
 
-static void pulse_timer_callback(void) {
+static void pulse_timer_callback(struct tcc_module *const module) {
     if (pulse_timeout>0) {
         pulse_timeout--;
     } else {
@@ -248,7 +248,7 @@ void set_battery_timeout(uint16_t val) {
     }
 }
 
-static void battery_timer_callback(void) {
+static void battery_timer_callback(struct tcc_module *const module) {
     if (battery_timeout>0) {
         battery_timeout--;
     } else {
@@ -273,7 +273,7 @@ void set_button_timeout(uint16_t val) {
     }
 }
 
-static void button_timer_callback(void) {
+static void button_timer_callback(struct tc_module *const module) {
     if (button_timeout>0) {
         button_timeout--;
     } else {

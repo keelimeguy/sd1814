@@ -21,7 +21,7 @@ static volatile uint16_t periods[MAX_CAP]; // Period with PPW capture
 static volatile size_t nCap;
 
 static void do_measurement(void);
-static void capture_event_callback(void);
+static void capture_event_callback(struct tc_module *const module);
 static void disable_capture(void);
 static void enable_capture(void);
 
@@ -192,7 +192,7 @@ void measurement_task(void) {
 
 #if DEBUG_MODE != DEBUG_MEASURE_SIM
 
-static void capture_event_callback(void) {
+static void capture_event_callback(struct tc_module *const module) {
     // The interrupt flag is cleared by reading CC
     periods[nCap] = TC4->COUNT16.CC[0].bit.CC;
     // pulse_widths[nCap] = TC4->COUNT16.CC[1].bit.CC;

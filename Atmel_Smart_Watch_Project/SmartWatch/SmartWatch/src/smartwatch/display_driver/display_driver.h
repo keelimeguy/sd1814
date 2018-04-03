@@ -10,9 +10,7 @@
 #define DISP_ST7735S    2 // 1.44" TFT LCD
 #define DISP_ILI9163    3 // 1.8" TFT LCD
 
-#ifdef CONSOLE_VERSION
-    #include <Smartwatch.h>
-#endif
+#include <Smartwatch.h>
 
 #ifndef DISP_SCREEN
     #define DISP_SCREEN NONE
@@ -42,6 +40,9 @@
     #define DISP_WIDTH                CONSOLE_DISPLAY_WIDTH
     #define DISP_HEIGHT               CONSOLE_DISPLAY_HEIGHT
     #endif
+
+    // DISP_WIDTH should be an even number
+    #define DISP_BUFFER_SIZE          CONSOLE_BUFFER_SIZE // (int)(DISP_WIDTH*DISP_HEIGHT*1.5)
 
     #define DISP_GRAPH_WIDTH             (DISP_WIDTH-8) // pixels
     #define DISP_GRAPH_HEIGHT            54 // pixels
@@ -73,6 +74,9 @@
 
     #define DISP_WIDTH                128
     #define DISP_HEIGHT               128
+
+    // DISP_WIDTH should be an even number
+    #define DISP_BUFFER_SIZE          24576 // (int)(DISP_WIDTH*DISP_HEIGHT*1.5)
 
     #define DISP_GRAPH_WIDTH             (DISP_WIDTH-8) // pixels
     #define DISP_GRAPH_HEIGHT            54 // pixels
@@ -110,6 +114,9 @@
     #define DISP_HEIGHT               160
     #endif
 
+    // DISP_WIDTH should be an even number
+    #define DISP_BUFFER_SIZE          30720 // (int)(DISP_WIDTH*DISP_HEIGHT*1.5)
+
     #define DISP_GRAPH_WIDTH             (DISP_WIDTH-8) // pixels
     #define DISP_GRAPH_HEIGHT            54 // pixels
     #define DISP_GRAPH_BAR_WIDTH         2  // pixels
@@ -138,21 +145,19 @@
 #define DISP_WARNING_LOW  70.0
 #define DISP_DANGER_LOW   50.0
 
-// 16-bit mode
-// static const uint16_t COLOR_ARRAY[] = {0x0000, 0x8410, 0xffff, 0xf800, 0xffe0, 0x07e0, 0x07ff, 0x001f, 0xf81f};
-
-// 12-bit mode
-static const uint16_t COLOR_ARRAY[] = {0x000, 0x888, 0xfff, 0xf00, 0xff0, 0x0f0, 0x0ff, 0x00f, 0xf0f};
-
-#define DISP_PIXEL_BLACK          0
-#define DISP_PIXEL_GREY           1
-#define DISP_PIXEL_WHITE          2
-#define DISP_PIXEL_RED            3
-#define DISP_PIXEL_YELLOW         4
-#define DISP_PIXEL_GREEN          5
-#define DISP_PIXEL_CYAN           6
-#define DISP_PIXEL_BLUE           7
-#define DISP_PIXEL_MAGENTA        8
+#define DISP_PIXEL_BLACK          (uint16_t)(0x000)
+#define DISP_PIXEL_LIGHT_GREY     (uint16_t)(0xccc)
+#define DISP_PIXEL_GREY           (uint16_t)(0x888)
+#define DISP_PIXEL_DARK_GREY      (uint16_t)(0x555)
+#define DISP_PIXEL_WHITE          (uint16_t)(0xfff)
+#define DISP_PIXEL_PINK           (uint16_t)(0xfcc)
+#define DISP_PIXEL_RED            (uint16_t)(0xf00)
+#define DISP_PIXEL_ORANGE         (uint16_t)(0xfa0)
+#define DISP_PIXEL_YELLOW         (uint16_t)(0xff0)
+#define DISP_PIXEL_GREEN          (uint16_t)(0x0f0)
+#define DISP_PIXEL_CYAN           (uint16_t)(0x0ff)
+#define DISP_PIXEL_BLUE           (uint16_t)(0x00f)
+#define DISP_PIXEL_MAGENTA        (uint16_t)(0xf0f)
 
 #define DISP_BG_COLOR             DISP_PIXEL_BLUE
 
@@ -166,26 +171,25 @@ static const uint16_t COLOR_ARRAY[] = {0x000, 0x888, 0xfff, 0xf00, 0xff0, 0x0f0,
 void disp_init(void);
 void disp_set_pos(uint8_t x, uint8_t y);
 void disp_write_pixel(uint16_t color);
-void disp_write_pixels(uint16_t color1, uint16_t color2);
-void disp_write_pixel_at(uint8_t x, uint8_t y, uint8_t color);
-void disp_draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color);
-void disp_draw_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color);
-void disp_fill_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color);
-void disp_clear_screen(uint8_t color);
+void disp_write_pixel_at(uint8_t x, uint8_t y, uint16_t color);
+void disp_draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_t color);
+void disp_draw_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t color);
+void disp_fill_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t color);
+void disp_clear_screen(uint16_t color);
 void disp_write(uint8_t c);
-void disp_write_str(char *str);
-void disp_write_str_group(char *str, uint8_t replace_last);
+void disp_write_str(const char *str);
+void disp_write_str_group(const char *str, uint8_t replace_last);
 void disp_set_str_group(int16_t x, int16_t y, int16_t width, int16_t height, uint8_t replace_last);
 void disp_remove_str_group(uint8_t replace_last);
 void disp_end_group(void);
-void disp_get_text_bounds(char *str, uint8_t x, uint8_t y, uint8_t *x1, uint8_t *y1, uint8_t *w, uint8_t *h);
-void disp_set_font(GFXfont *font);
+void disp_get_text_bounds(const char *str, uint8_t x, uint8_t y, uint8_t *x1, uint8_t *y1, uint8_t *w, uint8_t *h);
+void disp_set_font(const GFXfont *font);
 void disp_set_font_scale(uint8_t scale);
 void disp_set_wrap(uint8_t val);
 void disp_set_cp437(uint8_t val);
-void disp_set_color(uint8_t text, uint8_t bg);
-void disp_commit();
-void disp_sleep_enable();
-void disp_sleep_disable();
+void disp_set_color(uint16_t text, uint16_t bg);
+void disp_commit(void);
+void disp_sleep_enable(void);
+void disp_sleep_disable(void);
 
 #endif

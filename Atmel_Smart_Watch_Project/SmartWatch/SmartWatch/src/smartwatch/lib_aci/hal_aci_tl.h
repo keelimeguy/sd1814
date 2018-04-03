@@ -50,7 +50,7 @@ and the received ACI event is placed in the tail of the event queue.
 #include "boards.h"
 
 #ifndef HAL_ACI_MAX_LENGTH
-#define HAL_ACI_MAX_LENGTH 31
+#define HAL_ACI_MAX_LENGTH 16//31
 #endif
 
 /************************************************************************/

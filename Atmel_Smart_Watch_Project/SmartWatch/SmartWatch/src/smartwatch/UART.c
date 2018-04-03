@@ -160,7 +160,7 @@ void BLEsetup(void)
     The Active pin is optional and can be marked UNUSED
   */
   aci_state.aci_pins.board_name   = BOARD_DEFAULT; //See board.h for details REDBEARLAB_SHIELD_V1_1 or BOARD_DEFAULT
-  aci_state.aci_pins.spi          = BT_SPI;
+  aci_state.aci_pins.spi          = (uint32_t)BT_SPI;
   aci_state.aci_pins.reqn_pin     = BT_REQ_PIN;
   aci_state.aci_pins.rdyn_pin     = BT_RDY_PIN;
   aci_state.aci_pins.rdyn_pin_mux = BT_RDY_MUX;
@@ -337,6 +337,8 @@ void aci_loop()
 //                 #endif
               }
               break;
+            default:
+              break;
           }
         }
         break; //ACI Device Started Event
@@ -474,6 +476,8 @@ void aci_loop()
 //         #if BLE_DEBUG
 //           SerialMonitorInterface.println(F("Advertising started"));
 //         #endif
+        break;
+      default:
         break;
     }
   }

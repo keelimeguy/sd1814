@@ -158,7 +158,7 @@ void bt_clear_amt_notifications(void) {
     num_notifications = 0;
 }
 
-char* bt_get_notification_1(void) {
+const char* bt_get_notification_1(void) {
     #if DEBUG_MODE == DEBUG_CLOCK
     return __DATE__;
     #else
@@ -166,7 +166,7 @@ char* bt_get_notification_1(void) {
     #endif
 }
 
-char* bt_get_notification_2(void) {
+const char* bt_get_notification_2(void) {
     #if DEBUG_MODE == DEBUG_CLOCK
     return __TIME__;
     #else

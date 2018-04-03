@@ -53,7 +53,7 @@ The outgoing command and the incoming event needs to be converted
 #define digitalWrite port_pin_set_output_level
 #define digitalRead port_pin_get_input_level
 
-static void m_aci_data_print(hal_aci_data_t *p_data);
+// static void m_aci_data_print(hal_aci_data_t *p_data);
 static void m_aci_event_check(void);
 static void m_aci_isr(void);
 static void m_aci_pins_set(aci_pins_t *a_pins_ptr);
@@ -370,7 +370,7 @@ void hal_aci_tl_init(aci_pins_t *a_pins, bool debug)
   config.data_order = a_pins->dord;
   config.receiver_enable = true;
 
-  spi_init(&bt_master, a_pins->spi, &config);
+  spi_init(&bt_master, (Sercom* const)(a_pins->spi), &config);
   spi_enable(&bt_master);
 
   //Configure the IO lines
@@ -447,7 +447,7 @@ bool hal_aci_tl_send(hal_aci_data_t *p_aci_cmd)
 static uint8_t spi_readwrite(const uint8_t aci_byte)
 {
   uint16_t ret;
-  spi_transceive_wait(&bt_master, &aci_byte, &ret);
+  spi_transceive_wait(&bt_master, aci_byte, &ret);
   return (uint8_t)ret;
 }
 
