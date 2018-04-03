@@ -132,8 +132,10 @@ static void updateMainDisplay(uint8_t button) {
         currentDisplayState = DISP_STATE_HOME;
         rewriteMain = 1;
         // Assuming button IDs are only IDs greater than graph ID
-        for (int i = 0; i <= GRAPH_ID; i++)
+        for (int i = 0; i <= GRAPH_ID; i++) {
             if (last_drawn[i]) disp_remove_str_group(i);
+            last_drawn[i] = 0;
+        }
     }
     if (button & VIEW_BUTTON) {
         viewNotifications(0);
@@ -195,8 +197,10 @@ static void viewNotifications(uint8_t button) {
     } else if (currentDisplayState != DISP_STATE_NOTIFICATION) {
         currentDisplayState = DISP_STATE_NOTIFICATION;
         // Assuming button IDs are only IDs greater than graph ID
-        for (int i = 0; i <= GRAPH_ID; i++)
+        for (int i = 0; i <= GRAPH_ID; i++) {
             if (last_drawn[i]) disp_remove_str_group(i);
+            last_drawn[i] = 0;
+        }
         last_notifications = -1;
     }
     if (button == VIEW_BUTTON) {
@@ -207,8 +211,8 @@ static void viewNotifications(uint8_t button) {
     } else {
         if (bt_new_notifications() || last_notifications != bt_amt_notifications()) {
             disp_set_font(FONT_MEDIUM);
+            last_notifications = bt_amt_notifications();
             if (bt_amt_notifications()) {
-                last_notifications = bt_amt_notifications();
                 disp_set_pos(1, menuTextY[0]);
                 disp_write_str_group(bt_get_notification_1(), NOTIFICATION_1_ID);
                 disp_end_group();
@@ -273,8 +277,10 @@ static void showGraphView(uint8_t button) {
         currentDisplayState = DISP_STATE_GRAPH;
         graph_refresh = 1;
         // Assuming button IDs are only IDs greater than graph ID
-        for (int i = 0; i <= GRAPH_ID; i++)
+        for (int i = 0; i <= GRAPH_ID; i++) {
             if (last_drawn[i]) disp_remove_str_group(i);
+            last_drawn[i] = 0;
+        }
     }
     if (button == GRAPH_BUTTON) {
         updateMainDisplay(0);
@@ -412,7 +418,6 @@ static int updateDateDisplay(int xoff) {
 static void updateGlucoseDisplay(uint16_t glucose) {
     if (currentDisplayState != DISP_STATE_HOME)
         return;
-    disp_set_font(FONT_LARGE);
 
     if (glucose < DISP_DANGER_LOW || glucose > DISP_DANGER_HIGH)
          disp_set_color(DISP_PIXEL_RED, DISP_PIXEL_BLACK);
@@ -425,6 +430,15 @@ static void updateGlucoseDisplay(uint16_t glucose) {
     uint8_t w;
     uint8_t y1;
     uint8_t h;
+
+    #if DEBUG_MODE == DEBUG_MEASURE_FREQ
+    disp_set_font(FONT_SMALL);
+    disp_get_text_bounds(itoa(round(get_freq()), buffer, 10), 0, menuTextY[0], &x1, &y1, &w, &h);
+    disp_set_pos(1, (menuTextY[0]+menuTextY[1])/2 + 4);
+    disp_write_str_group(buffer, GLUCOSE_VAL_ID);
+    #endif
+
+    disp_set_font(FONT_LARGE);
     disp_get_text_bounds(itoa(glucose, buffer, 10), 0, menuTextY[0], &x1, &y1, &w, &h);
     disp_set_pos(0.80*DISP_WIDTH - w - x1, (menuTextY[0]+menuTextY[1])/2 + 4);
     disp_write_str_group(buffer, GLUCOSE_VAL_ID);

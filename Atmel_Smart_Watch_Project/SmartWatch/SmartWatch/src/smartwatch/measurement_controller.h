@@ -20,6 +20,7 @@ void measurement_controller_init(void);
 void take_measurement(uint8_t button);
 uint8_t is_measure_busy(void);
 uint16_t get_measurement(void);
+float get_freq(void);
 uint8_t is_new_measurement_soft(void);
 uint8_t is_new_measurement(void);
 void measure_set_reading_timeout(uint16_t timeout);
