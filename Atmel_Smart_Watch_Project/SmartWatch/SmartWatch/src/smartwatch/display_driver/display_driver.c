@@ -22,6 +22,8 @@
  #define pgm_read_pointer(addr) ((void *)pgm_read_word(addr))
 #endif
 
+#define ADJ_WIDTH (int)(DISP_WIDTH*1.5f)
+
 // Static variables
 static const GFXfont *gfxFont;
 static uint8_t wrap;   // If set, 'wrap' text at right edge of display
@@ -38,16 +40,15 @@ static uint8_t buffer[DISP_BUFFER_SIZE]; // For 12-bit mode
 // W = 8-> 8*1.5 = 12
 // 00 01 11 22 23 33 44 45 55 66 67 77
 // 0  1  2  3  4  5  6  7  8  9  10 11
-
 static inline void DISPLAY_DRIVER_WRITE(uint16_t x, uint16_t y, uint16_t color) {
         if (x%2) {
             x = (int)((x-1)*1.5f)+1;
-            buffer[x+y*DISP_WIDTH] = (buffer[x+y*DISP_WIDTH]&0xf0) | ((color>>8)&0xf);
-            buffer[(x+1)+y*DISP_WIDTH] = color&0xff;
+            buffer[x+y*ADJ_WIDTH] = (buffer[x+y*ADJ_WIDTH]&0xf0) | ((color>>8)&0xf);
+            buffer[(x+1)+y*ADJ_WIDTH] = color&0xff;
         } else {
             x = (int)(x*1.5f);
-            buffer[x+y*DISP_WIDTH] = color>>4;
-            buffer[(x+1)+y*DISP_WIDTH] = ((color&0xf)<<4) | (buffer[(x+1)+y*DISP_WIDTH]&0xf);
+            buffer[x+y*ADJ_WIDTH] = (color>>4)&0xff;
+            buffer[(x+1)+y*ADJ_WIDTH] = ((color&0xf)<<4) | (buffer[(x+1)+y*ADJ_WIDTH]&0xf);
         }
 }
 
@@ -102,9 +103,8 @@ void disp_init() {
 
     disp_sub_init();
 
-
     for (int y = 0; y < DISP_HEIGHT; y++)
-        for (int x = 0; x < DISP_WIDTH; x+=2)
+        for (int x = 0; x < DISP_WIDTH; x++)
             DISPLAY_DRIVER_WRITE(x, y, DISP_BG_COLOR);
     leftx = 0;
     rightx = DISP_WIDTH-1;
@@ -129,12 +129,12 @@ void disp_commit() {
         disp_begin_write_data();
         rightx = DISP_WIDTH-1;
         uint16_t length = (uint16_t)((DISP_WIDTH*(bottomy-topy-1)+(rightx-leftx+1))*1.5f);
-        disp_write_datap_continue(&buffer[(int)(leftx*1.5f)+topy*DISP_WIDTH], length);
+        disp_write_datap_continue(&buffer[(int)(leftx*1.5f)+topy*ADJ_WIDTH], length);
     } else {
         for (int y = topy; y <= bottomy; y++) {
             disp_set_pos_internal(leftx, y);
             disp_begin_write_data();
-            disp_write_datap_continue(&buffer[(int)(leftx*1.5f)+y*DISP_WIDTH], (uint16_t)((rightx-leftx+1)*1.5f));
+            disp_write_datap_continue(&buffer[(int)(leftx*1.5f)+y*ADJ_WIDTH], (uint16_t)((rightx-leftx+1)*1.5f));
         }
     }
     disp_end_write();

@@ -78,7 +78,7 @@ void measurement_controller_init(void) {
     config_extint_chan.wake_if_sleeping   = 0;
     extint_chan_set_config(PHOTODIODE_EIC, &config_extint_chan);
 
-    eic_events.generate_event_on_detect[7] = 1;
+    eic_events.generate_event_on_detect[PHOTODIODE_EIC] = 1;
     extint_enable_events(&eic_events);
 
     struct events_resource capture_event;
