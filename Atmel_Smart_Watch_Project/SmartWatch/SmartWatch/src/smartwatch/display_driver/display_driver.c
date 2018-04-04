@@ -52,7 +52,7 @@ static inline void DISPLAY_DRIVER_WRITE(uint16_t x, uint16_t y, uint16_t color) 
         }
 }
 
-static void disp_set_pos_internal(uint8_t x, uint8_t y);
+static void disp_set_pos_internal(uint8_t xs, uint8_t xe, uint8_t ys, uint8_t ye);
 static void disp_draw_char(uint8_t x, uint8_t y, unsigned char c, uint16_t color, uint8_t bg, uint8_t size);
 static void disp_char_bounds(char c, uint8_t *x, uint8_t *y, int16_t *minx, int16_t *miny, int16_t *maxx, int16_t *maxy);
 
@@ -122,21 +122,10 @@ void disp_commit() {
     if (leftx%2) leftx--;
     if (rightx%2==0) rightx++;
 
-    uint8_t range_test = (leftx + DISP_WIDTH - rightx < 6);
-
-	if (range_test) {
-        disp_set_pos_internal(leftx, topy);
-        disp_begin_write_data();
-        rightx = DISP_WIDTH-1;
-        uint16_t length = (uint16_t)((DISP_WIDTH*(bottomy-topy-1)+(rightx-leftx+1))*1.5f);
-        disp_write_datap_continue(&buffer[(int)(leftx*1.5f)+topy*ADJ_WIDTH], length);
-    } else {
-        for (int y = topy; y <= bottomy; y++) {
-            disp_set_pos_internal(leftx, y);
-            disp_begin_write_data();
-            disp_write_datap_continue(&buffer[(int)(leftx*1.5f)+y*ADJ_WIDTH], (uint16_t)((rightx-leftx+1)*1.5f));
-        }
-    }
+    disp_set_pos_internal(leftx, rightx, topy, bottomy);
+    disp_begin_write_data();
+    for (int y = topy; y <= bottomy; y++)
+        disp_write_datap_continue(&buffer[(int)(leftx*1.5f)+y*ADJ_WIDTH], (uint16_t)((rightx-leftx+1)*1.5f));
     disp_end_write();
     new_write = 1;
 }
@@ -151,9 +140,9 @@ void disp_sleep_disable() {
     port_pin_set_output_level(BOARD_DISP_BACKLIGHT_PIN, true);
 }
 
-static void disp_set_pos_internal(uint8_t x, uint8_t y) {
-    disp_set_column_address(x, DISP_WIDTH-1);
-    disp_set_row_address(y, DISP_HEIGHT-1);
+static void disp_set_pos_internal(uint8_t xs, uint8_t xe, uint8_t ys, uint8_t ye) {
+    disp_set_column_address(xs, xe);
+    disp_set_row_address(ys, ye);
 }
 
 void disp_set_pos(uint8_t x, uint8_t y) {

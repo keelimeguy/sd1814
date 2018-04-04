@@ -229,6 +229,7 @@ void graph_smart_sizing(unsigned short* xret, unsigned short* yret, unsigned sho
             *heightret = bar[i/BAR_WIDTH];
     }
 
+    *heightret = *heightret + 1;
     *yret = DISP_GRAPH_Y+DISP_GRAPH_HEIGHT-1-*heightret;
     is_changed = 0;
 }

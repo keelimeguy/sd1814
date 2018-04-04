@@ -239,7 +239,7 @@ uint16_t get_measurement(void) {
 }
 
 float get_freq(void) {
-	return freq;
+    return freq;
 }
 
 uint8_t is_new_measurement_soft(void) {
