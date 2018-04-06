@@ -179,10 +179,10 @@ void BLEsetup(void)
 //#endif
 
   aci_state.aci_pins.reset_pin              = BT_RES_PIN;
-  aci_state.aci_pins.active_pin             = HAL_UNUSED;
+  aci_state.aci_pins.active_pin             = BT_ACT_PIN;
   aci_state.aci_pins.optional_chip_sel_pin  = HAL_UNUSED;
 
-  aci_state.aci_pins.interface_is_interrupt = true;
+  aci_state.aci_pins.interface_is_interrupt = BT_USE_INTERRUPT;
   aci_state.aci_pins.interrupt_number       = BT_RDY_EIC;
 
   //We reset the nRF8001 here by toggling the RESET line connected to the nRF8001

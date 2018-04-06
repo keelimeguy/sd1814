@@ -208,12 +208,12 @@ static void m_aci_pins_set(aci_pins_t *a_pins_ptr)
 
 static inline void m_aci_reqn_disable (void)
 {
-  digitalWrite(a_pins_local_ptr->reqn_pin, 1);
+    spi_select_slave(&bt_master, &bt_slave, false);
 }
 
 static inline void m_aci_reqn_enable (void)
 {
-  digitalWrite(a_pins_local_ptr->reqn_pin, 0);
+    spi_select_slave(&bt_master, &bt_slave, true);
 }
 
 static void m_aci_q_flush(void)
@@ -366,6 +366,7 @@ void hal_aci_tl_init(aci_pins_t *a_pins, bool debug)
   config.pinmux_pad1 = a_pins->pinmux_pad1;
   config.pinmux_pad2 = a_pins->pinmux_pad2;
   config.pinmux_pad3 = a_pins->pinmux_pad3;
+  //config.generator_source = GCLK_GENERATOR_3;
   config.mode_specific.master.baudrate = a_pins->baudrate;
   config.data_order = a_pins->dord;
   config.receiver_enable = true;
@@ -380,7 +381,7 @@ void hal_aci_tl_init(aci_pins_t *a_pins, bool debug)
   pin.direction = PORT_PIN_DIR_OUTPUT;
 
   port_pin_set_config(a_pins->reset_pin, &pin);
-  digitalWrite(a_pins->reset_pin, true);
+  digitalWrite(a_pins->reset_pin, false);
 
   /* Attach the interrupt to the RDYN line as requested by the caller */
   if (a_pins->interface_is_interrupt) {
@@ -398,7 +399,6 @@ void hal_aci_tl_init(aci_pins_t *a_pins, bool debug)
     extint_chan_set_config(a_pins->interrupt_number, &config_extint_chan);
 
     extint_register_callback(m_aci_isr, a_pins->interrupt_number, EXTINT_CALLBACK_TYPE_DETECT);
-    extint_chan_enable_callback(a_pins->interrupt_number, EXTINT_CALLBACK_TYPE_DETECT);
 
   } else {
     port_get_config_defaults(&pin);
@@ -414,6 +414,9 @@ void hal_aci_tl_init(aci_pins_t *a_pins, bool debug)
   /* Pin reset the nRF8001, required when the nRF8001 setup is being changed */
   hal_aci_tl_pin_reset();
   delay_cycles_ms(30); //Wait for the nRF8001 to get hold of its lines - the lines float for a few ms after the reset
+
+  if (a_pins->interface_is_interrupt)
+    extint_chan_enable_callback(a_pins->interrupt_number, EXTINT_CALLBACK_TYPE_DETECT);
 }
 
 bool hal_aci_tl_send(hal_aci_data_t *p_aci_cmd)

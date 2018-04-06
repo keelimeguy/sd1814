@@ -50,7 +50,7 @@ and the received ACI event is placed in the tail of the event queue.
 #include "boards.h"
 
 #ifndef HAL_ACI_MAX_LENGTH
-#define HAL_ACI_MAX_LENGTH 16//31
+#define HAL_ACI_MAX_LENGTH 31
 #endif
 
 /************************************************************************/
@@ -62,8 +62,8 @@ and the received ACI event is placed in the tail of the event queue.
 typedef struct {
   uint8_t status_byte;
   uint8_t buffer[HAL_ACI_MAX_LENGTH+1];
-} hal_aci_data_t;
-//} _aci_packed_ hal_aci_data_t;
+//} hal_aci_data_t;
+} _aci_packed_ hal_aci_data_t;
 
 ACI_ASSERT_SIZE(hal_aci_data_t, HAL_ACI_MAX_LENGTH + 2);
 

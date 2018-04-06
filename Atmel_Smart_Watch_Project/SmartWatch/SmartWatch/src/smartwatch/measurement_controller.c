@@ -102,9 +102,11 @@ void measurement_controller_init(void) {
 #if DEBUG_MODE != DEBUG_MEASURE_SIM
 
 static void disable_capture(void) {
+	system_interrupt_disable_global();
     tc_stop_counter(&capture_instance);
     tc_set_count_value(&capture_instance, 0);
     extint_disable_events(&eic_events);
+	system_interrupt_enable_global();
 }
 
 static void enable_capture(void) {
@@ -185,6 +187,7 @@ void measurement_task(void) {
 
             default:
                 pulseState = 0;
+                break;
         }
         #endif
     }
