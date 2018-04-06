@@ -48,8 +48,10 @@ void kalman_CGM(float z, float R, unsigned char sensorNum, float x_result[6]) {
     uint8_t i0;
     uint8_t i1;
     uint8_t k;
-    float *F = (float *) malloc(144);
-    float *xk_1k_1 = (float *) malloc(24);
+//    float *F = (float *) malloc(144);
+	float F[36], xk_1k_1[6], b_F[36], y, nu, b_H[6], H[6], W[6], temp, b_FF[36], c_I[36], d_I[36], b_W[36];
+	char I[36];
+//    float *xk_1k_1 = (float *) malloc(24);
     setPointer(F,'F',sensorNum, x_result);
     setPointer(xk_1k_1,'x',sensorNum, x_result);
 
@@ -60,8 +62,8 @@ void kalman_CGM(float z, float R, unsigned char sensorNum, float x_result[6]) {
         }
     }
 
-    free(xk_1k_1);
-    float *b_F = (float *) malloc(144);
+  //  free(xk_1k_1);
+   // float *b_F = (float *) malloc(144);
 
     for (i0 = 0; i0 < 6; i0++) {
         for (i1 = 0; i1 < 6; i1++) {
@@ -72,18 +74,18 @@ void kalman_CGM(float z, float R, unsigned char sensorNum, float x_result[6]) {
         }
     }
 
-    float *y = (float *) malloc(4);
+//    float *y = (float *) malloc(4);
     for (i0 = 0; i0 < 6; i0++) {
         for (i1 = 0; i1 < 6; i1++) {
-            *y = 0.0F;
+            y = 0.0F;
             for (k = 0; k < 6; k++) {
-                *y += b_F[i0 * 6 + k] * F[i1 * 6 + k];
+                y += b_F[i0 * 6 + k] * F[i1 * 6 + k];
             }
-            P_result[i0*6+i1] = *y;
+            P_result[i0*6+i1] = y;
         }
     }
-    free(F);
-    free(b_F);
+  //  free(F);
+    //free(b_F);
 
     // Try manually adding Q diagonals
     P_result[0] += Q00;
@@ -93,16 +95,16 @@ void kalman_CGM(float z, float R, unsigned char sensorNum, float x_result[6]) {
     P_result[28] += Q44;
     P_result[35] += Q55;
 
-    float *nu = (float *)malloc(4);
+//    float *nu = (float *)malloc(4);
     if (sensorNum == 1) {
-        *nu = z - (x_result[0] * (x_result[4]) + x_result[5]);
+        nu = z - (x_result[0] * (x_result[4]) + x_result[5]);
     } else {
-        *nu = z - x_result[1];
+        nu = z - x_result[1];
     }
 
-    *y = 0.0F;
-    float *b_H = (float *) malloc(24);
-    float *H = (float *) malloc(24);
+    y = 0.0F;
+   // float *b_H = (float *) malloc(24);
+ //   float *H = (float *) malloc(24);
     setPointer(H, 'H', sensorNum, x_result);
     for (i0 = 0; i0 < 6; i0++) {
         b_H[i0] = 0.0F;
@@ -110,29 +112,29 @@ void kalman_CGM(float z, float R, unsigned char sensorNum, float x_result[6]) {
             b_H[i0] += H[i1] * P_result[i1+6*i0];
         }
 
-        *y += b_H[i0] * H[i0];
+        y += b_H[i0] * H[i0];
     }
-    free(b_H);
+//    free(b_H);
 
-    *y += R;
-    float *W = (float *)malloc(24);
-    float *temp = (float *)malloc(4);
+    y += R;
+   // float *W = (float *)malloc(24);
+    //float *temp = (float *)malloc(4);
     for (i0 = 0; i0 < 6; i0++) {
         for (i1 = 0; i1 < 6; i1++) {
-         *temp += P_result[i0 + 6 * i1] * H[i1];
+         temp += P_result[i0 + 6 * i1] * H[i1];
          }
 
-        W[i0] = *temp / *y;
-        *temp = 0.0F;
-        x_result[i0] += W[i0] * *nu;
+        W[i0] = temp / y;
+        temp = 0.0F;
+        x_result[i0] += W[i0] * nu;
 
 
     }
-    free(temp);
-    free(y);
-    free(nu);
+//    free(temp);
+ //   free(y);
+   // free(nu);
 
-    char *I= (char *)malloc(36);
+    //char *I= (char *)malloc(36);
     for (i0 = 0; i0 < 36; i0++) {
         I[i0] = 0;
     }
@@ -141,7 +143,7 @@ void kalman_CGM(float z, float R, unsigned char sensorNum, float x_result[6]) {
         I[k + 6 * k] = 1;
     }
 
-    float *b_FF = (float *) malloc(144);
+  //  float *b_FF = (float *) malloc(144);
     for (k = 0; k < 6; k++) {
 
         for (i1 = 0; i1 < 6; i1++) {
@@ -149,8 +151,8 @@ void kalman_CGM(float z, float R, unsigned char sensorNum, float x_result[6]) {
         }
     }
 
-    free(I);
-    float *c_I = (float *)malloc(144);
+   // free(I);
+    //float *c_I = (float *)malloc(144);
 
     for (k = 0; k < 6; k++) {
         for (i0 = 0; i0 < 6; i0++) {
@@ -169,9 +171,9 @@ void kalman_CGM(float z, float R, unsigned char sensorNum, float x_result[6]) {
                 b_FF[i0 + 6 * i1] = 0 - W[i1] * H[i0];
         }
     }
-    free(H);
+  //  free(H);
 
-    float *d_I = (float *)malloc(144);
+ //   float *d_I = (float *)malloc(144);
     for (i0 = 0; i0 < 6; i0++) {
         for (i1 = 0; i1 < 6; i1++) {
             d_I[i0 + 6 * i1] = 0.0F;
@@ -180,29 +182,29 @@ void kalman_CGM(float z, float R, unsigned char sensorNum, float x_result[6]) {
             }
         }
     }
-    free(c_I);
+   // free(c_I);
 
-    float *b_W = (float *)malloc(144);
+   // float *b_W = (float *)malloc(144);
     for (i0 = 0; i0 < 6; i0++) {
         for (i1 = 0; i1 < 6; i1++) {
             b_W[i0 + 6 * i1] = W[i0] * (R) * W[i1];
         }
     }
 
-    free(W);
+    //free(W);
 
     for (k = 0; k < 6; k++) {
         for (i1 = 0; i1 < 6; i1++) {
             d_I[(k*6)+i1] += b_W[(k*6)+i1];
         }
     }
-    free(b_W);
+    //free(b_W);
 
     for (i0 = 0; i0 < 6; i0++) {
         for (i1 = 0; i1 < 6; i1++) {
             P_result[i1+6*i0] = (d_I[i1 + 6 * i0] + d_I[i0 + 6 * i1])/ 2.0F;
         }
     }
-    free(d_I);
-    free(b_FF);
+ //   free(d_I);
+   // free(b_FF);
 }
