@@ -132,7 +132,7 @@ int add_to_graph(int val) {
     int min = data_min - BAR_PADDING_LOW;
     int max = data_max + BAR_PADDING_HIGH;
 
-    #define CONVERT(xx) ((short)(((xx-min)/(max-min))*(int)(MAX_BAR_HEIGHT-MIN_BAR_HEIGHT)) + MIN_BAR_HEIGHT)
+    #define CONVERT(xx) ((short)(((float)(xx-min)/(float)(max-min))*(float)(MAX_BAR_HEIGHT-MIN_BAR_HEIGHT)) + MIN_BAR_HEIGHT)
     if (refresh_axis) {
         for (int i = 0; i <= data_length; i++)
             bar_cache[i] = CONVERT(data[i]);
@@ -225,7 +225,7 @@ void graph_smart_sizing(unsigned short* xret, unsigned short* yret, unsigned sho
             else
                 GRAPH_PIXEL_ON(x, y);
         }
-        if (bar[i/BAR_WIDTH] > *heightret)
+        if (bar[i/BAR_WIDTH] > (*heightret))
             *heightret = bar[i/BAR_WIDTH];
     }
 

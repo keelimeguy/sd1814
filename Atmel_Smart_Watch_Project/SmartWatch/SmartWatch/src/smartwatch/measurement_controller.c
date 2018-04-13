@@ -38,7 +38,11 @@ void measurement_controller_init(void) {
     buttonFlag = 0;
     measure_busy = 0;
     pulseState = 0;
-    glucose = 0;
+    #if DEBUG_MODE == DEBUG_MEASURE_SIM
+        glucose = DISP_WARNING_HIGH-10;
+    #else
+        glucose = 0;
+    #endif
     glucoseTemp = 0;
     pulseOne = 1;    // 1 s
     pulseTwo = 1;    // 1 s
@@ -100,7 +104,11 @@ void measurement_controller_init(void) {
 
     // Time until next reading
     // (0 means no periodic readings)
-    readingTimeout  = 0; // s
+    #if DEBUG_MODE == DEBUG_MEASURE_SIM
+        readingTimeout  = 4; // s
+    #else
+        readingTimeout  = 0; // s
+    #endif
 }
 
 #if DEBUG_MODE != DEBUG_MEASURE_SIM
