@@ -9,8 +9,8 @@
 static float x_result[6] = {125,125,6,0,70,1000}, freq = 0.0f;
 static volatile uint8_t new_measurement, buttonFlag;
 static volatile uint8_t measure_busy, pulseState;
-static volatile uint16_t glucose;
-static uint16_t readingTimeout, pulseOne, pulseTwo, pulseThree;
+static volatile uint16_t glucose, glucoseTemp;
+static uint16_t readingTimeout, pulseOne, pulseTwo, pulseThree, pulseCounts, numPoints;
 
 #if DEBUG_MODE != DEBUG_MEASURE_SIM
 
@@ -38,10 +38,13 @@ void measurement_controller_init(void) {
     buttonFlag = 0;
     measure_busy = 0;
     pulseState = 0;
-    glucose = 125;
+    glucose = 0;
+    glucoseTemp = 0;
     pulseOne = 1;    // 1 s
     pulseTwo = 1;    // 1 s
     pulseThree = 6;  // 6 s
+    pulseCounts = 0;
+    numPoints = 0;
 
 #if DEBUG_MODE != DEBUG_MEASURE_SIM
     nCap = 0;
@@ -96,17 +99,18 @@ void measurement_controller_init(void) {
 #endif
 
     // Time until next reading
-    readingTimeout  = 10; // s
+    // (0 means no periodic readings)
+    readingTimeout  = 0; // s
 }
 
 #if DEBUG_MODE != DEBUG_MEASURE_SIM
 
 static void disable_capture(void) {
-	system_interrupt_disable_global();
+    system_interrupt_disable_global();
     tc_stop_counter(&capture_instance);
     tc_set_count_value(&capture_instance, 0);
     extint_disable_events(&eic_events);
-	system_interrupt_enable_global();
+    system_interrupt_enable_global();
 }
 
 static void enable_capture(void) {
@@ -159,24 +163,38 @@ void measurement_task(void) {
             case 0:
                 port_pin_set_output_level(LED_PIN, true);
                 set_pulse_timeout(pulseOne);
+                pulseCounts = 0;
                 pulseState = 1;
+                glucoseTemp = 0;
+                numPoints = 0;
                 break;
             case 1:
                 if (is_pulse_timeout()) {
-                    port_pin_set_output_level(LED_PIN, false);
+//                    port_pin_set_output_level(LED_PIN, false);
                     set_pulse_timeout(pulseTwo);
                     pulseState = 2;
                 }
                 break;
             case 2:
                 if (is_pulse_timeout()) {
-                    port_pin_set_output_level(LED_PIN, true);
-                    set_pulse_timeout(pulseThree);
-                    pulseState = 3;
-                    enable_capture();
+//                    port_pin_set_output_level(LED_PIN, true);
+                    if (pulseCounts<9) {
+                        pulseCounts++;
+//                      set_pulse_timeout(pulseThree);
+                        set_pulse_timeout(pulseTwo);
+                        do_measurement();
+    //                    pulseState = 3;
+                        enable_capture();
+                    } else {
+                        port_pin_set_output_level(LED_PIN, false);
+                        glucose = glucoseTemp / numPoints;
+                        pulseState = 0;
+                        measure_busy = 0;
+                        new_measurement = 1;
+                    }
                 }
                 break;
-            case 3:
+/*            case 3:
                 if (is_pulse_timeout()) {
                     port_pin_set_output_level(LED_PIN, false);
                     do_measurement();
@@ -184,7 +202,7 @@ void measurement_task(void) {
                     measure_busy = 0;
                 }
                 break;
-
+*/
             default:
                 pulseState = 0;
                 break;
@@ -201,7 +219,7 @@ static void capture_event_callback(struct tc_module *const module) {
     // pulse_widths[nCap] = TC4->COUNT16.CC[1].bit.CC;
     if (++nCap == MAX_CAP) {
         disable_capture();
-        set_pulse_timeout(0);
+        //set_pulse_timeout(0);
     }
 }
 
@@ -210,8 +228,7 @@ static void do_measurement(void) {
 
     if (nCap < 1)
         return; // Failure
-
-    new_measurement = 1;
+    numPoints++;
     uint32_t sum = 0;
     // Start at 1, to ignore first read value
     for (uint16_t i = 1; i < nCap; i ++) {
@@ -232,7 +249,7 @@ static void do_measurement(void) {
     //     glucose = x_result[1];
     // }
     do_kalman(freq, 1);
-    glucose = x_result[1];
+    glucoseTemp += x_result[1];
 }
 
 #endif

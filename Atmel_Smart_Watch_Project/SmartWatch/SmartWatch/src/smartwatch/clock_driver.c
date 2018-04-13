@@ -19,23 +19,24 @@ static void pulse_timer_callback(struct tcc_module *const module);
 static void battery_timer_callback(struct tcc_module *const module);
 static void button_timer_callback(struct tc_module *const module);
 
-// Configured assuming RTC_CALENDAR_ALARM_MASK_SEC
 static inline void next_alarm(void) {
-    alarm.time.second += READING_TIMEOUT;
-    if (alarm.time.second>=60) {
-        alarm.time.second = 0;
-        alarm.time.minute++;
-        if (alarm.time.minute>=60) {
-            alarm.time.minute = 0;
-            alarm.time.hour++;
-            if (alarm.time.hour > 11) {
-                if (alarm.time.hour == 12) {
-                    if (alarm.time.pm) {
-                        add_to_date_uchar(1, &(alarm.time.year), &(alarm.time.month), &(alarm.time.day));
-                        alarm.time.pm = !alarm.time.pm;
-                    }
-                } else
+    if (READING_TIMEOUT>0) {
+        alarm.time.second += READING_TIMEOUT;
+        if (alarm.time.second>=60) {
+            alarm.time.second = 0;
+            alarm.time.minute++;
+            if (alarm.time.minute>=60) {
+                alarm.time.minute = 0;
+                alarm.time.hour++;
+                if (alarm.time.hour > 11) {
+                    if (alarm.time.hour == 12) {
+                        if (alarm.time.pm) {
+                            add_to_date_uchar(1, &(alarm.time.year), &(alarm.time.month), &(alarm.time.day));
+                            alarm.time.pm = !alarm.time.pm;
+                        }
+                    } else
                     alarm.time.hour = 1;
+                }
             }
         }
     }
@@ -285,7 +286,9 @@ static void rtc_alarm_callback(void) {
     rtc_alarm_flag = 1;
 
     /* Trigger measurement */
-    take_measurement(0);
+    if (READING_TIMEOUT>0) {
+        take_measurement(0);
+    }
 
     /* Set new alarm */
     next_alarm();

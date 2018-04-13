@@ -13,7 +13,7 @@
     #endif
 
     #define BLE_ENABLED          1 // 0 = Bluetooth is disabled
-    #define BOARD_DISPLAY_ROTATE 1 // 1 = Rotate the display 90o
+    #define BOARD_DISPLAY_ROTATE 0 // 1 = Rotate the display 90o
 
     #define DEBUG_NONE           0
     #define DEBUG_CLOCK          1

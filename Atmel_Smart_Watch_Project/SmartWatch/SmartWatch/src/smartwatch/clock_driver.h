@@ -7,7 +7,7 @@
 #include <SmartWatch.h>
 
 // If this changes, also change next_alarm() in clock_driver.c for appropriate unit
-#define RTC_ALARM_UNIT_MASK RTC_CALENDAR_ALARM_MASK_SEC
+#define RTC_ALARM_UNIT_MASK RTC_CALENDAR_ALARM_MASK_YEAR
 
 #define BATTERY_TIMEOUT 20 // s
 #define SCREEN_TIMEOUT  120 // s
