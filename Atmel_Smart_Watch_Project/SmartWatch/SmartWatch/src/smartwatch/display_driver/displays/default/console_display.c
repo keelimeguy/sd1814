@@ -2,7 +2,6 @@
 */
 
 #include "console_display.h"
-#include "../../display_driver.h"
 
 static uint8_t xs, ys, curx, cury, xe, ye;
 static char fb[CONSOLE_DISPLAY_WIDTH][CONSOLE_DISPLAY_HEIGHT];
@@ -242,6 +241,9 @@ void console_display_write_multiple_data(uint8_t* data, uint16_t length) {
 }
 
 void console_display_end_write(void) {
+}
+
+void console_display_commit(void) {
     int x, y;
     #if BOARD_DISPLAY_ROTATE
     for (y=CONSOLE_DISPLAY_HEIGHT-1; y>=0; y--) {
@@ -256,10 +258,9 @@ void console_display_end_write(void) {
     }
     printf("\n");
 
-    for (y=0; y<CONSOLE_DISPLAY_HEIGHT; y++)
-        for (x=0; x<CONSOLE_DISPLAY_WIDTH; x++)
-            fb[x][y] = 'X';
-
+    // for (y=0; y<CONSOLE_DISPLAY_HEIGHT; y++)
+    //     for (x=0; x<CONSOLE_DISPLAY_WIDTH; x++)
+    //         fb[x][y] = 'X';
 }
 
 void console_display_set_row_address(uint8_t start_address, uint8_t end_address) {

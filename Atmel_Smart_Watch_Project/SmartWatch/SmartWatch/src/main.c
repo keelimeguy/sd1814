@@ -1,7 +1,7 @@
 /* UConn Senior Design Team 1814, January 2018
 */
 
-#include <SmartWatch.h>
+#include "SmartWatch.h"
 
 /*  is_active() triggered by:
         is_measure_busy() triggered by:

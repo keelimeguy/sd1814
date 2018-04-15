@@ -6,7 +6,7 @@
 #define BG_CAL 160.0f
 #define MAX_CAP 256
 
-static float x_result[6] = {125,125,6,0,70,1000}, freq = 0.0f;
+static float freq = 0.0f;
 static volatile uint8_t new_measurement, buttonFlag;
 static volatile uint8_t measure_busy, pulseState;
 static volatile uint16_t glucose, glucoseTemp;
@@ -247,17 +247,10 @@ static void do_measurement(void) {
     freq = 8000000.0f * (float)(nCap-1) / (float)sum;
     nCap = 0;
 
-    // if (buttonFlag) {
-    //     // Calculate bg without kalman algorithm
-    //     float Gs = x_result[4]*freq + x_result[5]; // rough estimate of Gs
-    //     glucose = x_result[3]*(1.0f/x_result[2]) + Gs;
-    //     buttonFlag = 0;
-    // } else {
-    //     do_kalman(freq, 1);
-    //     glucose = x_result[1];
-    // }
-    do_kalman(freq, 1);
-    glucoseTemp += x_result[1];
+    // 1kHz -> 80, 2kHz -> 85
+    // m = 0.005
+    // glucose = m(freq-1000)+80
+    glucoseTemp += 0.005f*(freq-1000.0f)+80;
 }
 
 #endif
@@ -280,16 +273,4 @@ uint8_t is_new_measurement(void) {
         return 1;
     }
     return 0;
-}
-
-void do_kalman_bt_cmd(long calibration) {
-    kalman_CGM((float)calibration, 0.0025f*x_result[1]*x_result[1], 0, x_result);
-}
-
-void do_kalman(float freq, uint8_t sensorNum) {
-    kalman_CGM(freq, 400.0f, sensorNum, x_result);
-}
-
-void cal_kalman(void) {
-    kalman_CGM(BG_CAL, 0.05f*BG_CAL, 0, x_result);
 }

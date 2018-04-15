@@ -65,7 +65,6 @@
 #ifndef UART_H
 #define UART_H
 
-#include "conf_bluetooth.h"
 #include "bluetooth_driver.h"
 
 #include "lib_aci/lib_aci.h"

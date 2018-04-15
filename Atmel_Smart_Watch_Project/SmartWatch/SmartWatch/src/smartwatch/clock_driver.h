@@ -4,7 +4,7 @@
 #ifndef CLOCK_DRIVER_H
 #define CLOCK_DRIVER_H
 
-#include <SmartWatch.h>
+#include "../SmartWatch.h"
 
 // If this changes, also change next_alarm() in clock_driver.c for appropriate unit
 #define RTC_ALARM_UNIT_MASK RTC_CALENDAR_ALARM_MASK_YEAR

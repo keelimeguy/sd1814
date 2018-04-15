@@ -4,7 +4,7 @@
 #ifndef MEASUREMENT_CONTROLLER_H
 #define MEASUREMENT_CONTROLLER_H
 
-#include <SmartWatch.h>
+#include "../SmartWatch.h"
 
 #define BUTTON_L_EIC     BOARD_EIC_L_BUTTON
 #define BUTTON_R_EIC     BOARD_EIC_R_BUTTON

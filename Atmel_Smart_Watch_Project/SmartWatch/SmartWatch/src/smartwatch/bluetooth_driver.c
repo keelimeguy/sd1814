@@ -79,19 +79,19 @@ void bt_task(void) {
 
         // Perform kalman calculation
         else if (rx_buffer[cur_rindx][0] == 'C') {
-            memcpy(paramData, &rx_buffer[cur_rindx][1], BT_MAX_MSG_LENGTH - 1);
-            char *ptr;
-            do_kalman_bt_cmd(strtol(paramData, &ptr, 10));
-            request_screen_on();
+            // memcpy(paramData, &rx_buffer[cur_rindx][1], BT_MAX_MSG_LENGTH - 1);
+            // char *ptr;
+            // do_kalman_bt_cmd(strtol(paramData, &ptr, 10));
+            // request_screen_on();
         }
 
         // Set measurement pulse timeout in seconds
         else if (rx_buffer[cur_rindx][0] == 'P') {
-            memcpy(paramData, &rx_buffer[cur_rindx][1], BT_MAX_MSG_LENGTH - 1);
-            char *ptr;
-            measure_set_pulse_one((uint16_t)strtol(paramData, &ptr, 10));
-            measure_set_pulse_two((uint16_t)strtol(ptr, &ptr, 10));
-            measure_set_pulse_three((uint16_t)strtol(ptr, &ptr, 10));
+            // memcpy(paramData, &rx_buffer[cur_rindx][1], BT_MAX_MSG_LENGTH - 1);
+            // char *ptr;
+            // measure_set_pulse_one((uint16_t)strtol(paramData, &ptr, 10));
+            // measure_set_pulse_two((uint16_t)strtol(ptr, &ptr, 10));
+            // measure_set_pulse_three((uint16_t)strtol(ptr, &ptr, 10));
             request_screen_on();
         }
 
@@ -102,10 +102,12 @@ void bt_task(void) {
             long val = strtol(paramData, &ptr, 10);
 
             // TODO: Verify these changes with app interface
-            kalman_setT(val/360000.0f);
+            // kalman_setT(val/360000.0f);
             measure_set_reading_timeout(val);
-            // kalman_setT(val/60);
-            // measure_set_reading_timeout(val*60*1000);
+
+            // // kalman_setT(val/60);
+            // // measure_set_reading_timeout(val*60*1000);
+
             request_screen_on();
         }
 

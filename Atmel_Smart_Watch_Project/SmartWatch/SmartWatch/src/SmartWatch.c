@@ -1,7 +1,7 @@
 /* UConn Senior Design Team 1814, January 2018
 */
 
-#include <SmartWatch.h>
+#include "SmartWatch.h"
 
 #ifndef CONSOLE_VERSION
 
@@ -72,7 +72,7 @@
                 // Wakeup screen if needed
                 if (screen_sleep) {
                     screen_sleep = 0;
-                    disp_sleep_disable();
+                    display_on();
                 }
 
                 set_screen_timeout(SCREEN_TIMEOUT);
@@ -107,7 +107,7 @@
 
     void sleep(void) {
         // First put display to sleep
-        disp_sleep_enable();
+        display_off();
         screen_sleep = 1;
 
         #if DEBUG_MODE==DEBUG_DISPLAY
@@ -133,7 +133,7 @@
             // Trigger battery timer for next wakeup
             set_battery_timeout(0);
             screen_sleep = 0;
-            disp_sleep_disable();
+            display_on();
         }
     }
 
@@ -190,6 +190,7 @@
                 }
             }
         }
+        console_display_commit();
     }
 
 #endif

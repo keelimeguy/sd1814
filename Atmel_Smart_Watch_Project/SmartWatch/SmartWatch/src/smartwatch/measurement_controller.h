@@ -4,7 +4,7 @@
 #ifndef _MEASUREMENT_CONTROLLER_H
 #define _MEASUREMENT_CONTROLLER_H
 
-#include <SmartWatch.h>
+#include "../SmartWatch.h"
 
 #define PHOTODIODE_EIC       BOARD_EIC_PHOTODIODE
 
@@ -29,8 +29,5 @@ void measure_set_pulse_one(uint16_t pulse);
 void measure_set_pulse_two(uint16_t pulse);
 void measure_set_pulse_three(uint16_t pulse);
 void measurement_task(void);
-void do_kalman_bt_cmd(long calibration);
-void do_kalman(float freq, uint8_t sensorNum);
-void cal_kalman(void);
 
 #endif

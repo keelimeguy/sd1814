@@ -10,7 +10,7 @@
 #define DISP_ST7735S    2 // 1.44" TFT LCD
 #define DISP_ILI9163    3 // 1.8" TFT LCD
 
-#include <Smartwatch.h>
+#include "../display_manager.h"
 
 #ifndef DISP_SCREEN
     #define DISP_SCREEN NONE

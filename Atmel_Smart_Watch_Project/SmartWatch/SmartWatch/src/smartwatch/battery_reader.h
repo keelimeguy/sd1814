@@ -4,9 +4,11 @@
 #ifndef BATTERY_READER_H
 #define BATTERY_READER_H
 
-#include <SmartWatch.h>
+#include "../SmartWatch.h"
 
-#define MAX_ADC     0xFFF
+#define MAX_ADC     4095.0f // 0xFFF
+#define MAX_V       4.0f // V
+#define MIN_V       3.3f // V
 
 void battery_reader_init(void);
 void battery_task(void);

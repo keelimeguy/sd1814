@@ -12,6 +12,8 @@ extern "C" {
 #include <stdint.h>
 #include <stdio.h>
 
+#include "../../display_driver.h"
+
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
@@ -52,6 +54,7 @@ void console_display_write_data(uint8_t data);
 void console_display_write_multiple_data(uint8_t* data, uint16_t length);
 void console_display_init(void);
 void console_display_end_write(void);
+void console_display_commit(void);
 
 #ifdef __cplusplus
 }

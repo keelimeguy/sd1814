@@ -4,8 +4,7 @@
 #ifndef DISPLAY_MANAGER_H
 #define DISPLAY_MANAGER_H
 
-#include <SmartWatch.h>
-#include "display_driver/display_driver.h"
+#include "../SmartWatch.h"
 
 #define CLR_BUTTON               BUTTON_L_VAL
 #define GRAPH_BUTTON             BUTTON_L_VAL
@@ -41,5 +40,7 @@
 void display_manager_init(void);
 void display_ui_task(uint8_t button);
 void updateGraph(uint16_t glucose);
+void display_off(void);
+void display_on(void);
 
 #endif

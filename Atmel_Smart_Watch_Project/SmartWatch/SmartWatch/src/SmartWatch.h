@@ -34,7 +34,6 @@
     #include "smartwatch/button_listener.h"
     #include "smartwatch/bluetooth_driver.h"
     #include "smartwatch/measurement_controller.h"
-    #include "smartwatch/kalman.h"
 
     void init_all(void);
     void smartwatch_task(void);
