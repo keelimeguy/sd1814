@@ -2065,9 +2065,6 @@ mv $(MSBuildProjectDirectory)\src\smartwatch\date_calc.__temp__ $(MSBuildProject
     <Compile Include="src\smartwatch\clock_driver.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\smartwatch\conf_bluetooth.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\smartwatch\display_driver\displays\st7735s\st7735s.c">
       <SubType>compile</SubType>
     </Compile>
@@ -2111,12 +2108,6 @@ mv $(MSBuildProjectDirectory)\src\smartwatch\date_calc.__temp__ $(MSBuildProject
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\smartwatch\display_manager.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\kalman.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\smartwatch\kalman.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\smartwatch\measurement_controller.c">
