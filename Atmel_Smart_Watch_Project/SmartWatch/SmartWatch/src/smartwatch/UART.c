@@ -331,7 +331,7 @@ void aci_loop()
               }
               else
               {
-                lib_aci_connect(180/* in seconds */, 0x0050 /* advertising interval 50ms*/);
+                lib_aci_bond(180/* in seconds */, 0x0050 /* advertising interval 50ms*/);
 //                 #if BLE_DEBUG
 //                   SerialMonitorInterface.println(F("Advertising started"));
 //                 #endif
@@ -406,7 +406,7 @@ void aci_loop()
 //         #if BLE_DEBUG
 //           SerialMonitorInterface.println(F("Evt Disconnected/Advertising timed out"));
 //         #endif
-        lib_aci_connect(180/* in seconds */, 0x0100 /* advertising interval 100ms*/);
+        lib_aci_bond(180/* in seconds */, 0x0100 /* advertising interval 100ms*/);
 //         #if BLE_DEBUG
 //           SerialMonitorInterface.println(F("Advertising started"));
 //         #endif
@@ -472,7 +472,7 @@ void aci_loop()
 //           }
 //           SerialMonitorInterface.println();
 //         #endif
-        lib_aci_connect(180/* in seconds */, 0x0050 /* advertising interval 50ms*/);
+        lib_aci_bond(180/* in seconds */, 0x0050 /* advertising interval 50ms*/);
 //         #if BLE_DEBUG
 //           SerialMonitorInterface.println(F("Advertising started"));
 //         #endif
