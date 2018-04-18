@@ -40,7 +40,7 @@ static uint8_t buffer[DISP_BUFFER_SIZE]; // For 12-bit mode
 // W = 8-> 8*1.5 = 12
 // 00 01 11 22 23 33 44 45 55 66 67 77
 // 0  1  2  3  4  5  6  7  8  9  10 11
-static inline void DISPLAY_DRIVER_WRITE(uint16_t x, uint16_t y, uint16_t color) {
+static inline void DISPLAY_DRIVER_WRITE(uint8_t x, uint8_t y, uint16_t color) {
         if (x%2) {
             x = (int)((x-1)*1.5f)+1;
             buffer[x+y*ADJ_WIDTH] = (buffer[x+y*ADJ_WIDTH]&0xf0) | ((color>>8)&0xf);
@@ -301,58 +301,58 @@ void disp_write_str(const char *str) {
         disp_write((uint8_t)c);
 }
 
-void disp_write_str_group(const char *str, uint8_t replace_last) {
-    if (replace_last>0 && replace_last<=MAX_WRITE_ID) {
+void disp_write_str_group(const char *str, uint8_t group_id) {
+    if (group_id>0 && group_id<=MAX_WRITE_ID) {
         uint8_t x, y, w, h;
         disp_get_text_bounds(str, cursor_x, cursor_y, &x, &y, &w, &h);
 
-        if (!keep_group && lastwidth[replace_last-1] > 0) {
-            disp_fill_rect(lastx[replace_last-1], lasty[replace_last-1], lastwidth[replace_last-1], lastheight[replace_last-1], textbgcolor);
+        if (!keep_group && lastwidth[group_id-1] > 0) {
+            disp_fill_rect(lastx[group_id-1], lasty[group_id-1], lastwidth[group_id-1], lastheight[group_id-1], textbgcolor);
         }
 
-        if (keep_group && lastwidth[replace_last-1] > 0) { // Assumes a single line
-            if (y < lasty[replace_last-1]) {
-                if (lasty[replace_last-1]+lastheight[replace_last-1] >= y+h) {
-                    lastheight[replace_last-1] = lasty[replace_last-1]-y+lastheight[replace_last-1];
+        if (keep_group && lastwidth[group_id-1] > 0) { // Assumes a single line
+            if (y < lasty[group_id-1]) {
+                if (lasty[group_id-1]+lastheight[group_id-1] >= y+h) {
+                    lastheight[group_id-1] = lasty[group_id-1]-y+lastheight[group_id-1];
                 } else {
-                    lastheight[replace_last-1] = h;
+                    lastheight[group_id-1] = h;
                 }
-                lasty[replace_last-1] = y;
-            } else if (lasty[replace_last-1]+lastheight[replace_last-1] < y+h) {
-                lastheight[replace_last-1] = y-lasty[replace_last-1]+h;
+                lasty[group_id-1] = y;
+            } else if (lasty[group_id-1]+lastheight[group_id-1] < y+h) {
+                lastheight[group_id-1] = y-lasty[group_id-1]+h;
             }
-            if (x > lastx[replace_last-1]) {
-                lastwidth[replace_last-1] = x - lastx[replace_last-1] + w;
+            if (x > lastx[group_id-1]) {
+                lastwidth[group_id-1] = x - lastx[group_id-1] + w;
             } else {
-                lastwidth[replace_last-1] += w;
+                lastwidth[group_id-1] += w;
             }
         } else {
-            lastx[replace_last-1] = x;
-            lasty[replace_last-1] = y;
-            lastwidth[replace_last-1] = w;
-            lastheight[replace_last-1] = h;
+            lastx[group_id-1] = x;
+            lasty[group_id-1] = y;
+            lastwidth[group_id-1] = w;
+            lastheight[group_id-1] = h;
         }
     }
     keep_group = 1;
     disp_write_str(str);
 }
 
-void disp_remove_str_group(uint8_t replace_last) {
-    if (replace_last>0 && replace_last<=MAX_WRITE_ID && lastwidth[replace_last-1] > 0) {
-        disp_fill_rect(lastx[replace_last-1], lasty[replace_last-1], lastwidth[replace_last-1], lastheight[replace_last-1], textbgcolor);
-        lastx[replace_last-1] = 0;
-        lasty[replace_last-1] = 0;
-        lastwidth[replace_last-1] = 0;
-        lastheight[replace_last-1] = 0;
+void disp_remove_str_group(uint8_t group_id) {
+    if (group_id>0 && group_id<=MAX_WRITE_ID && lastwidth[group_id-1] > 0) {
+        disp_fill_rect(lastx[group_id-1], lasty[group_id-1], lastwidth[group_id-1], lastheight[group_id-1], textbgcolor);
+        lastx[group_id-1] = 0;
+        lasty[group_id-1] = 0;
+        lastwidth[group_id-1] = 0;
+        lastheight[group_id-1] = 0;
     }
 }
 
-void disp_set_str_group(int16_t x, int16_t y, int16_t width, int16_t height, uint8_t replace_last) {
-    if (replace_last>0 && replace_last<=MAX_WRITE_ID) {
-        lastx[replace_last-1] = x;
-        lasty[replace_last-1] = y;
-        lastwidth[replace_last-1] = width;
-        lastheight[replace_last-1] = height;
+void disp_set_str_group(int16_t x, int16_t y, int16_t width, int16_t height, uint8_t group_id) {
+    if (group_id>0 && group_id<=MAX_WRITE_ID) {
+        lastx[group_id-1] = x;
+        lasty[group_id-1] = y;
+        lastwidth[group_id-1] = width;
+        lastheight[group_id-1] = height;
     }
 }
 

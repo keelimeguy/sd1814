@@ -171,11 +171,8 @@ static void updateMainDisplay(uint8_t button) {
             if (!startup)
                 disp_commit();
             last_drawn[LEFT_BUTTON_ID] = 1;
-            uint8_t x1;
-            uint8_t w;
-            uint8_t y1;
-            uint8_t h;
-            disp_get_text_bounds("View >", 0, 0, &x1, &y1, &w, &h);
+            uint8_t x, w, y, h;
+            disp_get_text_bounds("View >", 0, 0, &x, &y, &w, &h);
             disp_set_pos(DISP_WIDTH-w-1, menuTextY[6]);
             disp_write_str_group("View >", RIGHT_BUTTON_ID);
             disp_end_group();
