@@ -4,9 +4,11 @@
 #include <display_manager.h>
 
 // For testing GUI, compile using: -D DISP_SCREEN=DISP_CONSOLE
-
+#include <math.h>
 // Usage: ./main.exe [repeat]
 int main (int argc, char *argv[]) {
+    measurement_controller_init();
+
     int repeat = 1;
     if (argc > 1) {
         repeat = atoi(argv[1]);

@@ -10,7 +10,7 @@ static volatile uint8_t rtc_alarm_flag;
 
 static struct tcc_module screen_timer, pulse_timer, battery_timer;
 static struct tc_module button_timer;
-static volatile uint16_t screen_timeout, pulse_timeout, battery_timeout, button_timeout;
+static volatile int16_t screen_timeout, pulse_timeout, battery_timeout, button_timeout;
 static const char* day_str[7] = {"Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Tue"};
 
 static void rtc_alarm_callback(void);
@@ -22,8 +22,8 @@ static void button_timer_callback(struct tc_module *const module);
 static inline void next_alarm(void) {
     if (READING_TIMEOUT>0) {
         alarm.time.second += READING_TIMEOUT;
-        if (alarm.time.second>=60) {
-            alarm.time.second = 0;
+        while (alarm.time.second>=60) {
+            alarm.time.second -= 60;
             alarm.time.minute++;
             if (alarm.time.minute>=60) {
                 alarm.time.minute = 0;

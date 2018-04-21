@@ -42,8 +42,14 @@
         // Perform smartwatch subtasks
         bt_task();
         measurement_task();
+        #if DEBUG_MODE == DEBUG_MEASURE_SIM
+        while (is_new_measurement()) {
+            updateGraph(get_measurement());
+            measurement_task();
+        #else
         if (is_new_measurement()) {
             updateGraph(get_measurement());
+        #endif
         }
         battery_task();
 

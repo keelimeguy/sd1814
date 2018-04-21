@@ -46,7 +46,7 @@
 
     #define DISP_GRAPH_WIDTH             (DISP_WIDTH-8) // pixels
     #define DISP_GRAPH_HEIGHT            54 // pixels
-    #define DISP_GRAPH_BAR_WIDTH         2  // pixels
+    #define DISP_GRAPH_BAR_WIDTH         1  // pixels
     #define DISP_GRAPH_MIN_BAR_HEIGHT    1  // pixels
     #define DISP_GRAPH_MAX_BAR_HEIGHT    DISP_GRAPH_HEIGHT
     #define DISP_GRAPH_BAR_PADDING_LOW   1
@@ -80,7 +80,11 @@
 
     #define DISP_GRAPH_WIDTH             (DISP_WIDTH-8) // pixels
     #define DISP_GRAPH_HEIGHT            54 // pixels
+    #if DEBUG_MODE==DEBUG_MEASURE_SIM
+    #define DISP_GRAPH_BAR_WIDTH         1  // pixels
+    #else
     #define DISP_GRAPH_BAR_WIDTH         2  // pixels
+    #endif
     #define DISP_GRAPH_MIN_BAR_HEIGHT    1  // pixels
     #define DISP_GRAPH_MAX_BAR_HEIGHT    DISP_GRAPH_HEIGHT
     #define DISP_GRAPH_BAR_PADDING_LOW   1
@@ -119,7 +123,11 @@
 
     #define DISP_GRAPH_WIDTH             (DISP_WIDTH-8) // pixels
     #define DISP_GRAPH_HEIGHT            54 // pixels
+    #if DEBUG_MODE==DEBUG_MEASURE_SIM
+    #define DISP_GRAPH_BAR_WIDTH         1  // pixels
+    #else
     #define DISP_GRAPH_BAR_WIDTH         2  // pixels
+    #endif
     #define DISP_GRAPH_MIN_BAR_HEIGHT    1  // pixels
     #define DISP_GRAPH_MAX_BAR_HEIGHT    DISP_GRAPH_HEIGHT
     #define DISP_GRAPH_BAR_PADDING_LOW   1

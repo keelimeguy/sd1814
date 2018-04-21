@@ -26,7 +26,7 @@
     #define DEBUG_MEASURE_SIM    8
     #define DEBUG_MEASURE_FREQ   9
 
-    #define DEBUG_MODE DEBUG_MEASURE_FREQ
+    #define DEBUG_MODE DEBUG_MEASURE_SIM
 
     #include "smartwatch/clock_driver.h"
     #include "smartwatch/battery_reader.h"
@@ -78,6 +78,7 @@
     #define DEBUG_NONE 0
     #define DEBUG_MEASURE_SIM    8
     #define DEBUG_MODE DEBUG_MEASURE_SIM
+    #define READING_TIMEOUT    0
     // #define BOARD_DISPLAY_ROTATE 1 // 1 = Rotate the display 90o
     #define port_get_config_defaults(A)
     #define port_pin_set_config(A,B)

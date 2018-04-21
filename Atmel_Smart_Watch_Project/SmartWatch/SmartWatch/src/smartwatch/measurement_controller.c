@@ -25,6 +25,11 @@ static void capture_event_callback(struct tc_module *const module);
 static void disable_capture(void);
 static void enable_capture(void);
 
+#else
+
+static uint8_t sim_glucose[] = {152, 154, 156, 157, 158, 159, 160, 161, 162, 163, 163, 164, 165, 166, 166, 167, 168, 168, 169, 170, 170, 171, 172, 172, 173, 174, 174, 175, 175, 176, 177, 177, 178, 178, 179, 179, 180, 180, 181, 182, 182, 183, 183, 184, 184, 185, 185, 186, 186, 187, 187, 188, 188, 189, 189, 190, 190, 191, 191, 192, 192, 193, 193, 194, 194, 195, 195, 196, 196, 196, 197, 197, 198, 198, 199, 199, 200, 200, 201, 201, 202, 202, 202, 203, 203, 204, 204, 205, 205, 206, 206, 206, 207, 207, 207, 207, 206, 206, 205, 205, 205, 204, 203, 203, 202, 202, 201, 201, 200, 199, 199, 198, 198, 197, 196, 196, 195, 194, 194, 193, 192, 191, 191, 190, 189, 189, 188, 187, 186, 186, 185, 184, 183, 183, 182, 181, 180, 180, 179, 178, 177, 176, 176, 175, 174, 173, 172, 172, 171, 170, 169, 168, 167, 167, 166, 165, 164, 163, 162, 162, 161, 160, 159, 158, 157, 156, 156, 155, 154, 153, 152, 151, 150, 149, 148, 148, 147, 146, 145, 144, 143, 142, 141, 140, 139, 139, 138, 137, 136, 136, 135, 135, 134, 133, 132, 131, 130, 129, 129, 127, 126, 125, 124, 123, 122, 121, 120, 118, 117, 116, 115, 113, 112, 111, 109, 108, 107, 105, 104, 102, 101, 100, 98, 97, 96, 95, 95, 94, 94, 94, 93, 93, 93, 93, 92, 92, 92, 92, 91, 91, 91, 91, 91, 90, 90, 90, 90, 90, 89, 89, 89, 90, 90, 91, 92, 0};
+static int idx = 0;
+
 #endif
 
 void measurement_controller_init(void) {
@@ -36,13 +41,13 @@ void measurement_controller_init(void) {
 
     new_measurement = 0;
     buttonFlag = 0;
-    measure_busy = 0;
     pulseState = 0;
     #if DEBUG_MODE == DEBUG_MEASURE_SIM
-        glucose = DISP_WARNING_HIGH-10;
+        measure_busy = 1;
     #else
-        glucose = 0;
+        measure_busy = 0;
     #endif
+    glucose = 0;
     glucoseTemp = 0;
     pulseOne = 1;    // 1 s
     pulseTwo = 1;    // 1 s
@@ -102,13 +107,7 @@ void measurement_controller_init(void) {
     disable_capture();
 #endif
 
-    // Time until next reading
-    // (0 means no periodic readings)
-    #if DEBUG_MODE == DEBUG_MEASURE_SIM
-        readingTimeout  = 4; // s
-    #else
-        readingTimeout  = 0; // s
-    #endif
+    readingTimeout  = READING_TIMEOUT; // s
 }
 
 #if DEBUG_MODE != DEBUG_MEASURE_SIM
@@ -160,9 +159,14 @@ void measure_set_pulse_three(uint16_t pulse) {
 void measurement_task(void) {
     if (measure_busy) {
         #if DEBUG_MODE == DEBUG_MEASURE_SIM
-        glucose++;
-        new_measurement = 1;
-        measure_busy = 0;
+        printf("Glucose: %d\n", glucose);
+        if (sim_glucose[idx]) {
+            new_measurement = 1;
+            glucose = sim_glucose[idx];
+            idx++;
+        } else{
+            measure_busy = 0;
+        }
         return;
         #else
 
@@ -195,7 +199,7 @@ void measurement_task(void) {
                         enable_capture();
                     } else {
                         port_pin_set_output_level(LED_PIN, false);
-                        glucose = glucoseTemp / numPoints;
+                        glucose = (glucoseTemp / numPoints)%999;
                         pulseState = 0;
                         measure_busy = 0;
                         new_measurement = 1;

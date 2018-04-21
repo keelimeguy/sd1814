@@ -9,9 +9,11 @@
 
 #include "display_driver/GFXfont/Fonts/Org_01.h"
 #include "display_driver/GFXfont/Fonts/FreeSans9pt7b.h"
+#include "display_driver/GFXfont/Fonts/FreeSerif18pt7b.h"
 
 #define FONT_SMALL               &Org_01
 #define FONT_MEDIUM              &FreeSans9pt7b
+#define FONT_LARGE               &FreeSerif18pt7b
 
 #define FONT_DEFAULT             FONT_MEDIUM
 #define round(f) ( (f-(float)((int)f)) > 0.5 ? (int)f+1 : (int)f )
@@ -434,10 +436,12 @@ static void updateGlucoseDisplay(uint16_t glucose) {
     disp_write_str_group(buffer, GLUCOSE_VAL_ID);
     #endif
 
-    disp_set_font(FONT_MEDIUM);
-    disp_set_font_scale(3);
-    disp_get_text_bounds(itoa(glucose, buffer, 10), 0, menuTextY[1], &x1, &y1, &w, &h);
-    disp_set_pos(0.80*DISP_WIDTH - w - x1, (menuTextY[1]+menuTextY[2])/2 + 4);
+    disp_set_font(FONT_LARGE);
+    disp_set_font_scale(2);
+    disp_get_text_bounds(itoa(glucose, buffer, 10), 0, (menuTextY[1]+menuTextY[2])/2 + 20, &x1, &y1, &w, &h);
+    int xpos = 0.80*DISP_WIDTH - w - x1;
+    if (xpos < 0) xpos = 0;
+    disp_set_pos(xpos, (menuTextY[1]+menuTextY[2])/2 + 20);
     disp_write_str_group(buffer, GLUCOSE_VAL_ID);
     disp_end_group();
     last_drawn[GLUCOSE_VAL_ID] = 1;
@@ -445,16 +449,16 @@ static void updateGlucoseDisplay(uint16_t glucose) {
     disp_set_font(FONT_SMALL);
     disp_set_font_scale(2);
     disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_BLACK);
-    disp_set_pos(0.80*DISP_WIDTH+5,menuTextY[1]-3);
+    disp_set_pos(0.80*DISP_WIDTH+5,menuTextY[1]+12);
     disp_write_str_group("mg", GLUCOSE_UNIT_ID);
 
     disp_get_text_bounds("mg", 0.80*DISP_WIDTH+5, menuTextY[1]-3, &x1, &y1, &w, &h);
-    disp_draw_line(0.80*DISP_WIDTH+5, y1+h+1, 0.80*DISP_WIDTH+5+w, y1+h+1, DISP_PIXEL_WHITE);
-    disp_set_pos(0.80*DISP_WIDTH+5, menuTextY[1]+h+2);
+    disp_draw_line(0.80*DISP_WIDTH+5, y1+h+16, 0.80*DISP_WIDTH+5+w, y1+h+16, DISP_PIXEL_WHITE);
+    disp_set_pos(0.80*DISP_WIDTH+5, menuTextY[1]+h+17);
     disp_write_str_group("dL", GLUCOSE_UNIT_ID);
     disp_end_group();
     disp_set_font_scale(1);
-    disp_draw_line(x1+w-8, y1+h-1, x1+w-3, y1+h-1, DISP_PIXEL_WHITE);
+    disp_draw_line(x1+w-8, y1+h+14, x1+w-3, y1+h+14, DISP_PIXEL_WHITE);
     if (!startup)
         disp_commit();
     last_drawn[GLUCOSE_UNIT_ID] = 1;

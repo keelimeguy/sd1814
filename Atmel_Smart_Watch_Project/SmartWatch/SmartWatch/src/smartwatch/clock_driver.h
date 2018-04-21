@@ -9,10 +9,19 @@
 // If this changes, also change next_alarm() in clock_driver.c for appropriate unit
 #define RTC_ALARM_UNIT_MASK RTC_CALENDAR_ALARM_MASK_YEAR
 
-#define BATTERY_TIMEOUT 20 // s
-#define SCREEN_TIMEOUT  120 // s
-#define READING_TIMEOUT measure_get_reading_timeout()
+// (-1 means disabled)
+// Battery timer disabled as it is called every screen wakeup
+#define BATTERY_TIMEOUT -1 // s
+#define SCREEN_TIMEOUT  60 // s
 #define BUTTON_TIMEOUT 500 // ms
+// (0 means no periodic readings)
+#if DEBUG_MODE == DEBUG_MEASURE_SIM
+    #define READING_TIMEOUT 0 // s
+#else
+    // Make this greater than 10 s
+    #define READING_TIMEOUT 20 // s
+#endif
+
 
 void clock_driver_init(void);
 uint8_t is_reading_timeout(void);
