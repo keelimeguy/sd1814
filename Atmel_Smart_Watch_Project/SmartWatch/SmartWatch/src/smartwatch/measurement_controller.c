@@ -159,7 +159,6 @@ void measure_set_pulse_three(uint16_t pulse) {
 void measurement_task(void) {
     if (measure_busy) {
         #if DEBUG_MODE == DEBUG_MEASURE_SIM
-        printf("Glucose: %d\n", glucose);
         if (sim_glucose[idx]) {
             new_measurement = 1;
             glucose = sim_glucose[idx];

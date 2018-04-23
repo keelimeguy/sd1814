@@ -19,6 +19,7 @@ void bluetooth_driver_init(void) {
     cur_rindx = 0;
     write_busy = 0;
     new_notifications = 1;
+    num_notifications = 0;
     connection_state = BT_DISCONNECTED;
     for (int i=0; i< BT_MAX_BUFFER_LENGTH; i++)
         for (int j=0; j< BT_MAX_MSG_LENGTH; j++)

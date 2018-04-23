@@ -211,11 +211,11 @@ static void viewNotifications(uint8_t button) {
             disp_set_font(FONT_MEDIUM);
             last_notifications = bt_amt_notifications();
             if (bt_amt_notifications()) {
-                disp_set_pos(1, menuTextY[0]);
+                disp_set_pos(1, menuTextY[1]);
                 disp_write_str_group(bt_get_notification_1(), NOTIFICATION_1_ID);
                 disp_end_group();
                 last_drawn[NOTIFICATION_1_ID] = 1;
-                disp_set_pos(1, menuTextY[1]);
+                disp_set_pos(1, menuTextY[3]);
                 disp_write_str_group(bt_get_notification_2(), NOTIFICATION_2_ID);
                 disp_end_group();
                 if (!startup)
