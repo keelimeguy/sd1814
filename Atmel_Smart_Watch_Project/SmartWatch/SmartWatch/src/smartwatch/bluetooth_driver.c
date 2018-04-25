@@ -11,6 +11,7 @@ static volatile uint8_t cur_rxindx;
 static uint8_t num_notifications, cur_rindx, new_notifications;
 static char notificationLine1[BT_MAX_MSG_LENGTH];
 static char notificationLine2[BT_MAX_MSG_LENGTH];
+static char buffer[5];
 
 void bluetooth_driver_init(void) {
 
@@ -194,6 +195,10 @@ uint8_t bt_connection_state(void) {
 }
 
 void bt_set_connection_state(uint8_t state) {
+    if (state && !connection_state) {
+        itoa(get_measurement(), buffer, 4);
+        bt_write(buffer, 4);
+    }
     connection_state = state;
 }
 

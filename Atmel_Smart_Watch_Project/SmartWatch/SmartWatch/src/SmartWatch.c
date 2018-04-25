@@ -6,6 +6,7 @@
 #ifndef CONSOLE_VERSION
 
     static uint8_t screen_request, screen_sleep;
+    static char buffer[5];
 
     void init_all(void) {
         system_init();
@@ -46,11 +47,16 @@
         while (is_new_measurement()) {
             updateGraph(get_measurement());
             measurement_task();
+            itoa(get_measurement(), buffer, 4);
+            bt_write(buffer, 4);
+        }
         #else
         if (is_new_measurement()) {
             updateGraph(get_measurement());
-        #endif
+            itoa(get_measurement(), buffer, 4);
+            bt_write(buffer, 4);
         }
+        #endif
         battery_task();
 
         #if DEBUG_MODE==DEBUG_BUTTON_L
