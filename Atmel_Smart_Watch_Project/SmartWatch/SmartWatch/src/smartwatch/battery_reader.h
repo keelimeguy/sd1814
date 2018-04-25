@@ -7,8 +7,8 @@
 #include "../SmartWatch.h"
 
 #define MAX_ADC     4095.0f // 0xFFF
-#define MAX_V       4.0f // V
-#define MIN_V       3.3f // V
+#define MAX_V       2.0f // V
+#define MIN_V       1.65f // V
 
 void battery_reader_init(void);
 void battery_task(void);

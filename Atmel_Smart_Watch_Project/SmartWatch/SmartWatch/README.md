@@ -1,11 +1,5 @@
 ## Glucose Monitoring Smart Watch - UConn Senior Design Team 1814
 
-### TODO:
-- Make battery ADC read into interrupt and nonblocking
-- Test measurement_controller (communication with implant and data interpretation)
-- Test interrupt-driven bluetooth
-- Test and verify each component of code
-
 ### Notes:
 - Board configuration/pinout: "src/config/conf_board.h"
 - Configure startup time in: "src/config/conf_clocks.h"
@@ -46,10 +40,10 @@
 
 - **smartwatch/bluetooth_driver.c**
     - **_bluetooth\_driver.h_**
-    - :raised_hand: bluetooth_driver_init()
+    - :alien: bluetooth_driver_init()
     - :alien: is_bt_active_soft()
     - :alien: is_bt_active()
-    - :raised_hand: bt_task()
+    - :alien: bt_task()
     - :alien: bt_write()
     - :alien: bt_amt_notifications()
     - :alien: bt_new_notifications_soft()
@@ -60,7 +54,7 @@
     - :alien: bt_connection_state()
     - :alien: bt_set_connection_state()
     - :alien: set_ble_rx_buffer()
-    - :raised_hand: bt_read_callback()
+    - :alien: bt_read_callback()
     - :alien: bt_write_callback()
 
 - **smartwatch/button_listener.c**
@@ -107,18 +101,12 @@
     - :alien: updateDateDisplay()
     - :alien: updateGlucoseDisplay()
     - :alien: updateTimeDisplay()
-    - :raised_hand: updateBLEstatusDisplay()
+    - :alien: updateBLEstatusDisplay()
     - :alien: displayBattery()
-
-- **smartwatch/kalman.c**
-    - **_kalman.h_**
-    - :alien: setPointer()
-    - :alien: kalman_setT()
-    - :raised_hand: kalman_CGM()
 
 - **smartwatch/measurement_controller.c**
     - **_measurement\_controller.h_**
-    - :raised_hand: measurement_controller_init()
+    - :alien: measurement_controller_init()
     - :alien: take_measurement()
     - :alien: is_measure_busy()
     - :alien: measure_set_reading_timeout()
@@ -126,8 +114,8 @@
     - :alien: measure_set_pulse_one()
     - :alien: measure_set_pulse_two()
     - :alien: measure_set_pulse_three()
-    - :raised_hand: measurement_task()
-    - :raised_hand: do_measurement()
+    - :alien: measurement_task()
+    - :alien: do_measurement()
     - :alien: get_measurement()
     - :alien: is_new_measurement_soft()
     - :alien: is_new_measurement()
@@ -137,7 +125,7 @@
 
 - **smartwatch/UART.c**
     - **_UART.h_**
-    - :raised_hand: BLEsetup()
+    - :alien: BLEsetup()
     - :raised_hand: uart_tx()
-    - :raised_hand: uart_process_control_point_rx()
-    - :raised_hand: aci_loop()
+    - :alien: uart_process_control_point_rx()
+    - :alien: aci_loop()

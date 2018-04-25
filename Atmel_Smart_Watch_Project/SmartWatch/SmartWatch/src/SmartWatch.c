@@ -86,6 +86,11 @@
         } else {
             // Trigger battery timer for next screen activation
             set_battery_timeout(0);
+
+            if (!screen_sleep) {
+                display_off();
+                screen_sleep = 1;
+            }
         }
     }
 

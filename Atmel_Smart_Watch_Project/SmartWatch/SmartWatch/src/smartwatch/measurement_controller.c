@@ -7,12 +7,14 @@
 #define MAX_CAP 256
 
 static float freq = 0.0f;
-static volatile uint8_t new_measurement, buttonFlag;
+static volatile uint8_t new_measurement;
 static volatile uint8_t measure_busy, pulseState;
 static volatile uint16_t glucose, glucoseTemp;
 static uint16_t readingTimeout, pulseOne, pulseTwo, pulseThree, pulseCounts, numPoints;
 
 #if DEBUG_MODE != DEBUG_MEASURE_SIM
+
+#define MAX_PULSE_COUNTS 9
 
 static struct tc_module capture_instance;
 static struct extint_events eic_events;
@@ -40,7 +42,6 @@ void measurement_controller_init(void) {
     port_pin_set_config(LED_PIN, &pin);
 
     new_measurement = 0;
-    buttonFlag = 0;
     pulseState = 0;
     #if DEBUG_MODE == DEBUG_MEASURE_SIM
         measure_busy = 1;
@@ -127,8 +128,7 @@ static void enable_capture(void) {
 
 #endif
 
-void take_measurement(uint8_t button) {
-    buttonFlag = button;
+void take_measurement(void) {
     measure_busy = 1;
 }
 
@@ -168,52 +168,42 @@ void measurement_task(void) {
         }
         return;
         #else
-
-        // Mimicking blinking initialization from last year code
         switch (pulseState) {
             case 0:
-                port_pin_set_output_level(LED_PIN, true);
-                set_pulse_timeout(pulseOne);
                 pulseCounts = 0;
-                pulseState = 1;
                 glucoseTemp = 0;
                 numPoints = 0;
+
+                port_pin_set_output_level(LED_PIN, true);
+                set_pulse_timeout(pulseOne);
+                pulseState = 1;
                 break;
             case 1:
                 if (is_pulse_timeout()) {
-//                    port_pin_set_output_level(LED_PIN, false);
                     set_pulse_timeout(pulseTwo);
+                    enable_capture();
                     pulseState = 2;
                 }
                 break;
             case 2:
                 if (is_pulse_timeout()) {
-//                    port_pin_set_output_level(LED_PIN, true);
-                    if (pulseCounts<9) {
-                        pulseCounts++;
-//                      set_pulse_timeout(pulseThree);
+                    do_measurement();
+                    pulseCounts++;
+                    if (pulseCounts < MAX_PULSE_COUNTS) {
                         set_pulse_timeout(pulseTwo);
-                        do_measurement();
-    //                    pulseState = 3;
                         enable_capture();
                     } else {
                         port_pin_set_output_level(LED_PIN, false);
-                        glucose = (glucoseTemp / numPoints)%999;
-                        pulseState = 0;
+                        if (numPoints > 0) {
+                            glucose = (glucoseTemp / numPoints);
+                            new_measurement = 1;
+                        }
                         measure_busy = 0;
-                        new_measurement = 1;
+                        pulseState = 0;
                     }
                 }
                 break;
-/*            case 3:
-                if (is_pulse_timeout()) {
-                    port_pin_set_output_level(LED_PIN, false);
-                    do_measurement();
-                    pulseState = 0;
-                    measure_busy = 0;
-                }
-                break;
-*/
+
             default:
                 pulseState = 0;
                 break;

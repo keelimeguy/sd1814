@@ -107,7 +107,7 @@ extern int get_default_time_year(void);
 #  define CONF_CLOCK_OSC32K_RUN_IN_STANDBY        true
 
 /* SYSTEM_CLOCK_SOURCE_DFLL configuration - Digital Frequency Locked Loop */
-#  define CONF_CLOCK_DFLL_ENABLE                  true
+#  define CONF_CLOCK_DFLL_ENABLE                  false
 #  define CONF_CLOCK_DFLL_LOOP_MODE               SYSTEM_CLOCK_DFLL_LOOP_MODE_OPEN
 #  define CONF_CLOCK_DFLL_ON_DEMAND               true
 
@@ -125,7 +125,7 @@ extern int get_default_time_year(void);
 #  define CONF_CLOCK_DFLL_MAX_FINE_STEP_SIZE      (0xff / 4)
 
 /* SYSTEM_CLOCK_SOURCE_DPLL configuration - Digital Phase-Locked Loop */
-#  define CONF_CLOCK_DPLL_ENABLE                  false
+#  define CONF_CLOCK_DPLL_ENABLE                  true
 #  define CONF_CLOCK_DPLL_ON_DEMAND               true
 #  define CONF_CLOCK_DPLL_RUN_IN_STANDBY          false
 #  define CONF_CLOCK_DPLL_LOCK_BYPASS             false
@@ -173,7 +173,7 @@ extern int get_default_time_year(void);
 /* Configure GCLK generator 3 */
 #  define CONF_CLOCK_GCLK_3_ENABLE                true
 #  define CONF_CLOCK_GCLK_3_RUN_IN_STANDBY        false
-#  define CONF_CLOCK_GCLK_3_CLOCK_SOURCE          SYSTEM_CLOCK_SOURCE_DFLL
+#  define CONF_CLOCK_GCLK_3_CLOCK_SOURCE          SYSTEM_CLOCK_SOURCE_DPLL
 #  define CONF_CLOCK_GCLK_3_PRESCALER             1
 #  define CONF_CLOCK_GCLK_3_OUTPUT_ENABLE         false
 

@@ -366,7 +366,7 @@ static void showGraphView(uint8_t button) {
         }
 
         if (button == VIEW_BUTTON) {
-            take_measurement(1);
+            take_measurement();
         }
     }
 }

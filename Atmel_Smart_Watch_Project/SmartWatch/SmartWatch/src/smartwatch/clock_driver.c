@@ -20,9 +20,9 @@ static void battery_timer_callback(struct tcc_module *const module);
 static void button_timer_callback(struct tc_module *const module);
 
 static inline void next_alarm(void) {
-    if (READING_TIMEOUT>0) {
+    if (READING_TIMEOUT > 0) {
         alarm.time.second += READING_TIMEOUT;
-        while (alarm.time.second>=60) {
+        while (alarm.time.second >= 60) {
             alarm.time.second -= 60;
             alarm.time.minute++;
             if (alarm.time.minute>=60) {
@@ -32,8 +32,8 @@ static inline void next_alarm(void) {
                     if (alarm.time.hour == 12) {
                         if (alarm.time.pm) {
                             add_to_date_uchar(1, &(alarm.time.year), &(alarm.time.month), &(alarm.time.day));
-                            alarm.time.pm = !alarm.time.pm;
                         }
+                        alarm.time.pm = !alarm.time.pm;
                     } else
                     alarm.time.hour = 1;
                 }
@@ -286,8 +286,8 @@ static void rtc_alarm_callback(void) {
     rtc_alarm_flag = 1;
 
     /* Trigger measurement */
-    if (READING_TIMEOUT>0) {
-        take_measurement(0);
+    if (READING_TIMEOUT > 0) {
+        take_measurement();
     }
 
     /* Set new alarm */

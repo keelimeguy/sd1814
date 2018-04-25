@@ -17,7 +17,7 @@
 #define clockCyclesToMicroseconds(cycles)   ( cycles * 0.125 )
 
 void measurement_controller_init(void);
-void take_measurement(uint8_t button);
+void take_measurement(void);
 uint8_t is_measure_busy(void);
 uint16_t get_measurement(void);
 float get_freq(void);
