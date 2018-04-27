@@ -151,6 +151,9 @@ void measure_set_pulse_two(uint16_t pulse) {
     pulseTwo = pulse;
 }
 
+#if DEBUG_MODE == DEBUG_MEASURE_SIM
+static uint8_t diff = -1;
+#endif
 void measurement_task(void) {
     if (measure_busy) {
         #if DEBUG_MODE == DEBUG_MEASURE_SIM
@@ -160,6 +163,8 @@ void measurement_task(void) {
             idx++;
         } else{
             measure_busy = 0;
+            new_measurement = 1;
+            glucose = sim_glucose[idx-1]+5;
         }
         return;
         #else

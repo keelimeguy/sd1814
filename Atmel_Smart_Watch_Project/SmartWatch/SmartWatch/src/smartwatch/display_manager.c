@@ -148,6 +148,10 @@ static void updateMainDisplay(uint8_t button) {
     } else if (button & GRAPH_BUTTON) {
         showGraphView(0);
     } else {
+        if (graph_changed() && !graph_length()) {
+            lastGlucoseVal = 0;
+            newGlucose = 1;
+        }
         if (rewriteMain || newGlucose) {
             updateGlucoseDisplay(lastGlucoseVal);
             newGlucose = 0;

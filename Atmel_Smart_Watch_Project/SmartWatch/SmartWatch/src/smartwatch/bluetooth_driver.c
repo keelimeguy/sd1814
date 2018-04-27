@@ -17,7 +17,7 @@ static char notificationLine1[BT_MAX_MSG_LENGTH];
 #endif
 
 static char notificationLine2[BT_MAX_MSG_LENGTH];
-static char buffer[5];
+static char buffer[18];
 
 void bluetooth_driver_init(void) {
 
@@ -38,10 +38,10 @@ void bluetooth_driver_init(void) {
         for (int j=0; j< BT_MAX_MSG_LENGTH; j++)
             rx_buffer[i][j] = 0;
 
-	#if BLE_ENABLED
-		BLEsetup();
-		//start_read();
-	#endif
+    #if BLE_ENABLED
+        BLEsetup();
+        //start_read();
+    #endif
 }
 
 uint8_t is_bt_active_soft(void) {
