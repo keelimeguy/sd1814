@@ -27,6 +27,15 @@ static int data[GRAPH_WIDTH/BAR_WIDTH];
 static short bar_cache[GRAPH_WIDTH/BAR_WIDTH];
 static char is_changed = 0;
 
+int graph_get_recent_trend(void) {
+    if (data_length<2) return 0;
+    int idx1 = (data_start+data_length-1)%data_size;
+    int idx2 = (data_start+data_length-2)%data_size;
+    if (bar_cache[idx1] > bar_cache[idx2]) return 1;
+    if (bar_cache[idx1] < bar_cache[idx2]) return -1;
+    return 0;
+}
+
 unsigned char graph_changed(void) {
     return is_changed;
 }

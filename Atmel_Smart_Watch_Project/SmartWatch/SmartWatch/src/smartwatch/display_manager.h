@@ -9,6 +9,7 @@
 #define CLR_BUTTON               BUTTON_L_VAL
 #define GRAPH_BUTTON             BUTTON_L_VAL
 #define VIEW_BUTTON              BUTTON_R_VAL
+#define MEASURE_BUTTON           BUTTON_R_VAL
 
 #define DISP_STATE_HOME          0
 #define DISP_STATE_GRAPH         1
@@ -42,5 +43,6 @@ void display_ui_task(uint8_t button);
 void updateGraph(uint16_t glucose);
 void display_off(void);
 void display_on(void);
+int display_get_recent_graph_trend(void);
 
 #endif

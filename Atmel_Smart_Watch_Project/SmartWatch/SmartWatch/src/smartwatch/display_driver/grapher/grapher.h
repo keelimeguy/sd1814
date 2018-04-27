@@ -39,6 +39,7 @@ unsigned char graph_changed(void);
 int graph_length(void);
 int graph_min(void);
 int graph_max(void);
+int graph_get_recent_trend(void);
 
 #ifdef __cplusplus
 }

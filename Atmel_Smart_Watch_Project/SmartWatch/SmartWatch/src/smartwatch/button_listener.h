@@ -17,5 +17,6 @@ uint8_t is_button_interrupt_soft(void);
 uint8_t is_button_interrupt(void);
 uint8_t get_buttons_soft(void);
 uint8_t get_buttons(void);
+uint8_t get_buttons_held(void);
 
 #endif

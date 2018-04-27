@@ -53,6 +53,11 @@ static int updateTimeDisplay(int xoff);
 static int updateBLEstatusDisplay(int xoff);
 static int displayBattery(int xoff);
 
+int display_get_recent_graph_trend(void) {
+    return graph_get_recent_trend();
+}
+
+
 void display_manager_init(void) {
     disp_init();
     disp_set_font(FONT_DEFAULT);
@@ -203,9 +208,16 @@ static void viewNotifications(uint8_t button) {
     }
     if (button == VIEW_BUTTON) {
         updateMainDisplay(0);
+
+    #if CLEAR_GRAPH_BUTTON_ENABLED && DEBUG_MODE != DEBUG_MEASURE_SIM
+    } else if (button == CLR_BUTTON) {
+        reset_graph();
+    #else
     } else if (bt_amt_notifications() && button == CLR_BUTTON) {
+    #endif
         bt_clear_amt_notifications();
         updateMainDisplay(0);
+
     } else {
         if (bt_new_notifications() || last_notifications != bt_amt_notifications()) {
             disp_set_font(FONT_MEDIUM);
@@ -246,6 +258,19 @@ static void viewNotifications(uint8_t button) {
                 if (!startup)
                     disp_commit();
                 last_drawn[NOTIFICATION_1_ID] = 1;
+
+                #if CLEAR_GRAPH_BUTTON_ENABLED && DEBUG_MODE != DEBUG_MEASURE_SIM
+                disp_set_pos(1, menuTextY[6]);
+                disp_set_font(FONT_SMALL);
+                disp_write_str_group("< Clear", LEFT_BUTTON_ID);
+                disp_end_group();
+                if (!startup)
+                    disp_commit();
+                last_drawn[LEFT_BUTTON_ID] = 1;
+                #else
+                disp_remove_str_group(LEFT_BUTTON_ID);
+                #endif
+
                 disp_remove_str_group(NOTIFICATION_2_ID);
                 uint8_t x1;
                 uint8_t w;
@@ -256,7 +281,6 @@ static void viewNotifications(uint8_t button) {
                 disp_set_pos(DISP_WIDTH-w-1, menuTextY[6]);
                 disp_write_str_group("Back >", RIGHT_BUTTON_ID);
                 disp_end_group();
-                disp_remove_str_group(LEFT_BUTTON_ID);
                 if (!startup)
                     disp_commit();
                 last_drawn[RIGHT_BUTTON_ID] = 1;
@@ -341,6 +365,24 @@ static void showGraphView(uint8_t button) {
             }
         }
 
+        #if DEBUG_MODE != DEBUG_MEASURE_SIM
+        if (is_measure_busy()) {
+            itoa(get_measurement_continuous(), buffer, 10);
+            uint8_t x, w, y, h;
+            disp_get_text_bounds(buffer, 0, 0, &x, &y, &w, &h);
+            disp_set_pos(DISP_WIDTH-w-x-1, menuTextY[5]);
+            disp_write_str_group(buffer, GLUCOSE_VAL_ID);
+            disp_end_group();
+            last_drawn[GLUCOSE_VAL_ID] = 1;
+            if (!startup)
+                disp_commit();
+        } else if (last_drawn[GLUCOSE_VAL_ID]) {
+            disp_remove_str_group(GLUCOSE_VAL_ID);
+            last_drawn[GLUCOSE_VAL_ID] = 0;
+            disp_commit();
+        }
+        #endif
+
         if (graph_refresh) {
             disp_set_font(FONT_SMALL);
             disp_set_pos(1, menuTextY[6]);
@@ -365,7 +407,7 @@ static void showGraphView(uint8_t button) {
             graph_refresh = 0;
         }
 
-        if (button == VIEW_BUTTON) {
+        if (button == MEASURE_BUTTON) {
             take_measurement();
         }
     }

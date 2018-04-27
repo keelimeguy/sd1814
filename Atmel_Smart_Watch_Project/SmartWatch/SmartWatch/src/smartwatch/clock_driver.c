@@ -20,8 +20,8 @@ static void battery_timer_callback(struct tcc_module *const module);
 static void button_timer_callback(struct tc_module *const module);
 
 static inline void next_alarm(void) {
-    if (READING_TIMEOUT > 0) {
-        alarm.time.second += READING_TIMEOUT;
+    if (measure_get_reading_timeout() > 0) {
+        alarm.time.second += measure_get_reading_timeout();
         while (alarm.time.second >= 60) {
             alarm.time.second -= 60;
             alarm.time.minute++;
@@ -87,7 +87,7 @@ void clock_driver_init(void) {
     //  256 prescaler at 31250 compare match => 8e6/31250*256 = 1Hz
     config_tcc.counter.clock_source = GCLK_GENERATOR_0;
     config_tcc.counter.clock_prescaler = TCC_CLOCK_PRESCALER_DIV256;
-    config_tcc.counter.period =   0x7a11; // 31250-1
+    config_tcc.counter.period = 0x7a11; // 31250-1
 
     tcc_init(&screen_timer, TCC0, &config_tcc);
 
@@ -102,10 +102,10 @@ void clock_driver_init(void) {
     tcc_get_config_defaults(&config_tcc, TCC1);
 
     // Assuming GCLK generator 0 source is 8MHz:
-    //  256 prescaler at 31250 compare match => 8e6/31250*256 = 1Hz
+    //  256 prescaler at 31250 compare match => 8e6/125*64 = 1kHz
     config_tcc.counter.clock_source = GCLK_GENERATOR_0;
-    config_tcc.counter.clock_prescaler = TCC_CLOCK_PRESCALER_DIV256;
-    config_tcc.counter.period =   0x7a11; // 31250-1
+    config_tcc.counter.clock_prescaler = TCC_CLOCK_PRESCALER_DIV64;
+    config_tcc.counter.period = 0x7c; // 125-1
 
     tcc_init(&pulse_timer, TCC1, &config_tcc);
 
@@ -123,7 +123,7 @@ void clock_driver_init(void) {
     //  256 prescaler at 31250 compare match => 8e6/31250*256 = 1Hz
     config_tcc.counter.clock_source = GCLK_GENERATOR_0;
     config_tcc.counter.clock_prescaler = TCC_CLOCK_PRESCALER_DIV256;
-    config_tcc.counter.period =   0x7a11; // 31250-1
+    config_tcc.counter.period = 0x7a11; // 31250-1
 
     tcc_init(&battery_timer, TCC2, &config_tcc);
 
@@ -144,7 +144,7 @@ void clock_driver_init(void) {
     config_tc.wave_generation = TC_WAVE_GENERATION_MATCH_FREQ;
     config_tc.clock_source = GCLK_GENERATOR_0;
     config_tc.clock_prescaler = TC_CLOCK_PRESCALER_DIV64;
-    config_tc.counter_16_bit.compare_capture_channel[TC_COMPARE_CAPTURE_CHANNEL_0] =   0x7c; // 125-1
+    config_tc.counter_16_bit.compare_capture_channel[TC_COMPARE_CAPTURE_CHANNEL_0] = 0x7c; // 125-1
 
     tc_init(&button_timer, TC3, &config_tc);
 
@@ -286,7 +286,7 @@ static void rtc_alarm_callback(void) {
     rtc_alarm_flag = 1;
 
     /* Trigger measurement */
-    if (READING_TIMEOUT > 0) {
+    if (measure_get_reading_timeout() > 0) {
         take_measurement();
     }
 

@@ -6,7 +6,7 @@
 #ifndef CONSOLE_VERSION
 
     static uint8_t screen_request, screen_sleep;
-    static char buffer[5];
+    static char buffer[18];
 
     void init_all(void) {
         system_init();
@@ -47,14 +47,14 @@
         while (is_new_measurement()) {
             updateGraph(get_measurement());
             measurement_task();
-            itoa(get_measurement(), buffer, 4);
-            bt_write(buffer, 4);
+            sprintf((char*)buffer, "%3d%3d%3d%3d%3d%3d", 0,get_measurement(),0,display_get_recent_graph_trend(),0,0);
+            bt_write(buffer, 18);
         }
         #else
         if (is_new_measurement()) {
             updateGraph(get_measurement());
-            itoa(get_measurement(), buffer, 4);
-            bt_write(buffer, 4);
+            sprintf((char*)buffer, "%3d%3d%3d%3d%3d%3d", 0,get_measurement(),0,display_get_recent_graph_trend(),0,0);
+            bt_write(buffer, 18);
         }
         #endif
         battery_task();

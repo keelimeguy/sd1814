@@ -9,7 +9,13 @@ static volatile uint8_t rx_buffer_len, write_busy;
 static volatile uint8_t connection_state;
 static volatile uint8_t cur_rxindx;
 static uint8_t num_notifications, cur_rindx, new_notifications;
+
+#if DEBUG_MODE == DEBUG_MEASURE_SIM
+static char notificationLine1[BT_MAX_MSG_LENGTH] = "1 Missed Call";
+#else
 static char notificationLine1[BT_MAX_MSG_LENGTH];
+#endif
+
 static char notificationLine2[BT_MAX_MSG_LENGTH];
 static char buffer[5];
 
@@ -20,8 +26,14 @@ void bluetooth_driver_init(void) {
     cur_rindx = 0;
     write_busy = 0;
     new_notifications = 1;
+
+#if DEBUG_MODE == DEBUG_MEASURE_SIM
+    num_notifications = 1;
+#else
     num_notifications = 0;
+#endif
     connection_state = BT_DISCONNECTED;
+
     for (int i=0; i< BT_MAX_BUFFER_LENGTH; i++)
         for (int j=0; j< BT_MAX_MSG_LENGTH; j++)
             rx_buffer[i][j] = 0;
@@ -46,8 +58,6 @@ void bt_task(void) {
     if (rx_buffer_len) {
         char paramData[BT_MAX_MSG_LENGTH] = {0};
         rx_buffer_len--;
-
-        // Commands copied over from 2016-17 project
 
         // Set date and time
         if (rx_buffer[cur_rindx][0] == 'D') {
@@ -131,11 +141,14 @@ void bt_task(void) {
 }
 
 uint8_t bt_write(uint8_t *tx_data, uint16_t length) {
-    if (length > BT_MAX_MSG_LENGTH-1)
-        return 0;
-    write_busy = 1;
-    uart_tx(tx_data, length);
-    return 1;
+    if (connection_state) {
+        if (length > BT_MAX_MSG_LENGTH-1)
+            return 0;
+        write_busy = 1;
+        uart_tx(tx_data, length);
+        return 1;
+    }
+    return 0;
 }
 
 uint8_t bt_amt_notifications(void) {
@@ -196,8 +209,8 @@ uint8_t bt_connection_state(void) {
 
 void bt_set_connection_state(uint8_t state) {
     if (state && !connection_state) {
-        itoa(get_measurement(), buffer, 4);
-        bt_write(buffer, 4);
+        sprintf((char*)buffer, "%3d%3d%3d%3d%3d%3d", 0,get_measurement(),0,display_get_recent_graph_trend(),0,0);
+        bt_write(buffer, 18);
     }
     connection_state = state;
 }

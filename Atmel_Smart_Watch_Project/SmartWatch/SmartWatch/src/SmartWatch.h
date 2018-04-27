@@ -12,8 +12,11 @@
     #define PROGMEM
     #endif
 
-    #define BLE_ENABLED          1 // 0 = Bluetooth is disabled
-    #define BOARD_DISPLAY_ROTATE 0 // 1 = Rotate the display 90o
+    #define BLE_ENABLED                1 // 0 = Bluetooth is disabled
+    #define BOARD_DISPLAY_ROTATE       0 // 1 = Rotate the display 90o
+
+    // No effect when DEBUG_MODE==DEBUG_MEASURE_SIM
+    #define CLEAR_GRAPH_BUTTON_ENABLED 1 // 1 = Clear button in notification window will clear graph
 
     #define DEBUG_NONE           0
     #define DEBUG_CLOCK          1
@@ -26,6 +29,7 @@
     #define DEBUG_MEASURE_SIM    8
     #define DEBUG_MEASURE_FREQ   9
 
+    // #define DEBUG_MODE DEBUG_NONE
     #define DEBUG_MODE DEBUG_MEASURE_SIM
 
     #include "smartwatch/clock_driver.h"

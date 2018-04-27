@@ -9,12 +9,12 @@
 static float freq = 0.0f;
 static volatile uint8_t new_measurement;
 static volatile uint8_t measure_busy, pulseState;
-static volatile uint16_t glucose, glucoseTemp;
-static uint16_t readingTimeout, pulseOne, pulseTwo, pulseThree, pulseCounts, numPoints;
+static volatile uint32_t glucoseTemp;
+static uint16_t glucose, readingTimeout, pulseOne, pulseTwo, pulseCounts;//, numPoints;
 
 #if DEBUG_MODE != DEBUG_MEASURE_SIM
 
-#define MAX_PULSE_COUNTS 9
+#define MAX_PULSE_COUNTS 65535
 
 static struct tc_module capture_instance;
 static struct extint_events eic_events;
@@ -50,11 +50,10 @@ void measurement_controller_init(void) {
     #endif
     glucose = 0;
     glucoseTemp = 0;
-    pulseOne = 1;    // 1 s
-    pulseTwo = 1;    // 1 s
-    pulseThree = 6;  // 6 s
+    pulseOne = 1000;    // 1000 ms
+    pulseTwo = 100;    // 100 ms
     pulseCounts = 0;
-    numPoints = 0;
+    // numPoints = 0;
 
 #if DEBUG_MODE != DEBUG_MEASURE_SIM
     nCap = 0;
@@ -152,10 +151,6 @@ void measure_set_pulse_two(uint16_t pulse) {
     pulseTwo = pulse;
 }
 
-void measure_set_pulse_three(uint16_t pulse) {
-    pulseThree = pulse;
-}
-
 void measurement_task(void) {
     if (measure_busy) {
         #if DEBUG_MODE == DEBUG_MEASURE_SIM
@@ -172,7 +167,7 @@ void measurement_task(void) {
             case 0:
                 pulseCounts = 0;
                 glucoseTemp = 0;
-                numPoints = 0;
+                // numPoints = 0;
 
                 port_pin_set_output_level(LED_PIN, true);
                 set_pulse_timeout(pulseOne);
@@ -189,15 +184,18 @@ void measurement_task(void) {
                 if (is_pulse_timeout()) {
                     do_measurement();
                     pulseCounts++;
-                    if (pulseCounts < MAX_PULSE_COUNTS) {
-                        set_pulse_timeout(pulseTwo);
+                    if (/*numPoints < MAX_PULSE_COUNTS && */(get_buttons_held() & MEASURE_BUTTON)) {
                         enable_capture();
                     } else {
                         port_pin_set_output_level(LED_PIN, false);
-                        if (numPoints > 0) {
-                            glucose = (glucoseTemp / numPoints);
-                            new_measurement = 1;
-                        }
+
+                        // if (numPoints > 0) {
+                            // glucose = (glucoseTemp / numPoints);
+                            // new_measurement = 1;
+                        // }
+                        glucose = glucoseTemp%999;
+                        new_measurement = 1;
+
                         measure_busy = 0;
                         pulseState = 0;
                     }
@@ -220,7 +218,7 @@ static void capture_event_callback(struct tc_module *const module) {
     // pulse_widths[nCap] = TC4->COUNT16.CC[1].bit.CC;
     if (++nCap == MAX_CAP) {
         disable_capture();
-        //set_pulse_timeout(0);
+        // set_pulse_timeout(0);
     }
 }
 
@@ -229,7 +227,7 @@ static void do_measurement(void) {
 
     if (nCap < 1)
         return; // Failure
-    numPoints++;
+    // numPoints++;
     uint32_t sum = 0;
     // Start at 1, to ignore first read value
     for (uint16_t i = 1; i < nCap; i ++) {
@@ -240,13 +238,20 @@ static void do_measurement(void) {
     freq = 8000000.0f * (float)(nCap-1) / (float)sum;
     nCap = 0;
 
-    // 1kHz -> 80, 2kHz -> 85
-    // m = 0.005
-    // glucose = m(freq-1000)+80
-    glucoseTemp += 0.005f*(freq-1000.0f)+80;
+    glucoseTemp = M_STEP_CONVERSION*(freq-BASE_FREQ)+BASE_GLUCOSE;
+    // glucoseTemp += M_STEP_CONVERSION*(freq-BASE_FREQ)+BASE_GLUCOSE;
 }
 
 #endif
+
+uint32_t get_measurement_continuous(void) {
+    #if DEBUG_MODE != DEBUG_MEASURE_SIM
+    // if (numPoints>0)
+        // return glucoseTemp/numPoints;
+    return glucoseTemp;
+    #endif
+    return glucose;
+}
 
 uint16_t get_measurement(void) {
     return glucose;
