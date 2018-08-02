@@ -43,4 +43,3 @@ ReleaseServer
 
 *.componentinfo.xml
 
-!SmartWatch/SmartWatch/src/ASF/thirdparty/CMSIS/lib/GCC/*
