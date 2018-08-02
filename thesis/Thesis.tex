@@ -1,0 +1,95 @@
+\documentclass[defaultstyle,11pt]{thesis}
+
+\usepackage{amssymb}        % to get all AMS symbols
+\usepackage{graphicx}       % to insert figures
+\usepackage{hyperref}       % PDF hyperreferences??
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{changepage}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{pdfpages}
+
+\makeatletter
+\newcommand\mat{{\ifnum\z@=`}\fi\@mat}
+\def\@mat[#1]{\begin{matrix}#1\end{matrix}\ifnum\z@=`{\fi}}
+\makeatother
+
+\newcommand{\nl}{\hfill \break}
+\newcommand{\figref}[1]{\hyperref[#1]{Figure~\ref*{#1}}}
+\newcommand{\equref}[1]{\hyperref[#1]{Equation~\ref*{#1}}}
+
+\lstset{
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  frame=single,
+  breaklines=true,
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+  language=c,
+}
+
+%%%%%%%%%%%%   All the preamble material:   %%%%%%%%%%%%
+
+\title{Development of the Codebase for ECE Design: Smartwatch Device and App for Continuous Glucose Monitoring}
+
+\author{Keelin}{Becker-Wheeler}
+
+\otherdegrees{Computer Engineering}
+
+\degree{Bachelor of Science in Engineering}       %  #1 {long descr.}
+    {B.S.E., Computer Engineering}     %  #2 {short descr.}
+
+\dept{Department of}            %  #1 {designation}
+    {Electrical and Computer Engineering}        %  #2 {name}
+
+\advisor{Prof.}             %  #1 {title}
+    {John Chandy}          %  #2 {name}
+
+\reader{Krishna Pattipati}       %  2nd person to sign thesis
+\readerThree{~}     %  3rd person to sign thesis
+
+\abstract{  \OnePageChapter % because it is very short
+    \textbf{Abstract --} This honors thesis describes the development of the codebase for the 2018 University of Connecticut ECE Senior Design project titled ``Smartwatch Device and App for Continuous Glucose Monitoring''. The goal for the senior design project is to remove the dependencies imposed by a previously-designed prototype of a glucose-monitoring smartwatch, by creating a new custom device without those dependencies. Development of the new codebase involves splitting the tasks of an Arduino codebase into a number of logical components that are then implemented in C. This new codebase makes substantial improvements to the overall program structure and organization, as well as numerous functional additions. An API for writing graphics to a given display is written and implemented for two LCD controllers as well as for the standard output stream. This graphics API uses a buffering strategy and partial screen rendering to achieve faster display writing. Functions that plot incoming data on an auto-scaling bar graph are implemented as well. The resulting codebase realizes the firmware for a custom smartwatch controlled by an ATSAMD21G18A microcontroller. This smartwatch is designed to periodically read the frequency of an incoming signal to determine and display the current glucose level of a user. The program supports Bluetooth communication with a smartphone app and a deep sleep mode to save battery during inactivity. Current time and date are kept and displayed to the user, as well as battery and Bluetooth connection information. A user interacts with the smartwatch using two buttons.
+    }
+
+\dedication[Dedication]{    % NEVER use \OnePageChapter here.
+    % To all of the fluffy kitties.
+    }
+
+\acknowledgements{  \OnePageChapter % *MUST* BE ONLY ONE PAGE!
+    This honors thesis is completed in parallel with the 2018 University of Connecticut ECE Senior Design project titled ``Smartwatch Device and App for Continuous Glucose Monitoring''. The senior design project is completed as a group effort between Alexander Valdes, Richard Mullen, and myself as well as a Mechanical Engineering team consisting of Chloe Vollaro and Danielle Browning. The senior design project is sponsored by Biorasis, with the advising support of Allen Legassey. The faculty advisor for the senior design project is also the supervisor for this honors thesis; that person is Professor John Chandy.
+    }
+
+% \IRBprotocol{E927F29.001X}    % optional!
+
+\ToCisShort % use this only for 1-page Table of Contents
+
+\LoFisShort % use this only for 1-page Table of Figures
+% \emptyLoF % use this if there is no List of Figures
+
+\LoTisShort % use this only for 1-page Table of Tables
+% \emptyLoT % use this if there is no List of Tables
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%       BEGIN DOCUMENT...         %%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\input macros.tex
+\input chapter1.tex
+\input chapter2.tex
+\input chapter3.tex
+
+%%%%%%%%%   then the Bibliography, if any   %%%%%%%%%
+\bibliographystyle{plain}   % or "siam", or "alpha", etc.
+\nocite{*}      % list all refs in database, cited or not
+\bibliography{refs}     % Bib database in "refs.bib"
+
+%%%%%%%%%   then the Appendices, if any   %%%%%%%%%
+\appendix
+\input appendixA.tex
+% \input appendixB.tex
+
+
+\end{document}

@@ -1,0 +1,718 @@
+\chapter{Selected Code Samples}	% *NOT* \OnePageChapter
+
+% \paragraph{About appendices:}
+% 	Each appendix follow the same page-numbering rules
+% 	as a regular chapter; the first page of a
+% 	(multi-page) appendix is not numbered.
+% 	By the way, the following are supposedly
+% 	authentic answers to English GCSE exams!
+
+\begin{enumerate}[label=\textbf{S.\arabic*},ref=S.\arabic*{ of Appendix A}]
+
+\item \label{main}
+\begin{adjustwidth}{-2em}{0pt}
+\singlespacing
+\nl
+\begin{lstlisting}
+int main(void) {
+    init_all();
+
+    for(;;) {
+        while (is_active()) {
+            smartwatch_task();
+        }
+        sleep();
+        wakeup();
+    }
+    return 0;
+}
+\end{lstlisting}
+\end{adjustwidth}
+\doublespacing
+
+
+\item \label{smartwatch_task}
+\begin{adjustwidth}{-2em}{0pt}
+\singlespacing
+\nl
+\begin{lstlisting}
+// Smartwatch core task
+void smartwatch_task(void) {
+    // Perform smartwatch subtasks:
+
+    // Bluetooth driver task
+    bt_task();
+
+    // Measurement controller task
+    measurement_task();
+    if (is_new_measurement()) {
+        updateGraph(get_measurement());
+        itoa(get_measurement(), buffer, 4);
+        bt_write(buffer, 4);
+    }
+
+    if (is_screen_active()) {
+        // (Only need to deal with new battery reads if screen is active)
+        // Battery reader task
+        battery_task();
+        if (!is_battery_active() && is_battery_timeout()) {
+            start_battery_read();
+            set_battery_timeout(BATTERY_TIMEOUT);
+        }
+
+        uint8_t buttons = get_buttons(); // Returns identifier to determine which buttons were pressed
+        // Display manager task
+        display_ui_task(buttons);
+
+        // We need to set a timeout for screen if it was freshly activated
+        if (screen_request || buttons) { // i.e. by explicit request or button press
+            screen_request = 0;
+
+            // Wakeup screen if needed
+            if (screen_sleep) {
+                screen_sleep = 0;
+                disp_sleep_disable();
+            }
+
+            set_screen_timeout(SCREEN_TIMEOUT);
+        }
+    } else {
+        // Trigger battery timer for next screen activation
+        set_battery_timeout(0);
+
+        if (!screen_sleep) {
+            display_off();
+            screen_sleep = 1;
+        }
+    }
+}
+\end{lstlisting}
+\end{adjustwidth}
+\doublespacing
+
+\item \label{display_ui_task}
+\begin{adjustwidth}{-2em}{0pt}
+\singlespacing
+\nl
+\begin{lstlisting}
+// Display manager task
+void display_ui_task(uint8_t button) {
+    // Display header
+    int offset = updateTimeDisplay(DISP_WIDTH);
+    offset = displayBattery(offset);
+    offset = updateBLEstatusDisplay(offset);
+    updateDateDisplay(-1);
+
+    // Display window
+    switch(currentDisplayState) {
+        case DISP_STATE_HOME:
+            updateMainDisplay(button);
+            break;
+
+        case DISP_STATE_GRAPH:
+            showGraphView(button);
+            break;
+
+        case DISP_STATE_NOTIFICATION:
+            viewNotifications(button);
+            break;
+
+        default:
+            currentDisplayState = DISP_STATE_HOME;
+            rewriteMain = 1;
+            initScreen();
+    }
+
+    if (startup) {
+        disp_commit();
+        startup = 0;
+    }
+}
+\end{lstlisting}
+\end{adjustwidth}
+\doublespacing
+
+\item \label{graph}
+\begin{adjustwidth}{-2em}{0pt}
+\singlespacing
+\nl
+\begin{lstlisting}
+void graph(int clear) {
+    int i, x, y, index;
+    short bar[data_length];
+
+    if (data_start>data_length) return;
+    // Fill new structure with precomputed bar heights, in the correct order
+    // Rather than to have to worry about the ordering during draw phase
+    for (y=0, i=data_start; i<data_length; i++, y++)
+        bar[y] = bar_cache[i];
+    for (y=data_length-data_start, i=0; i<data_start; i++, y++)
+        bar[y] = bar_cache[i];
+
+    if (clear)
+        GRAPH_RESET();
+    for (y=MAX_BAR_HEIGHT; y>0; y--) {
+        for (x=0; x<GRAPH_WIDTH-(GRAPH_WIDTH%BAR_WIDTH)-data_length*BAR_WIDTH; x++) {
+            GRAPH_PIXEL_OFF(x, y);
+        }
+        for (x=GRAPH_WIDTH-(GRAPH_WIDTH%BAR_WIDTH)-data_length*BAR_WIDTH, i=0; i<GRAPH_WIDTH-(GRAPH_WIDTH%BAR_WIDTH); i++, x++) {
+            if ((i/BAR_WIDTH)>=data_length) break;
+            index = (data_start+i/BAR_WIDTH)%data_length;
+            if (bar[i/BAR_WIDTH]>=y)
+                // Color the pixels based on glucose level (whether too high or too low)
+                if (data[index]>=DISP_DANGER_HIGH)
+                    GRAPH_PIXEL_DANGER(x, y);
+                else if (data[index]>=DISP_WARNING_HIGH)
+                    GRAPH_PIXEL_WARNING(x, y);
+                else if (data[index]<=DISP_DANGER_LOW)
+                    GRAPH_PIXEL_DANGER(x, y);
+                else if (data[index]<=DISP_WARNING_LOW)
+                    GRAPH_PIXEL_WARNING(x, y);
+                else
+                    GRAPH_PIXEL_ON(x, y);
+            else
+                GRAPH_PIXEL_OFF(x, y);
+        }
+    }
+    is_changed = 0;
+}
+\end{lstlisting}
+\end{adjustwidth}
+\doublespacing
+
+\item \label{graph_smart_sizing}
+\begin{adjustwidth}{-2em}{0pt}
+\singlespacing
+\nl
+\begin{lstlisting}
+void graph_smart_sizing(unsigned short* xret, unsigned short* yret, unsigned short* widthret, unsigned short* heightret) {
+    int i, index;
+    short x, y;
+    short bar[data_length];
+
+    *xret = 0;
+    *yret = 0;
+    *widthret = 0;
+    *heightret = 0;
+
+    if (data_start>data_length) return;
+    // Fill new structure with precomputed bar heights, in the correct order
+    // Rather than to have to worry about the ordering during draw phase
+    for (y=0, i=data_start; i<data_length; i++, y++)
+        bar[y] = bar_cache[i];
+    for (y=data_length-data_start, i=0; i<data_start; i++, y++)
+        bar[y] = bar_cache[i];
+
+    *xret = DISP_GRAPH_X + GRAPH_WIDTH-(GRAPH_WIDTH%BAR_WIDTH)-data_length*BAR_WIDTH;
+    *widthret = GRAPH_WIDTH-(GRAPH_WIDTH%BAR_WIDTH);
+    for (x=*xret-DISP_GRAPH_X, i=0; i<*widthret; i++, x++) {
+        if ((i/BAR_WIDTH)>=data_length) {
+            *widthret = i;
+            break;
+        }
+        for (y=0; y<bar[i/BAR_WIDTH]; y++) {
+            index = (data_start+i/BAR_WIDTH)%data_length;
+            // Color the pixels based on glucose level (whether too high or too low)
+            if (data[index]>=DISP_DANGER_HIGH)
+                GRAPH_PIXEL_DANGER(x, y);
+            else if (data[index]>=DISP_WARNING_HIGH)
+                GRAPH_PIXEL_WARNING(x, y);
+            else if (data[index]<=DISP_DANGER_LOW)
+                GRAPH_PIXEL_DANGER(x, y);
+            else if (data[index]<=DISP_WARNING_LOW)
+                GRAPH_PIXEL_WARNING(x, y);
+            else
+                GRAPH_PIXEL_ON(x, y);
+        }
+        if (bar[i/BAR_WIDTH] > (*heightret))
+            *heightret = bar[i/BAR_WIDTH];
+    }
+
+    *yret = DISP_GRAPH_Y+DISP_GRAPH_HEIGHT-1-*heightret;
+    *heightret = *heightret + 1;
+    is_changed = 0;
+}
+\end{lstlisting}
+\end{adjustwidth}
+\doublespacing
+
+\item \label{disp_write_pixel_at}
+\begin{adjustwidth}{-2em}{0pt}
+\singlespacing
+\nl
+\begin{lstlisting}
+static inline void DISPLAY_DRIVER_WRITE(uint8_t x, uint8_t y, uint16_t color) {
+        if (x%2) {
+            x = (int)((x-1)*1.5f)+1;
+            buffer[x+y*ADJ_WIDTH] = (buffer[x+y*ADJ_WIDTH]&0xf0) | ((color>>8)&0xf);
+            buffer[(x+1)+y*ADJ_WIDTH] = color&0xff;
+        } else {
+            x = (int)(x*1.5f);
+            buffer[x+y*ADJ_WIDTH] = (color>>4)&0xff;
+            buffer[(x+1)+y*ADJ_WIDTH] = ((color&0xf)<<4) | (buffer[(x+1)+y*ADJ_WIDTH]&0xf);
+        }
+}
+
+void disp_write_pixel_at(uint8_t x, uint8_t y, uint16_t color) {
+    if (x<DISP_WIDTH && y<DISP_HEIGHT) {
+        // Write pixel to the buffer, at given screen position
+        DISPLAY_DRIVER_WRITE(x, y, color);
+
+        // Compute bounds for partial screen rendering
+        if (new_write) {
+            new_write = 0;
+            leftx = x;
+            rightx = x;
+            topy = y;
+            bottomy = y;
+        } else {
+            if (x < leftx)
+                leftx = x;
+            else if (x > rightx)
+                rightx = x;
+            if (y < topy)
+                topy = y;
+            else if (y > bottomy)
+                bottomy = y;
+        }
+    }
+}
+\end{lstlisting}
+\end{adjustwidth}
+\doublespacing
+
+\item \label{disp_write_str_group}
+\begin{adjustwidth}{-2em}{0pt}
+\singlespacing
+\nl
+\begin{lstlisting}
+void disp_write_str_group(const char *str, uint8_t group_id) {
+    if (group_id>0 && group_id<=MAX_WRITE_ID) {
+        uint8_t x, y, w, h;
+        disp_get_text_bounds(str, cursor_x, cursor_y, &x, &y, &w, &h);
+
+        // Clear previous group if it exists
+        if (!keep_group && lastwidth[group_id-1] > 0) {
+            disp_fill_rect(lastx[group_id-1], lasty[group_id-1], lastwidth[group_id-1], lastheight[group_id-1], textbgcolor);
+        }
+
+        // Update bounds of current group
+        if (keep_group && lastwidth[group_id-1] > 0) { // Assumes a single line
+            if (y < lasty[group_id-1]) {
+                if (lasty[group_id-1]+lastheight[group_id-1] >= y+h) {
+                    lastheight[group_id-1] = lasty[group_id-1]-y+lastheight[group_id-1];
+                } else {
+                    lastheight[group_id-1] = h;
+                }
+                lasty[group_id-1] = y;
+            } else if (lasty[group_id-1]+lastheight[group_id-1] < y+h) {
+                lastheight[group_id-1] = y-lasty[group_id-1]+h;
+            }
+            if (x > lastx[group_id-1]) {
+                lastwidth[group_id-1] = x - lastx[group_id-1] + w;
+            } else {
+                lastwidth[group_id-1] += w;
+            }
+        } else {
+            lastx[group_id-1] = x;
+            lasty[group_id-1] = y;
+            lastwidth[group_id-1] = w;
+            lastheight[group_id-1] = h;
+        }
+    }
+    keep_group = 1;
+    disp_write_str(str);
+}
+\end{lstlisting}
+\end{adjustwidth}
+\doublespacing
+
+\item \label{updateMainDisplay}
+\begin{adjustwidth}{-2em}{0pt}
+\singlespacing
+\nl
+\begin{lstlisting}
+static void updateMainDisplay(uint8_t button) {
+    disp_set_color(DISP_PIXEL_WHITE, DISP_PIXEL_BLACK);
+    // Make sure the state of the window is set to the main window state
+    if (startup) {
+        currentDisplayState = DISP_STATE_HOME;
+        rewriteMain = 1;
+        initScreen();
+    } else if (currentDisplayState != DISP_STATE_HOME) {
+        currentDisplayState = DISP_STATE_HOME;
+        rewriteMain = 1;
+        // Assuming button IDs are only IDs greater than graph ID
+        for (int i = 0; i <= GRAPH_ID; i++) {
+            // Remove groups from previous window
+            // (But not button text, to optimize performance)
+            if (last_drawn[i]) disp_remove_str_group(i);
+            last_drawn[i] = 0;
+        }
+    }
+
+    // Update state of window on button presses
+    if (button & VIEW_BUTTON) {
+        viewNotifications(0);
+    } else if (button & GRAPH_BUTTON) {
+        showGraphView(0);
+
+    } else {
+        // Draw the main window, only if it needs redrawing due to an update
+
+        if (rewriteMain || newGlucose) {
+            // Draw glucose display
+            updateGlucoseDisplay(lastGlucoseVal);
+            newGlucose = 0;
+        }
+        if (rewriteMain || lastAmtNotificationsShown != bt_amt_notifications()) {
+            lastAmtNotificationsShown = bt_amt_notifications();
+
+            // Draw number of notifications
+            disp_set_font(FONT_MEDIUM);
+            disp_set_pos(1, (menuTextY[4]+menuTextY[5])/2);
+            if (!bt_amt_notifications()) {
+                disp_write_str_group("No notifications.", NOTIFICATION_NUM_ID);
+                disp_end_group();
+                last_drawn[NOTIFICATION_NUM_ID] = 1;
+            } else {
+                disp_write_str_group(itoa(bt_amt_notifications(), buffer, 10), NOTIFICATION_NUM_ID);
+                disp_write_str_group(" notification", NOTIFICATION_NUM_ID);
+                if (bt_amt_notifications() > 1)
+                    disp_write_str_group("s", NOTIFICATION_NUM_ID);
+                disp_write_str_group(".", NOTIFICATION_NUM_ID);
+                disp_end_group();
+                last_drawn[NOTIFICATION_NUM_ID] = 1;
+            }
+            if (!startup)
+                disp_commit();
+
+            // Draw button text at bottom of screen
+            disp_set_font(FONT_SMALL);
+            disp_set_pos(1, menuTextY[6]);
+            disp_write_str_group("< Graph", LEFT_BUTTON_ID);
+            disp_end_group();
+            if (!startup)
+                disp_commit();
+            last_drawn[LEFT_BUTTON_ID] = 1;
+            uint8_t x, w, y, h;
+            disp_get_text_bounds("View >", 0, 0, &x, &y, &w, &h);
+            disp_set_pos(DISP_WIDTH-w-1, menuTextY[6]);
+            disp_write_str_group("View >", RIGHT_BUTTON_ID);
+            disp_end_group();
+            if (!startup)
+                disp_commit();
+            last_drawn[RIGHT_BUTTON_ID] = 1;
+            rewriteMain = 0;
+        }
+    }
+}
+\end{lstlisting}
+\end{adjustwidth}
+\doublespacing
+
+\item \label{rtc_alarm_callback}
+\begin{adjustwidth}{-2em}{0pt}
+\singlespacing
+\nl
+\begin{lstlisting}
+static inline void next_alarm(void) {
+    if (READING_TIMEOUT > 0) {
+        alarm.time.second += READING_TIMEOUT;
+        while (alarm.time.second >= 60) {
+            alarm.time.second -= 60;
+            alarm.time.minute++;
+            if (alarm.time.minute>=60) {
+                alarm.time.minute = 0;
+                alarm.time.hour++;
+                if (alarm.time.hour > 11) {
+                    if (alarm.time.hour == 12) {
+                        if (alarm.time.pm) {
+                            add_to_date_uchar(1, &(alarm.time.year), &(alarm.time.month), &(alarm.time.day));
+                        }
+                        alarm.time.pm = !alarm.time.pm;
+                    } else
+                    alarm.time.hour = 1;
+                }
+            }
+        }
+    }
+}
+
+static void rtc_alarm_callback(void) {
+    rtc_alarm_flag = 1;
+
+    // Trigger measurement
+    if (READING_TIMEOUT > 0) {
+        take_measurement();
+    }
+
+    // Set new alarm
+    next_alarm();
+
+    rtc_calendar_set_alarm(&rtc_instance, &alarm, RTC_CALENDAR_ALARM_0);
+}
+\end{lstlisting}
+\end{adjustwidth}
+\doublespacing
+
+\item \label{screen_timer_callback}
+\begin{adjustwidth}{-2em}{0pt}
+\singlespacing
+\nl
+\begin{lstlisting}
+uint8_t is_screen_timeout(void) {
+    return screen_timeout==0;
+}
+
+void set_screen_timeout(uint16_t val) {
+    tcc_stop_counter(&screen_timer);
+    screen_timeout = val;
+    if (val != 0) {
+        tcc_set_count_value(&screen_timer, 0);
+        tcc_restart_counter(&screen_timer);
+    }
+}
+
+static void screen_timer_callback(struct tcc_module *const module) {
+    // Decrement the counter until it reaches zero, then stop the timer
+    if (screen_timeout > 0) {
+        screen_timeout--;
+    } else {
+        tcc_stop_counter(&screen_timer);
+    }
+}
+\end{lstlisting}
+\end{adjustwidth}
+\doublespacing
+
+\item \label{bt_task}
+\begin{adjustwidth}{-2em}{0pt}
+\singlespacing
+\nl
+\begin{lstlisting}
+// Bluetooth driver task
+void bt_task(void) {
+    // Run the task for the ACI BLE library interface
+    aci_loop();
+
+    if (rx_buffer_len) { // If there is a received message
+        rx_buffer_len--;
+
+        // Set date and time
+        if (rx_buffer[cur_rindx][0] == 'D') {
+            // expect date/time string- example: DYYYY MM DD HH MM SS (D[Year] [Month] [Day] [Hr] [Min] [Sec])
+            struct rtc_calendar_time time;
+            rtc_get_time(&time);
+            char *ptr;
+            time.year = strtol(&rx_buffer[cur_rindx][1],&ptr,10);
+            time.month = strtol(ptr,&ptr,10);
+            time.day = strtol(ptr,&ptr,10);
+            time.hour = strtol(ptr,&ptr,10);
+            time.minute = strtol(ptr,&ptr,10);
+            time.second = strtol(ptr,&ptr,10);
+            rtc_update_time(&time);
+            request_screen_on();
+        }
+
+        // Set notification 1
+        else if (rx_buffer[cur_rindx][0] == '1') {
+            bt_set_notification_1(&rx_buffer[cur_rindx][1]);
+            request_screen_on();
+            new_notifications = 1;
+        }
+
+        // Set notification 2
+        else if (rx_buffer[cur_rindx][0] == '2') {
+            bt_set_notification_2(&rx_buffer[cur_rindx][1]);
+            request_screen_on();
+            new_notifications = 1;
+        }
+
+        // Set measurement reading timeout in seconds
+        else if (rx_buffer[cur_rindx][0] == 'R') {
+            char *ptr;
+            long val = strtol(&rx_buffer[cur_rindx][1],&ptr,10);
+
+            measure_set_reading_timeout(val);
+            request_screen_on();
+        }
+
+        // Increment circular buffer reading index
+        if (++cur_rindx >= BT_MAX_BUFFER_LENGTH) cur_rindx=0;
+    }
+}
+\end{lstlisting}
+\end{adjustwidth}
+\doublespacing
+
+\item \label{battery_task}
+\begin{adjustwidth}{-2em}{0pt}
+\singlespacing
+\nl
+\begin{lstlisting}
+// Battery reader task
+void battery_task(void) {
+    uint16_t result = 0;
+    if (adc_active && adc_read(&adc_instance, &result) == STATUS_OK) { // When the ADC read succeeds
+        adc_disable(&adc_instance);
+
+        adc_result = result;
+        if (result != 0) {
+            // Precompute the level assuming the same max used last time
+            battery_level = (int16_t)(((float)result*MAX_V/MAX_ADC - MIN_V)/(MAX_V-MIN_V)*(float)last_max);
+            if (battery_level < 1) battery_level = 1;
+            if (battery_level > last_max) battery_level = last_max;
+        }
+        adc_active = 0;
+    }
+}
+
+int get_battery_level(int max) {
+    if (max == last_max) {
+        // Return precomputed level if the max has not changed
+        return battery_level;
+    }
+    last_max = max;
+    battery_level = (int16_t)(((float)adc_result*MAX_V/MAX_ADC - MIN_V)/(MAX_V-MIN_V)*(float)max);
+    if (battery_level < 1) battery_level = 1;
+    if (battery_level > max) battery_level = max;
+    return battery_level;
+}
+
+void start_battery_read(void) {
+    if (!adc_active) {
+        adc_active = 1;
+        adc_enable(&adc_instance);
+        adc_start_conversion(&adc_instance);
+    }
+}
+\end{lstlisting}
+\end{adjustwidth}
+\doublespacing
+
+\item \label{measurement_task}
+\begin{adjustwidth}{-2em}{0pt}
+\singlespacing
+\nl
+\begin{lstlisting}
+void take_measurement(void) {
+    measure_busy = 1;
+}
+
+// Measurement controller task
+void measurement_task(void) {
+    if (measure_busy) {
+        switch (pulseState) {
+            case 0: // Initialize implant
+                pulseCounts = 0;
+                glucoseTemp = 0;
+                numPoints = 0;
+
+                // Enable LEDs to power implant
+                port_pin_set_output_level(LED_PIN, true);
+                set_pulse_timeout(pulseOne);
+                pulseState = 1;
+                break;
+
+            case 1: // Enable capturing and wait for reading
+                if (is_pulse_timeout()) {
+                    set_pulse_timeout(pulseTwo);
+                    enable_capture();
+                    pulseState = 2;
+                }
+                break;
+
+            case 2: // Make readings over a specified period, then average them
+                if (is_pulse_timeout()) {
+                    do_measurement();
+                    pulseCounts++;
+                    if (pulseCounts < MAX_PULSE_COUNTS) {
+                        set_pulse_timeout(pulseTwo);
+                        enable_capture();
+                    } else {
+                        // Disable LEDs to power implant
+                        port_pin_set_output_level(LED_PIN, false);
+                        if (numPoints > 0) {
+                            glucose = (glucoseTemp / numPoints);
+                            new_measurement = 1;
+                        }
+                        measure_busy = 0;
+                        pulseState = 0;
+                    }
+                }
+                break;
+
+            default:
+                pulseState = 0;
+                break;
+        }
+    }
+}
+
+static void do_measurement(void) {
+    disable_capture();
+
+    if (nCap < 1)
+        return; // Failure
+    numPoints++;
+    uint32_t sum = 0;
+    // Start at 1, to ignore first read value
+    for (uint16_t i = 1; i < nCap; i ++) {
+        sum += (uint32_t)periods[i];
+    }
+
+    // Assumes 8MHz clock
+    freq = 8000000.0f * (float)(nCap-1) / (float)sum;
+    nCap = 0;
+
+    glucoseTemp += GLUCOSE_CONVERSION(freq);
+}
+\end{lstlisting}
+\end{adjustwidth}
+\doublespacing
+
+\item \label{is_button_interrupt}
+\begin{adjustwidth}{-2em}{0pt}
+\singlespacing
+\nl
+\begin{lstlisting}
+static void button_listener_callback_R(void) {
+    if (is_button_timeout()) {
+        button_interrupt_flag = 1;
+        button_pressed |= BUTTON_R_VAL;
+        set_button_timeout(BUTTON_TIMEOUT);
+    }
+}
+
+// Used to poll the interrupt flag without clearing it
+uint8_t is_button_interrupt_soft(void) {
+    return button_interrupt_flag;
+}
+
+uint8_t is_button_interrupt(void) {
+    if (button_interrupt_flag) {
+        button_interrupt_flag = 0;
+        return 1;
+    }
+    return 0;
+}
+
+// Used to poll the button values without clearing them
+uint8_t get_buttons_soft(void) {
+    return button_pressed;
+}
+
+uint8_t get_buttons(void) {
+    if (button_pressed) {
+        uint8_t ret = button_pressed;
+        button_pressed = 0;
+        return ret;
+    }
+    return 0;
+}
+\end{lstlisting}
+\end{adjustwidth}
+\doublespacing
+
+\end{enumerate}

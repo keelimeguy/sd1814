@@ -1,0 +1,29 @@
+\documentclass{standalone}
+\usepackage{graphicx}
+\usepackage{tikz}
+
+\usetikzlibrary{calc}
+\begin{document}
+
+\begin{tikzpicture}\tikzstyle{every node}=[font=\Large]
+\node[inner sep=0pt] (graph) at (0,0)
+    {\includegraphics[width=.5\textwidth]{display_graph.jpg}} node[above=40mm,font=\LARGE]{\textbf{Graph Window}};
+\node[inner sep=0pt] (notification) at (16,0)
+    {\includegraphics[width=.5\textwidth]{display_notification.jpg}} node[above=40mm,font=\LARGE] at (16,0) {\textbf{Notification Window}};
+\node[inner sep=0pt] (main) at (8,8)
+    {\includegraphics[width=.5\textwidth]{display_main.jpg}} node[above=40mm,font=\LARGE] at (8,8) {\textbf{Main Window}};
+\draw[<->,ultra thick] (main.south east) -- (notification.north west)
+    node[above=2mm,left=6mm,fill=white] {Right Button};
+\draw[<->,ultra thick] (main.south east) -- (notification.north west);
+\draw[<->,ultra thick] (main.south west) -- (graph.north east)
+    node[above=3mm,right=7mm,fill=white] {Left Button};
+\draw[<->,ultra thick] (main.south west) -- (graph.north east);
+\draw[->,ultra thick] (graph.30) arc (75:-150:35mm)
+    node[above=16.5mm,right=50mm,fill=white] {Right Button:}
+    node[above=11mm,right=50mm,fill=white] {Take Measurement};
+\draw[->,ultra thick] (notification) to [out=180, in=270](main)
+    node[below=30mm,right=-10mm,fill=white] {Left Button:}
+    node[below=35.5mm,right=-10mm,fill=white] {Clear Notifications};
+\end{tikzpicture}
+
+\end{document}
